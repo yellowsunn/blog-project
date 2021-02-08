@@ -1,13 +1,17 @@
 <template>
-  <Header></Header>
+  <div>
+    <Header></Header>
+    <Container></Container>
+  </div>
 </template>
 
 <script>
 import Header from '@/components/HeaderComponent';
+import Container from '@/components/ContainerComponent';
 
 export default {
   name: 'MainView',
-  components: { Header },
+  components: { Container, Header },
 };
 </script>
 
