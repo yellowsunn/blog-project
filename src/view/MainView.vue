@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import Header from '@/components/Header';
+import Header from '@/components/HeaderComponent';
 
 export default {
   name: 'MainView',

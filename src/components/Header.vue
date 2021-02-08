@@ -7,8 +7,8 @@
 
       <div class="box-header">
         <h1 class="title-logo">
-          <a href="/" title="[##_title_##]" class="link_logo">
-            문화재청
+          <a href="/" title="title" class="link_logo">
+            <slot name="title"></slot>
           </a>
         </h1>
 
@@ -23,30 +23,16 @@
       <!-- area-align -->
       <div class="area-align">
         <!-- area-slogan -->
-        <div class="area-slogun topnavmenu slogunmobileoff">
-          <strong>어제를 담아 내일에 전합니다</strong>
-          <p>과거와 현재, 시간과 사람 사이에 다리를 놓아<br>우리 시대의 문화를 만들어갑니다.</p>
+        <div class="area-slogun topnavmenu slogunmobileoff" v-if="hasSlogun">
+          <strong><slot name="header-slogun-title"></slot></strong>
+          <p><slot name="header-slogun-text"></slot></p>
         </div>
 
         <!-- area-gnb -->
-        <div class="area-gnb">
+        <div class="area-gnb" v-if="hasGnb">
           <nav class="topnavmenu">
             <ul>
-              <li class="t_menu_home first">
-                <a href="/">홈</a>
-              </li>
-              <li class="t_menu_category">
-                <a href="#">고궁의 밤</a>
-              </li>
-              <li class="t_menu_category">
-                <a href="#">행사 안내</a>
-              </li>
-              <li class="t_menu_guestbook">
-                <a href="#">방명록</a>
-              </li>
-              <li class="t_menu_link_1 last">
-                <a href="#">문화재청 홈페이지</a>
-              </li>
+              <slot name="blog-menu"></slot>
             </ul>
           </nav>
         </div>
@@ -63,6 +49,10 @@
 
 <script>
 export default {
+  props: {
+    hasSlogun: Boolean,
+    hasGnb: Boolean
+  }
 };
 </script>
 
