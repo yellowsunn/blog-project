@@ -1,5 +1,5 @@
 <template>
-  <aside class="area-aside" :class="{'area-aside-on' : asideOn }">
+  <aside class="area-aside" :class="{'area-aside-on' : asideOn }" v-click-outside="asideOffEvent">
     <!-- 프로필 -->
     <div class="box-profile" style="background-image: url('#')">
       <div class="inner-box">
@@ -34,7 +34,7 @@
       <nav>
         <ul class="tt_category">
           <li>
-            <a class="link_tit" href="#">전체 글 보기 <span class="c_cnt">(19)</span></a>
+            <a class="link_tit" href="/">전체 글 보기 <span class="c_cnt">(19)</span></a>
             <ul class="category_list">
               <li>
                 <a class="link_item" href="#">
@@ -74,6 +74,15 @@ export default {
   computed: {
     asideOn() {
       return this.$store.state.asideOn;
+    }
+  },
+  methods: {
+    asideOffEvent() {
+      if (this.$store.state.asideOn === true) {
+        this.$store.state.asideOn = false;
+        document.body.classList.remove('bg-dimmed');
+        document.body.style.overflow = '';
+      }
     }
   }
 };

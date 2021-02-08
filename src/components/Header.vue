@@ -90,8 +90,11 @@ export default {
     headerbannerlinkOut() {
       this.$refs.linkPromotion.style.background = this.var_headerbannerlinkcolor;
     },
-    asideOnEvent() {
+    asideOnEvent(event) {
       this.$store.state.asideOn = true;
+      document.body.classList.add('bg-dimmed');
+      document.body.style.overflow = 'hidden';
+      event.stopImmediatePropagation();
     }
   }
 };
