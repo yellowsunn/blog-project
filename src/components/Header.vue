@@ -3,7 +3,7 @@
     <div class="line-bottom display-none"></div>
 
     <!-- inner-header -->
-    <div class="inner-header slogun-use topnavmenu">
+    <div class="inner-header topnavmenu" :class="{ 'slogun-use' : if_var_headersloguntitle}">
 
       <div class="box-header">
         <h1 class="title-logo">
@@ -22,14 +22,17 @@
 
       <!-- area-align -->
       <div class="area-align">
-        <!-- area-slogan -->
-        <div class="area-slogun topnavmenu slogunmobileoff" v-if="hasSlogun">
-          <strong><slot name="header-slogun-title"></slot></strong>
-          <p><slot name="header-slogun-text"></slot></p>
-        </div>
+
+        <template v-if="if_var_headersloguntitle">
+          <!-- area-slogan -->
+          <div class="area-slogun topnavmenu slogunmobileoff">
+            <strong><slot name="header-slogun-title"></slot></strong>
+            <p><slot name="header-slogun-text"></slot></p>
+          </div>
+        </template>
 
         <!-- area-gnb -->
-        <div class="area-gnb" v-if="hasGnb">
+        <div class="area-gnb">
           <nav class="topnavmenu">
             <ul>
               <slot name="blog-menu"></slot>
@@ -42,6 +45,23 @@
             <path fill="#333" fill-rule="evenodd" d="M0 0h20v2H0V0zm0 6h20v2H0V6zm0 6h20v2H0v-2z"></path>
           </svg>
         </button>
+
+        <template v-if="if_var_headerbannerimage">
+          <!-- area-banner -->
+          <div class="area-promotion height400 bannermobile-on" :style="{ backgroundImage: `url(${var_headerbannerimage})`}">
+            <div class="inner-promotion">
+              <div class="box-promotion">
+                <template v-if="if_var_headerbannertitle">
+                  <strong :style="{ color: var_headerbannertitlecolor }"><slot name="header-banner-title"></slot></strong>
+                </template>
+
+                <template v-if="if_var_headerbannerlink">
+                  <a :href="var_headerbannerlink" class="link-promotion" ref="linkPromotion" @mouseover="headerbannerlinkHover" @mouseout="headerbannerlinkOut">자세히보기</a>
+                </template>
+              </div>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </header>
@@ -50,8 +70,26 @@
 <script>
 export default {
   props: {
-    hasSlogun: Boolean,
-    hasGnb: Boolean
+    if_var_headersloguntitle: Boolean,
+    if_var_headerbannerimage: Boolean,
+    if_var_headerbannertitle: Boolean,
+    if_var_headerbannerlink: Boolean,
+    var_headerbannerimage: String,
+    var_headerbannertitlecolor: String,
+    var_headerbannerlinkcolor: String,
+    var_headerbannerlinkovercolor: String,
+    var_headerbannerlink: String,
+  },
+  mounted() {
+    this.$refs.linkPromotion.style.background = this.var_headerbannerlinkcolor;
+  },
+  methods: {
+    headerbannerlinkHover() {
+      this.$refs.linkPromotion.style.background = this.var_headerbannerlinkovercolor;
+    },
+    headerbannerlinkOut() {
+      this.$refs.linkPromotion.style.background = this.var_headerbannerlinkcolor;
+    }
   }
 };
 </script>
