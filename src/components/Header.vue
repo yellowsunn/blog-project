@@ -40,7 +40,7 @@
           </nav>
         </div>
 
-        <button type="button" class="button-menu">
+        <button type="button" class="button-menu" @click="asideOnEvent">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14">
             <path fill="#333" fill-rule="evenodd" d="M0 0h20v2H0V0zm0 6h20v2H0V6zm0 6h20v2H0v-2z"></path>
           </svg>
@@ -89,6 +89,9 @@ export default {
     },
     headerbannerlinkOut() {
       this.$refs.linkPromotion.style.background = this.var_headerbannerlinkcolor;
+    },
+    asideOnEvent() {
+      this.$store.state.asideOn = true;
     }
   }
 };
