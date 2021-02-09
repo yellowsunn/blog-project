@@ -12,14 +12,14 @@ import Container from '@/components/Container';
 import Footer from '@/components/Footer';
 
 export default {
-  name: 'MainView',
+  name: 'CategoryView',
   components: { Footer, Container, Header },
   created() {
-    this.$store.state.isMainPage = true;
-    this.$store.state.isCategoryPage = false;
+    this.$store.state.isCategoryPage = true;
+    this.$store.state.isMainPage = false;
   }
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 </style>
