@@ -8,7 +8,7 @@
 
 <script>
 import Header from '@/components/HeaderComponent';
-import Container from '@/components/ContainerComponent';
+import Container from '@/components/Container';
 import Footer from '@/components/Footer';
 
 export default {
