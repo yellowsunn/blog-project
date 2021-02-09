@@ -64,7 +64,168 @@
       </nav>
     </div>
     <!-- 태그 -->
+    <div class="box-tag">
+      <h3 class="title-sidebar">Tag</h3>
+      <div class="box_tag">
+        <a href="/tag/#" class="cloud4">ASMR,</a>
+        <a href="/tag/#" class="cloud4">유물,</a>
+      </div>
+    </div>
+    <!-- 최근글과 인기글 -->
+    <div class="box-recent">
+      <h3 class="title-sidebar blind">최근글과 인기글</h3>
+      <ul class="tab-recent">
+        <li class="tab-button recent_button on"><a class="tab-button" href="#" onclick="return false;">최근글</a></li>
+        <li class="tab-button sidebar_button"><a class="tab-button" href="#" onclick="return false;">인기글</a></li>
+      </ul>
+      <ul class="list-recent" style="display: block;">
+        <li>
+          <a href="/68" class="link-recent">
+            <p class="thumbnail" style="background-image:url('https://img1.daumcdn.net/thumb/R750x0/?scode=mtistory2&amp;fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FlNnI9%2FbtqHJj5an3X%2FAn2u3X2N9fSBRQTak6e450%2Fimg.jpg')"></p>
+            <div class="box-recent">
+              <strong>고궁의 밤 - 경복궁</strong>
+              <span>2020.09.01 13:41</span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/67" class="link-recent">
+            <p class="thumbnail" style="background-image:url('https://img1.daumcdn.net/thumb/R750x0/?scode=mtistory2&amp;fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FcLP4bH%2FbtqHy6e2szz%2F1ZvZwYdtnCOImbsH6BPKOk%2Fimg.jpg')"></p>
+            <div class="box-recent">
+              <strong>고궁의 밤 - 창덕궁</strong>
+              <span>2020.09.01 13:37</span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/66" class="link-recent">
+            <p class="thumbnail" style="background-image:url('https://img1.daumcdn.net/thumb/R750x0/?scode=mtistory2&amp;fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fc6EMkq%2FbtqHJjjRshA%2FKzOpjx6QkTPVfOAFJekZgk%2Fimg.jpg')"></p>
+            <div class="box-recent">
+              <strong>고궁의 밤 - 덕수궁</strong>
+              <span>2020.09.01 13:33</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+      <ul class="list-recent list-tab" style="display: none;">
+        <li>
+          <a href="/68" class="link-recent">
+            <p class="thumbnail" style="background-image:url('https://img1.daumcdn.net/thumb/R750x0/?scode=mtistory2&amp;fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FlNnI9%2FbtqHJj5an3X%2FAn2u3X2N9fSBRQTak6e450%2Fimg.jpg')"></p>
+            <div class="box-recent">
+              <strong>고궁의 밤 - 경복궁</strong>
+              <span>2020.09.01 13:41</span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/63" class="link-recent">
+            <p class="thumbnail" style="background-image:url('https://img1.daumcdn.net/thumb/R750x0/?scode=mtistory2&amp;fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2ForaF1%2FbtqHAmWduTn%2F9oCrT8yOPrsktnRFKqXpKk%2Fimg.jpg')"></p>
+            <div class="box-recent">
+              <strong>세계에 활짝 열린 실감형 궁궐체험 앱 ‘창덕궁’</strong>
+              <span>2020.09.01 11:56</span>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/62" class="link-recent">
+            <p class="thumbnail" style="background-image:url('https://img1.daumcdn.net/thumb/R750x0/?scode=mtistory2&amp;fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2F0RbB7%2FbtqHLYzt2bY%2FL5z8mEJ6T1Wl9QE6d1iQvK%2Fimg.jpg')"></p>
+            <div class="box-recent">
+              <strong>「정선 정암사 수마노탑」은 국보,「안동 봉황사 대웅전」은 보물로 지정</strong>
+              <span>2020.09.01 11:54</span>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+    <!-- 달력 모듈 -->
+    <div class="box-calendar">
+      <h3 class="title-sidebar"><span class="blind">Calendar</span></h3>
+      <div class="inner-calendar">
+        <table class="tt-calendar" cellpadding="0" cellspacing="1" style="width: 100%; table-layout: fixed">
+          <caption class="cal_month">
+            <a href="/archive/202101" title="1개월 앞의 달력을 보여줍니다."></a>
+            &nbsp;
+            <a href="/archive/202102" title="현재 달의 달력을 보여줍니다.">2021. 02</a>
+            &nbsp;
+            <a href="/archive/202103" title="1개월 뒤의 달력을 보여줍니다."></a>
+          </caption>
+          <thead>
+          <tr>
+            <th class="cal_week2">일</th>
+            <th class="cal_week1">월</th>
+            <th class="cal_week1">화</th>
+            <th class="cal_week1">수</th>
+            <th class="cal_week1">목</th>
+            <th class="cal_week1">금</th>
+            <th class="cal_week1">토</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr class="cal_week">
+            <td class="cal_day1">&nbsp;</td>
+            <td class=" cal_day cal_day3">1</td>
+            <td class=" cal_day cal_day3">2</td>
+            <td class=" cal_day cal_day3">3</td>
+            <td class=" cal_day cal_day3">4</td>
+            <td class=" cal_day cal_day3">5</td>
+            <td class=" cal_day cal_day3">6</td>
+          </tr>
+          <tr class="cal_week cal_current_week">
+            <td class=" cal_day cal_day_sunday cal_day3">7</td>
+            <td class=" cal_day cal_day3">8</td>
+            <td class=" cal_day cal_day4">9</td>
+            <td class=" cal_day cal_day3">10</td>
+            <td class=" cal_day cal_day3">11</td>
+            <td class=" cal_day cal_day3">12</td>
+            <td class=" cal_day cal_day3">13</td>
+          </tr>
+          <tr class="cal_week">
+            <td class=" cal_day cal_day_sunday cal_day3">14</td>
+            <td class=" cal_day cal_day3">15</td>
+            <td class=" cal_day cal_day3">16</td>
+            <td class=" cal_day cal_day3">17</td>
+            <td class=" cal_day cal_day3">18</td>
+            <td class=" cal_day cal_day3">19</td>
+            <td class=" cal_day cal_day3">20</td>
+          </tr>
+          <tr class="cal_week">
+            <td class=" cal_day cal_day_sunday cal_day3">21</td>
+            <td class=" cal_day cal_day3">22</td>
+            <td class=" cal_day cal_day3">23</td>
+            <td class=" cal_day cal_day3">24</td>
+            <td class=" cal_day cal_day3">25</td>
+            <td class=" cal_day cal_day3">26</td>
+            <td class=" cal_day cal_day3">27</td>
+          </tr>
+          <tr class="cal_week">
+            <td class=" cal_day cal_day_sunday cal_day3">28</td>
+            <td class="cal_day2">&nbsp;</td>
+            <td class="cal_day2">&nbsp;</td>
+            <td class="cal_day2">&nbsp;</td>
+            <td class="cal_day2">&nbsp;</td>
+            <td class="cal_day2">&nbsp;</td>
+            <td class="cal_day2">&nbsp;</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- 방문자수 -->
+    <div class="box-visit">
+      <h3 class="title-sidebar"><span class="blind">방문자수</span>Total</h3>
+      <p class="text-total">24,757</p>
+      <ul>
+        <li class="item-visit">Today : 101</li>
+        <li class="item-visit">Yesterday : 98</li>
+      </ul>
+    </div>
 
+    <!-- search-bar for MOBILE -->
+    <div class="util use-sidebar">
+      <div class="search">
+        <input class="searchInput" type="text" name="search" value="" placeholder="검색내용을 입력하세요." onkeypress="if (event.keyCode == 13) { requestSearch('.util.use-sidebar .searchInput') }">
+      </div>
+    </div>
   </aside>
 </template>
 
