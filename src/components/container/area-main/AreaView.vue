@@ -1,0 +1,42 @@
+<!-- 게시글 내용이 보이는 뷰페이지 -->
+<template>
+  <div class="area-view">
+    <!-- 이미지가 없는 경우 article-header-noimg -->
+    <ArticleHeader v-if="isViewPage"></ArticleHeader>
+
+    <!-- 에디터 영역 -->
+    <ArticleView v-if="isViewPage"></ArticleView>
+
+    <!-- article-footer -->
+    <ArticleFooter v-if="isViewPage"></ArticleFooter>
+
+    <!-- area-paging -->
+    <AreaPage></AreaPage>
+  </div>
+</template>
+
+<script>
+import AreaPage from '@/components/container/area-main/area-view/AreaPage';
+import ArticleHeader from '@/components/container/area-main/area-view/ArticleHeader';
+import ArticleView from '@/components/container/area-main/area-view/ArticleView';
+import ArticleFooter from '@/components/container/area-main/area-view/ArticleFooter';
+
+export default {
+  name: 'AreaView',
+  components: {
+    ArticleFooter,
+    ArticleView,
+    AreaPage,
+    ArticleHeader
+  },
+  computed: {
+    isViewPage() {
+      return this.$store.state.isViewPage;
+    },
+  }
+};
+</script>
+
+<style scoped>
+
+</style>

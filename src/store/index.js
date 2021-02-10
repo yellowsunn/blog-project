@@ -11,6 +11,7 @@ export const store = new Vuex.Store({
     isMainPage: false,
     isCategoryPage: false,
     isViewPage: false,
+
     // 메인 페이지에 뜨는 커버 게시글
     coverData: {
       cover_title: "고궁의 밤",
@@ -71,6 +72,9 @@ export const store = new Vuex.Store({
           cover_item_comment_count: '0',
         }
       ]
+    },
+    articleData: {
+      cover_item_thumbnail: 'https://img1.daumcdn.net/thumb/R1440x0/?scode=mtistory2&fname=https://blog.kakaocdn.net/dn/lNnI9/btqHJj5an3X/An2u3X2N9fSBRQTak6e450/img.jpg',
     }
   },
   getters: {

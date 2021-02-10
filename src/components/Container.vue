@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import AreaMain from '@/components/AreaMain';
+import AreaMain from '@/components/container/AreaMain';
+import Aside from '@/components/container/Aside';
 
-import Aside from '@/components/Aside';
 export default {
   name: 'Container',
   components: { Aside, AreaMain },
