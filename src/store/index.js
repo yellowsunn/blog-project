@@ -10,6 +10,7 @@ export const store = new Vuex.Store({
     // 메인 페이지, 카테고리 페이지인지 확인
     isMainPage: false,
     isCategoryPage: false,
+    isViewPage: false,
     // 메인 페이지에 뜨는 커버 게시글
     coverData: {
       cover_title: "고궁의 밤",

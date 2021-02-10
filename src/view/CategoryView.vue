@@ -17,6 +17,9 @@ export default {
   created() {
     this.$store.state.isCategoryPage = true;
     this.$store.state.isMainPage = false;
+    this.$store.state.isViewPage = false;
+    document.body.id = "tt-body-category"
+    document.body.classList.add('headerbannerdisplayon'); // 메인페이지 배너 이미지 사라짐
   }
 };
 </script>

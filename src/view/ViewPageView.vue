@@ -10,17 +10,17 @@
 import Header from '@/components/HeaderComponent';
 import Container from '@/components/Container';
 import Footer from '@/components/Footer';
-
 export default {
-  name: 'MainView',
   components: { Footer, Container, Header },
   created() {
-    this.$store.state.isMainPage = true;
+    this.$store.state.isViewPage = true;
+    this.$store.state.isMainPage = false;
     this.$store.state.isCategoryPage = false;
-    this.$store.state.isViewPage = false;
+    document.body.id = "tt-body-page";
   }
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+
 </style>
