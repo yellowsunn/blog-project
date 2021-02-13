@@ -5,7 +5,12 @@
     </div>
     <div>
       <!-- area-reply -->
-      <div class="area-reply"></div>
+      <div class="area-reply">
+        <ul class="list-reply">
+          <!-- 반복 -->
+          <Reply></Reply>
+        </ul>
+      </div>
       <form method="post">
         <!-- reply_write -->
         <div class="area-write">
@@ -31,11 +36,12 @@
 </template>
 
 <script>
+import Reply from '@/components/Reply';
 export default {
   name: 'ArticleReply',
+  components: { Reply },
 };
 </script>
 
 <style scoped>
-
 </style>
