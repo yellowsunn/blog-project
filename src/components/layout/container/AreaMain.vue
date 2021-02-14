@@ -19,10 +19,10 @@
 </template>
 
 <script>
-import AreaCover from '@/components/container/area-main/AreaCover';
-import AreaCoverCategory from '@/components/container/area-main/AreaCoverCategory';
-import Category from '@/components/container/area-main/Category';
-import AreaView from '@/components/container/area-main/AreaView';
+import AreaCover from '@/components/layout/container/area-main/AreaCover';
+import AreaCoverCategory from '@/components/layout/container/area-main/AreaCoverCategory';
+import Category from '@/components/layout/container/area-main/Category';
+import AreaView from '@/components/layout/container/area-main/AreaView';
 
 export default {
   components: {

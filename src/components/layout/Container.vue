@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import AreaMain from '@/components/container/AreaMain';
-import Aside from '@/components/container/Aside';
+import AreaMain from '@/components/layout/container/AreaMain';
+import Aside from '@/components/layout/container/Aside';
 
 export default {
   name: 'Container',

@@ -3,25 +3,36 @@
     <i class="fas fa-user-circle thumbnail"></i>
     <div class="box-content">
       <div class="box-meta">
-        <strong>{{ reply.name }}</strong>
-        <span class="date">{{ reply.date }}</span>
+        <strong>{{ comment.name }}</strong>
+        <span class="date">{{ comment.date }}</span>
       </div>
-      <p class="text" v-html="reply.desc"></p>
+      <p class="text" v-html="comment.desc"></p>
+      <a class="link-comment" @click="replyEvent">답글</a>
 
       <!-- 댓글 삭제 -->
       <div class="box-modify">
         <i class="far fa-times-circle" @click="deleteEvent"></i>
       </div>
     </div>
+
+    <ul class="list-reply-comment" v-if="comment.reply !== undefined">
+      <Reply v-for="(reply, index) in comment.reply" :reply="reply" :key="index"></Reply>
+    </ul>
   </li>
 </template>
 
 <script>
+import Reply from '@/components/Reply';
+
 export default {
+  components: { Reply },
   props: {
-    reply: Object,
+    comment: Object,
   },
   methods: {
+    replyEvent() {
+      this.$modal.show('reply');
+    },
     deleteEvent() {
       this.$modal.show('delete');
     }
@@ -36,7 +47,7 @@ a {
 
 .fa-times-circle {
   color: #747474;
-  padding-right: 5px;
+  padding-right: 10px;
   cursor: pointer;
 }
 
@@ -51,12 +62,6 @@ a {
 @media screen and (max-width: 1060px) {
   .fa-user-circle {
     font-size: 37px;
-  }
-}
-
-@media screen and (max-width: 767px) {
-  .fa-times-circle {
-    padding-right: 10px;
   }
 }
 </style>

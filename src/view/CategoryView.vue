@@ -8,8 +8,8 @@
 
 <script>
 import Header from '@/components/HeaderComponent';
-import Container from '@/components/Container';
-import Footer from '@/components/Footer';
+import Container from '@/components/layout/Container';
+import Footer from '@/components/layout/Footer';
 
 export default {
   name: 'CategoryView',

@@ -16,10 +16,10 @@
 </template>
 
 <script>
-import AreaPage from '@/components/container/area-main/area-view/AreaPage';
-import ArticleHeader from '@/components/container/area-main/area-view/ArticleHeader';
-import ArticleView from '@/components/container/area-main/area-view/ArticleView';
-import ArticleFooter from '@/components/container/area-main/area-view/ArticleFooter';
+import AreaPage from '@/components/layout/container/area-main/area-view/AreaPage';
+import ArticleHeader from '@/components/layout/container/area-main/area-view/ArticleHeader';
+import ArticleView from '@/components/layout/container/area-main/area-view/ArticleView';
+import ArticleFooter from '@/components/layout/container/area-main/area-view/ArticleFooter';
 
 export default {
   name: 'AreaView',
