@@ -9,44 +9,72 @@
       <p class="text">
         예제 텍스트입니다.<br> 예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>
       </p>
-      <a href="#" class="link-comment">답글</a>
+      <a class="link-comment" @click="replyEvent">답글</a>
+
+      <!-- 댓글 삭제 -->
       <div class="box-modify">
-        <button type="button" class="button-modify" @click="modifyToggle"><span class="blind">더보기</span></button>
-        <ul class="list-modify" ref="listModify">
-          <li><a href="#">수정/삭제</a></li>
-        </ul>
+        <i class="far fa-times-circle" @click="deleteEvent"></i>
       </div>
     </div>
 
     <ul class="list-reply-comment">
       <SubReply></SubReply>
     </ul>
+
+    <!-- 모달 상자 -->
+    <modal name="reply" :adaptive="true">
+      <div class="reply-modal">
+        <AreaWrite v-on:submit="replySubmit"></AreaWrite>
+      </div>
+    </modal>
+    <modal name="delete" :adaptive="true" :width="450">
+      <DeleteComment v-on:cancel="deleteCancel" v-on:submit="deleteSubmit"></DeleteComment>
+    </modal>
   </li>
 </template>
 
 <script>
 import SubReply from '@/components/SubReply';
+import AreaWrite from '@/components/AreaWrite';
+import DeleteComment from '@/components/DeleteComment';
+
 export default {
-  components: { SubReply },
-  data() {
-    return {
-      isModified: false
-    }
-  },
+  components: { DeleteComment, SubReply, AreaWrite },
   methods: {
-    modifyToggle() {
-      this.isModified = !this.isModified;
-      if (this.isModified) {
-        this.$refs.listModify.style.display = 'block';
-      } else {
-        this.$refs.listModify.style.display = 'none';
-      }
+    /** 모달 이벤트 **/
+    replyEvent() {
+      this.$modal.show('reply')
+    },
+    // replySubmit(event) {
+    replySubmit() {
+      this.$modal.hide("reply");
+    },
+    deleteEvent() {
+      this.$modal.show('delete');
+    },
+    deleteCancel() {
+      this.$modal.hide('delete');
+    },
+    deleteSubmit(event) {
+      console.log(event);
+      this.$modal.hide('delete');
     }
+    /**************/
   }
 };
 </script>
 
 <style scoped>
+a {
+  cursor: pointer;
+}
+
+.fa-times-circle {
+  color: #747474;
+  padding-right: 10px;
+  cursor: pointer;
+}
+
 .fa-user-circle {
   font-size: 46px;
   color: #c6c6c6;
@@ -59,5 +87,9 @@ export default {
   .fa-user-circle {
     font-size: 37px;
   }
+}
+
+.reply-modal {
+  padding: 30px;
 }
 </style>

@@ -9,37 +9,54 @@
       <p class="text">
         예제 텍스트입니다.<br> 예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>
       </p>
+      <!-- 댓글 삭제 -->
       <div class="box-modify">
-        <button type="button" class="button-modify" @click="modifyToggle"><span class="blind">더보기</span></button>
-        <ul class="list-modify" ref="listModify">
-          <li><a href="#">수정/삭제</a></li>
-        </ul>
+        <i class="far fa-times-circle" @click="deleteEvent"></i>
       </div>
     </div>
+
+    <!-- 모달 상자 -->
+    <modal name="subDelete" :adaptive="true" :width="450">
+      <DeleteComment v-on:cancel="deleteCancel" v-on:submit="deleteSubmit"></DeleteComment>
+    </modal>
   </li>
 </template>
 
 <script>
+import DeleteComment from '@/components/DeleteComment'
+
 export default {
-  data() {
-    return {
-      isModified: false
-    }
+  components: {
+    DeleteComment
   },
   methods: {
-    modifyToggle() {
-      this.isModified = !this.isModified;
-      if (this.isModified) {
-        this.$refs.listModify.style.display = 'block';
-      } else {
-        this.$refs.listModify.style.display = 'none';
-      }
+    /** 모달 이벤트 **/
+    deleteEvent() {
+      this.$modal.show('subDelete');
+    },
+    deleteCancel() {
+      this.$modal.hide('subDelete');
+    },
+    deleteSubmit(event) {
+      console.log("sub = " + event);
+      this.$modal.hide('subDelete');
     }
+    /**************/
   }
 };
 </script>
 
 <style scoped>
+a {
+  cursor: pointer;
+}
+
+.fa-times-circle {
+  color: #747474;
+  padding-right: 5px;
+  cursor: pointer;
+}
+
 .fa-user-circle {
   font-size: 46px;
   color: #c6c6c6;
@@ -53,4 +70,11 @@ export default {
     font-size: 37px;
   }
 }
+
+@media screen and (max-width: 767px) {
+  .fa-times-circle {
+    padding-right: 10px;
+  }
+}
+
 </style>
