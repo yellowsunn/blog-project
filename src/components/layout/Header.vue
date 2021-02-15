@@ -3,13 +3,11 @@
     <div class="line-bottom display-none"></div>
 
     <!-- inner-header -->
-    <div class="inner-header topnavmenu" :class="{ 'slogun-use' : if_var_headersloguntitle}">
+    <div class="inner-header topnavmenu" :class="{ 'slogun-use' : hasSlogun}">
 
       <div class="box-header">
         <h1 class="title-logo">
-          <a href="/" title="title" class="link_logo">
-            <slot name="title"></slot>
-          </a>
+          <a href="/" title="title" class="link_logo">{{ data.title }}</a>
         </h1>
 
         <!-- search-bar for PC -->
@@ -23,19 +21,21 @@
       <!-- area-align -->
       <div class="area-align">
 
-        <template v-if="if_var_headersloguntitle">
+        <template v-if="hasSlogun">
           <!-- area-slogan -->
           <div class="area-slogun topnavmenu slogunmobileoff">
-            <strong><slot name="header-slogun-title"></slot></strong>
-            <p><slot name="header-slogun-text"></slot></p>
+            <strong>{{ data.slogunTitle }}</strong>
+            <p v-html="data.slogunText"></p>
           </div>
         </template>
 
         <!-- area-gnb -->
-        <div class="area-gnb">
+        <div class="area-gnb" v-if="hasCategory">
           <nav class="topnavmenu">
             <ul>
-              <slot name="blog-menu"></slot>
+              <li class="t_menu_home" :class="{ first: index === 0, last: index === data.categories.length - 1 }" v-for="(category, index) in data.categories" :key="index">
+                <a :href="category.link">{{ category.name }}</a>
+              </li>
             </ul>
           </nav>
         </div>
@@ -45,23 +45,6 @@
             <path fill="#333" fill-rule="evenodd" d="M0 0h20v2H0V0zm0 6h20v2H0V6zm0 6h20v2H0v-2z"></path>
           </svg>
         </button>
-
-        <template v-if="if_var_headerbannerimage">
-          <!-- area-banner -->
-          <div class="area-promotion height400 bannermobile-on" :style="{ backgroundImage: `url(${var_headerbannerimage})`}">
-            <div class="inner-promotion">
-              <div class="box-promotion">
-                <template v-if="if_var_headerbannertitle">
-                  <strong :style="{ color: var_headerbannertitlecolor }"><slot name="header-banner-title"></slot></strong>
-                </template>
-
-                <template v-if="if_var_headerbannerlink">
-                  <a :href="var_headerbannerlink" class="link-promotion" ref="linkPromotion" @mouseover="headerbannerlinkHover" @mouseout="headerbannerlinkOut">자세히보기</a>
-                </template>
-              </div>
-            </div>
-          </div>
-        </template>
       </div>
     </div>
   </header>
@@ -69,27 +52,18 @@
 
 <script>
 export default {
-  props: {
-    if_var_headersloguntitle: Boolean,
-    if_var_headerbannerimage: Boolean,
-    if_var_headerbannertitle: Boolean,
-    if_var_headerbannerlink: Boolean,
-    var_headerbannerimage: String,
-    var_headerbannertitlecolor: String,
-    var_headerbannerlinkcolor: String,
-    var_headerbannerlinkovercolor: String,
-    var_headerbannerlink: String,
-  },
-  mounted() {
-    this.$refs.linkPromotion.style.background = this.var_headerbannerlinkcolor;
+  computed: {
+    data() {
+      return this.$store.state.coverHeaderData;
+    },
+    hasSlogun() {
+      return !(this.data.slogunTitle === undefined || this.data.slogunTitle === '');
+    },
+    hasCategory() {
+      return !(this.data.categories === undefined || this.data.categories.length === 0);
+    }
   },
   methods: {
-    headerbannerlinkHover() {
-      this.$refs.linkPromotion.style.background = this.var_headerbannerlinkovercolor;
-    },
-    headerbannerlinkOut() {
-      this.$refs.linkPromotion.style.background = this.var_headerbannerlinkcolor;
-    },
     asideOnEvent(event) {
       this.$store.state.asideOn = true;
       document.body.classList.add('bg-dimmed');
