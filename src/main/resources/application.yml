@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3307/blog_db?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnection=true
+    username: root
+    password: password
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    database: MYSQL
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 100
+
+logging.level:
+  org.hibernate:
+    SQL: debug
+#    type: trace
