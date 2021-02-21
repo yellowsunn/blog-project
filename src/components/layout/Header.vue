@@ -1,9 +1,9 @@
 <template>
-  <header class="header">
+  <header class="header border-none">
     <div class="line-bottom display-none"></div>
 
     <!-- inner-header -->
-    <div class="inner-header topnavmenu" :class="{ 'slogun-use' : hasSlogun}">
+    <div class="inner-header topnavnone" :class="{ 'slogun-use' : hasSlogun}">
 
       <div class="box-header">
         <h1 class="title-logo">
@@ -23,21 +23,15 @@
 
         <template v-if="hasSlogun">
           <!-- area-slogan -->
-          <div class="area-slogun topnavmenu slogunmobileoff">
+          <div class="area-slogun topnavnone slogunmobileoff">
             <strong>{{ data.slogunTitle }}</strong>
             <p v-html="data.slogunText"></p>
           </div>
         </template>
 
         <!-- area-gnb -->
-        <div class="area-gnb" v-if="hasCategory">
-          <nav class="topnavmenu">
-            <ul>
-              <li class="t_menu_home" :class="{ first: index === 0, last: index === data.categories.length - 1 }" v-for="(category, index) in data.categories" :key="index">
-                <a :href="category.link">{{ category.name }}</a>
-              </li>
-            </ul>
-          </nav>
+        <div class="area-gnb">
+          <nav class="topnavnone"></nav>
         </div>
 
         <button type="button" class="button-menu" @click="asideOnEvent">
@@ -58,9 +52,6 @@ export default {
     },
     hasSlogun() {
       return !(this.data.slogunTitle === undefined || this.data.slogunTitle === '');
-    },
-    hasCategory() {
-      return !(this.data.categories === undefined || this.data.categories.length === 0);
     }
   },
   methods: {

@@ -16,11 +16,6 @@ export const store = new Vuex.Store({
       title: '문화재청',
       slogunTitle: '어제를 담아 내일에 전합니다.',
       slogunText: '과거와 현재, 시간과 사람 사이에 다리를 놓아<br>우리 시대의 문화를 만들어갑니다.',
-      categories: [
-        { name: "홈", link: "/", },
-        { name: "고궁의 밤", link: "#" },
-        { name: "행사 안내", link: "#" },
-      ]
     },
     // 메인 페이지에 뜨는 커버 게시글
     coverData: {
