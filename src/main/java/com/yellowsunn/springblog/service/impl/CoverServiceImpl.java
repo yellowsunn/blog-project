@@ -7,6 +7,7 @@ import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.domain.entity.Cover;
 import com.yellowsunn.springblog.repository.ArticleRepository;
+import com.yellowsunn.springblog.repository.CommentRepository;
 import com.yellowsunn.springblog.repository.CoverRepository;
 import com.yellowsunn.springblog.repository.ImageRepository;
 import com.yellowsunn.springblog.service.CoverService;
@@ -29,6 +30,7 @@ public class CoverServiceImpl implements CoverService {
 
     private final CoverRepository coverRepository;
     private final ArticleRepository articleRepository;
+    private final CommentRepository commentRepository;
     private final ImageRepository imageRepository;
 
     @Value("${imagePath}")
@@ -89,17 +91,20 @@ public class CoverServiceImpl implements CoverService {
     }
 
     private ArticleDto getSimpleArticleDto(Article article) {
+        // 본문 내용 요약처리
         String content = removeTag(article.getContent());
         if (content.length() > 200) {
             content = content.substring(0, 200);
         }
         Category category = article.getCategory();
+        long commentSize = commentRepository.countByArticle(article);
 
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
                 .category(category.getName())
                 .id(article.getId())
                 .title(article.getTitle())
                 .summary(content)
+                .commentSize(commentSize)
                 .simpleDate(article.getDate());
 
         imageRepository.findThumbnailByArticle(article)

@@ -22,6 +22,8 @@ public class ArticleDto {
     private String content;
     @JsonInclude(Include.NON_EMPTY)
     private String summary;
+    @JsonInclude(Include.NON_EMPTY)
+    private Long commentSize;
 
     private String thumbnail;
 

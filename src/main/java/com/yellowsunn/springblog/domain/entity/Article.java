@@ -37,6 +37,9 @@ public class Article {
     private Category category;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
+    private List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 
     public void addLike() {
