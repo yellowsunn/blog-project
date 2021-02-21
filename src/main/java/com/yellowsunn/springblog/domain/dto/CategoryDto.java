@@ -13,6 +13,7 @@ import static com.fasterxml.jackson.annotation.JsonInclude.*;
 public class CategoryDto {
 
     private Long id;
+    // 상위 카테고리 이름
     private String name;
 
     @JsonInclude(Include.NON_EMPTY)

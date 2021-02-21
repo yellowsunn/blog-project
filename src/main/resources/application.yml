@@ -20,3 +20,7 @@ logging.level:
   org.hibernate:
     SQL: debug
     type: trace
+
+# 이미지 경로
+file.upload.directory: ./upload/image/
+imagePath: /image/

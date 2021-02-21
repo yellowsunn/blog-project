@@ -23,6 +23,8 @@ public class ArticleDto {
     @JsonInclude(Include.NON_EMPTY)
     private String summary;
 
+    private String thumbnail;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul", locale = "ko")
     private LocalDate simpleDate;
 
@@ -32,5 +34,7 @@ public class ArticleDto {
     @JsonInclude(Include.NON_EMPTY)
     private Long categoryId;
     @JsonInclude(Include.NON_EMPTY)
-    private String categoryName;
+    private String parentCategory;
+    @JsonInclude(Include.NON_EMPTY)
+    private String category;
 }

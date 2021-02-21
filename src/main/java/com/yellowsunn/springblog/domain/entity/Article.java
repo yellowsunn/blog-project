@@ -36,10 +36,6 @@ public class Article {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "thumbnail_id")
-    private Image thumbnailImage;
-
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 

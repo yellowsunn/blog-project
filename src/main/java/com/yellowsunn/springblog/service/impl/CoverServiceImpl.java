@@ -8,11 +8,16 @@ import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.domain.entity.Cover;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CoverRepository;
+import com.yellowsunn.springblog.repository.ImageRepository;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +29,10 @@ public class CoverServiceImpl implements CoverService {
 
     private final CoverRepository coverRepository;
     private final ArticleRepository articleRepository;
+    private final ImageRepository imageRepository;
+
+    @Value("${imagePath}")
+    private String imgPath;
 
     @Transactional(readOnly = true)
     @Override
@@ -44,6 +53,11 @@ public class CoverServiceImpl implements CoverService {
             articleRepository.findLatestByCategory(cover.getCoverCategory())
                     .ifPresent(article -> {
                         ArticleDto articleDto = getSimpleArticleDto(article);
+
+                        // 상위 카테고리
+                        Category parentCategory = cover.getCoverCategory().getParentCategory();
+                        if (parentCategory == null) parentCategory = cover.getCoverCategory();
+                        articleDto.setParentCategory(parentCategory.getName());
                         builder.cover(articleDto);
                     });
         }
@@ -56,9 +70,12 @@ public class CoverServiceImpl implements CoverService {
                 articleDtoList.add(getSimpleArticleDto(article));
             }
 
+            // 상위 카테고리
+            Category parentCategory = category.getParentCategory();
+            if (parentCategory == null) parentCategory = category;
             CategoryDto categoryDto = CategoryDto.builder()
-                    .id(category.getId())
-                    .name(category.getName())
+                    .id(parentCategory.getId())
+                    .name(parentCategory.getName())
                     .articles(articleDtoList)
                     .build();
             builder.category(categoryDto);
@@ -78,13 +95,24 @@ public class CoverServiceImpl implements CoverService {
         }
         Category category = article.getCategory();
 
-        return ArticleDto.builder()
-                .categoryId(category.getId())
-                .categoryName(category.getName())
+        ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
+                .category(category.getName())
                 .id(article.getId())
                 .title(article.getTitle())
                 .summary(content)
-                .simpleDate(article.getDate())
-                .build();
+                .simpleDate(article.getDate());
+
+        imageRepository.findThumbnailByArticle(article)
+                .ifPresent(image -> {
+                    String serverImg = getServerUrl().concat(image.getName());
+                    builder.thumbnail(serverImg);
+                });
+
+        return builder.build();
+    }
+
+    private String getServerUrl() {
+        HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + imgPath;
     }
 }
