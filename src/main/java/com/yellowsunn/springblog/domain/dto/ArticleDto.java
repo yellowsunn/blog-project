@@ -23,7 +23,7 @@ public class ArticleDto {
     @JsonInclude(Include.NON_EMPTY)
     private String summary;
     @JsonInclude(Include.NON_EMPTY)
-    private Long commentSize;
+    private Long commentCount;
 
     private String thumbnail;
 

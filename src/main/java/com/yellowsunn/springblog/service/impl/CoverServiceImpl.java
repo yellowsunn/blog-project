@@ -2,7 +2,8 @@ package com.yellowsunn.springblog.service.impl;
 
 import com.yellowsunn.springblog.domain.dto.ArticleDto;
 import com.yellowsunn.springblog.domain.dto.CategoryDto;
-import com.yellowsunn.springblog.domain.dto.CoverDto;
+import com.yellowsunn.springblog.domain.dto.MainDto;
+import com.yellowsunn.springblog.domain.dto.HeaderDto;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.domain.entity.Cover;
@@ -38,17 +39,30 @@ public class CoverServiceImpl implements CoverService {
 
     @Transactional(readOnly = true)
     @Override
-    public CoverDto findCover() {
+    public HeaderDto findHeader() {
         Optional<Cover> coverOptional = coverRepository.findFirst();
         if (coverOptional.isEmpty()) {
-            return CoverDto.builder().build();
+            return HeaderDto.builder().build();
         }
 
         Cover cover = coverOptional.get();
-        CoverDto.CoverDtoBuilder builder = CoverDto.builder()
+        return HeaderDto.builder()
                 .title(cover.getTitle())
                 .slogunTitle(cover.getSlogunTitle())
-                .slogunText(cover.getSlogunText());
+                .slogunText(cover.getSlogunText())
+                .build();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public MainDto findMainInfo() {
+        Optional<Cover> coverOptional = coverRepository.findFirst();
+        if (coverOptional.isEmpty()) {
+            return MainDto.builder().build();
+        }
+
+        Cover cover = coverOptional.get();
+        MainDto.MainDtoBuilder builder = MainDto.builder();
 
         // 커버 게시글
         if (cover.getCoverCategory() != null) {
@@ -97,14 +111,14 @@ public class CoverServiceImpl implements CoverService {
             content = content.substring(0, 200);
         }
         Category category = article.getCategory();
-        long commentSize = commentRepository.countByArticle(article);
+        long commentCount = commentRepository.countByArticle(article);
 
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
                 .category(category.getName())
                 .id(article.getId())
                 .title(article.getTitle())
                 .summary(content)
-                .commentSize(commentSize)
+                .commentCount(commentCount)
                 .simpleDate(article.getDate());
 
         imageRepository.findThumbnailByArticle(article)

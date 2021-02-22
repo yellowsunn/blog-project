@@ -1,8 +1,11 @@
 package com.yellowsunn.springblog.service;
 
-import com.yellowsunn.springblog.domain.dto.CoverDto;
+import com.yellowsunn.springblog.domain.dto.MainDto;
+import com.yellowsunn.springblog.domain.dto.HeaderDto;
 
 public interface CoverService {
 
-    public CoverDto findCover();
+    HeaderDto findHeader();
+
+    MainDto findMainInfo();
 }

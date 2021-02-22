@@ -6,11 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CoverDto {
-
-    private String title;
-    private String slogunTitle;
-    private String slogunText;
+public class MainDto {
 
     // 커버에 보이는 게시글
     @JsonInclude(JsonInclude.Include.NON_NULL)
