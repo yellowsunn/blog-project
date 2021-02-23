@@ -18,6 +18,8 @@ export default {
     this.$store.state.isMainPage = true;
     this.$store.state.isCategoryPage = false;
     this.$store.state.isViewPage = false;
+
+    this.$store.dispatch('GET_MAIN_PAGE_DATA');
   }
 };
 </script>

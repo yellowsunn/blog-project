@@ -2,11 +2,11 @@
 <template>
   <div class="area-cover area-cover-thumbnail">
     <div class="box-cover-title">
-      <h2 class="title-cover">{{ categoryData.cover_title }}</h2>
-      <a href="#" class="link-title">more</a>
+      <h2 class="title-cover">{{ categoryData.name || '전체 글' }}</h2>
+      <a :href="`/category/${categoryData.id || ''}`" class="link-title">more</a>
     </div>
     <div class="box-article">
-      <Article :data="data" v-for="(data, index) in categoryData.item" :key="index"></Article>
+      <Article :data="data" v-for="(data, index) in categoryData.articles" :key="index"></Article>
     </div>
   </div>
 </template>

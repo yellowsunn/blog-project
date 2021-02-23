@@ -54,6 +54,9 @@ export default {
       return !(this.data.slogunTitle === undefined || this.data.slogunTitle === '');
     }
   },
+  created() {
+    this.$store.dispatch('GET_HEADER_DATA');
+  },
   methods: {
     asideOnEvent(event) {
       this.$store.state.asideOn = true;

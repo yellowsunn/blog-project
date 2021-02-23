@@ -4,7 +4,7 @@
     <!-- area-common -->
     <div class="area-common" v-if="isMainPage">
       <!-- 커버에 띄울 게시글 영역 -->
-      <AreaCover :data="coverData"></AreaCover>
+      <AreaCover :data="coverArticle" v-if="coverArticle"></AreaCover>
 
       <!-- 커버에 띄울 카테고리 목록 영역 -->
       <AreaCoverCategory :categoryData="coverCategoryData"></AreaCoverCategory>
@@ -37,8 +37,8 @@ export default {
     isCategoryPage() {
       return this.$store.state.isCategoryPage;
     },
-    coverData() {
-      return this.$store.state.coverData;
+    coverArticle() {
+      return this.$store.state.coverArticle;
     },
     coverCategoryData() {
       return this.$store.state.coverCategoryData;

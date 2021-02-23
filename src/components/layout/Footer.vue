@@ -2,11 +2,10 @@
   <footer id="footer">
     <div class="inner-footer">
       <div class="box-policy">
-        <a href="#" class="link-footer">문화재청</a>
+<!--        <a href="#" class="link-footer">문화재청</a>-->
       </div>
       <div>
-        <p class="text-info">(우)35208 대전광역시 서구 청사로 189 정부대전청사 1동 8-11층, 2동 14층</p>
-        <address>COPYRIGHT(C) CULTURAL HERITAGE ADMINISTRATION. ALL RIGHTS RESERVED.</address>
+        <p class="text-info">DESIGNED BY TISTORY (Copyright (c) 2020 TISTORY)</p>
       </div>
     </div>
   </footer>
