@@ -14,7 +14,11 @@ export const router = new VueRouter({
       component: MainView,
     },
     {
-      path: '/category',
+      path: '/category/',
+      component: CategoryView
+    },
+    {
+      path: '/category/:categoryId',
       component: CategoryView
     },
     {

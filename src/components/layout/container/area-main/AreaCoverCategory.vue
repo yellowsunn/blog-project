@@ -2,7 +2,7 @@
 <template>
   <div class="area-cover area-cover-thumbnail">
     <div class="box-cover-title">
-      <h2 class="title-cover">{{ categoryData.name || '전체 글' }}</h2>
+      <h2 class="title-cover">{{ category || '전체 글' }}</h2>
       <a :href="`/category/${categoryData.id || ''}`" class="link-title">more</a>
     </div>
     <div class="box-article">
@@ -17,6 +17,14 @@ export default {
   components: { Article },
   props: {
     categoryData: Object,
+  },
+  computed: {
+    category() {
+      const base = this.categoryData.baseCategory;
+      const child = this.categoryData.category;
+      if (base === child) return base;
+      else return `${base}/${child}`;
+    }
   }
 };
 </script>

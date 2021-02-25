@@ -12,7 +12,17 @@ const getMainPageData = async () => {
   return await axios.get('/', config);
 };
 
+const getCategoryData = async (categoryId, page) => {
+  if (!categoryId) categoryId = '';
+
+  return await axios.get(`/category/${categoryId}`, {
+    ...config,
+    params: { page }
+  })
+};
+
 export {
   getHeaderData,
   getMainPageData,
+  getCategoryData
 };

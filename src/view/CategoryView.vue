@@ -20,6 +20,10 @@ export default {
     this.$store.state.isViewPage = false;
     document.body.id = "tt-body-category"
     document.body.classList.add('headerbannerdisplayon'); // 메인페이지 배너 이미지 사라짐
+
+    this.$store.dispatch('GET_CATEGORY_DATA', {
+      categoryId: this.$route.params.categoryId,
+    });
   }
 };
 </script>

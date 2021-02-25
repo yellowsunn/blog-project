@@ -11,9 +11,9 @@
       </div>
     </div>
     <h2 class="title-search article-title-thumbnail title-border" list-style="thumbnail">
-      <b class="archives">{{ categoryData.list_conform }}</b> <span>{{ categoryData.list_count }}</span>
+      <b class="archives">{{ category || '전체 글' }}</b> <span>{{ categoryData.totalElements }}</span>
     </h2>
-    <Article :data="data" v-for="(data, index) in categoryData.item" :key="index"></Article>
+    <Article :data="data" v-for="(data, index) in categoryData.articles" :key="index"></Article>
   </div>
 </template>
 
@@ -23,6 +23,14 @@ export default {
   components: { Article },
   props: {
     categoryData: Object,
+  },
+  computed: {
+    category() {
+      const base = this.categoryData.baseCategory;
+      const child = this.categoryData.category;
+      if (base === child) return base;
+      else return `${base}/${child}`;
+    }
   }
 };
 </script>
