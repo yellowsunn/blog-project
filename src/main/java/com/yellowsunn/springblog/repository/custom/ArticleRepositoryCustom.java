@@ -12,7 +12,7 @@ public interface ArticleRepositoryCustom {
 
     Optional<Article> findLatestByCategory(Category category);
 
-    List<Article> findLatest3ByCategory(Category category);
+    List<Article> findLatest3ByCategoryIn(List<Category> categories);
 
-    Page<Article> findByCategory(Category category, Pageable pageable);
+    Page<Article> findByCategoryIn(List<Category> categories, Pageable pageable);
 }

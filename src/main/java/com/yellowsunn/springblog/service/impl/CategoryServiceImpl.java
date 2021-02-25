@@ -2,7 +2,6 @@ package com.yellowsunn.springblog.service.impl;
 
 import com.yellowsunn.springblog.domain.dto.ArticleDto;
 import com.yellowsunn.springblog.domain.dto.CategoryDto;
-import com.yellowsunn.springblog.domain.dto.PageDto;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.repository.ArticleRepository;
@@ -40,11 +39,26 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public CategoryDto findArticles(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
-        List<ArticleDto> articleDtoList = new ArrayList<>();
 
-        Page<Article> articlePage = articleRepository.findByCategory(category, pageable);
-        for (Article article : articlePage) {
-            articleDtoList.add(getSimpleArticleDto(article));
+        List<ArticleDto> articleDtoList = new ArrayList<>();
+        Page<Article> articlePage = null;
+
+        List<Category> categories = new ArrayList<>();
+        if (category != null) {
+            categories.add(category);
+            categories.addAll(categoryRepository.findChildCategories(category));
+        }
+
+        if (pageable != null) {
+            articlePage = articleRepository.findByCategoryIn(categories, pageable);
+            for (Article article : articlePage) {
+                articleDtoList.add(getSimpleArticleDto(article));
+            }
+        } else {
+            // 커버 카테고리인 경우
+            for (Article article : articleRepository.findLatest3ByCategoryIn(categories)) {
+                articleDtoList.add(getSimpleArticleDto(article));
+            }
         }
 
         CategoryDto.CategoryDtoBuilder categoryDtoBuilder = CategoryDto.builder()
@@ -55,27 +69,27 @@ public class CategoryServiceImpl implements CategoryService {
             Category parentCategory = category.getParentCategory();
             if (parentCategory == null) parentCategory = category;
             categoryDtoBuilder
-                    .id(parentCategory.getId())
-                    .name(parentCategory.getName());
+                    .id(category.getId())
+                    .category(category.getName())
+                    .baseCategory(parentCategory.getName());
         }
 
-        categoryDtoBuilder
-                .totalElements(articlePage.getTotalElements())
-                .totalPages(articlePage.getTotalPages())
-                .pageNumber(articlePage.getNumber())
-                .isFirst(articlePage.isFirst())
-                .isLast(articlePage.isLast())
-                .hasNext(articlePage.hasNext())
-                .hasPrevious(articlePage.hasPrevious());
+        if (articlePage != null) {
+            categoryDtoBuilder
+                    .totalElements(articlePage.getTotalElements())
+                    .totalPages(articlePage.getTotalPages())
+                    .pageNumber(articlePage.getNumber())
+                    .isFirst(articlePage.isFirst())
+                    .isLast(articlePage.isLast())
+                    .hasNext(articlePage.hasNext())
+                    .hasPrevious(articlePage.hasPrevious());
+        }
 
         return categoryDtoBuilder.build();
     }
 
-    private String removeTag(String html) {
-        return html.replaceAll("(<([^>]+)>)", "");
-    }
-
-    private ArticleDto getSimpleArticleDto(Article article) {
+    @Override
+    public ArticleDto getSimpleArticleDto(Article article) {
         // 본문 내용 요약처리
         String content = removeTag(article.getContent());
         if (content.length() > 200) {
@@ -85,6 +99,7 @@ public class CategoryServiceImpl implements CategoryService {
         long commentCount = commentRepository.countByArticle(article);
 
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
+                .categoryId(category.getId())
                 .category(category.getName())
                 .id(article.getId())
                 .title(article.getTitle())
@@ -100,6 +115,10 @@ public class CategoryServiceImpl implements CategoryService {
 
 
         return builder.build();
+    }
+
+    private String removeTag(String html) {
+        return html.replaceAll("(<([^>]+)>)", "");
     }
 
     private String getServerUrl() {

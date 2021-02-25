@@ -2,26 +2,18 @@ package com.yellowsunn.springblog.service.impl;
 
 import com.yellowsunn.springblog.domain.dto.ArticleDto;
 import com.yellowsunn.springblog.domain.dto.CategoryDto;
-import com.yellowsunn.springblog.domain.dto.MainDto;
 import com.yellowsunn.springblog.domain.dto.HeaderDto;
-import com.yellowsunn.springblog.domain.entity.Article;
+import com.yellowsunn.springblog.domain.dto.MainDto;
 import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.domain.entity.Cover;
 import com.yellowsunn.springblog.repository.ArticleRepository;
-import com.yellowsunn.springblog.repository.CommentRepository;
 import com.yellowsunn.springblog.repository.CoverRepository;
-import com.yellowsunn.springblog.repository.ImageRepository;
+import com.yellowsunn.springblog.service.CategoryService;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,13 +21,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CoverServiceImpl implements CoverService {
 
+    private final CategoryService categoryService;
+
     private final CoverRepository coverRepository;
     private final ArticleRepository articleRepository;
-    private final CommentRepository commentRepository;
-    private final ImageRepository imageRepository;
-
-    @Value("${imagePath}")
-    private String imgPath;
 
     @Transactional(readOnly = true)
     @Override
@@ -68,7 +57,7 @@ public class CoverServiceImpl implements CoverService {
         if (cover.getCoverCategory() != null) {
             articleRepository.findLatestByCategory(cover.getCoverCategory())
                     .ifPresent(article -> {
-                        ArticleDto articleDto = getSimpleArticleDto(article);
+                        ArticleDto articleDto = categoryService.getSimpleArticleDto(article);
 
                         // 상위 카테고리
                         Category parentCategory = cover.getCoverCategory().getParentCategory();
@@ -79,59 +68,7 @@ public class CoverServiceImpl implements CoverService {
         }
 
         // 커버 카테고리 (카테고리가 null 이면 전체 글에서 선택)
-        Category category = cover.getCategory();
-
-        List<ArticleDto> articleDtoList = new ArrayList<>();
-        for (Article article : articleRepository.findLatest3ByCategory(category)) {
-            articleDtoList.add(getSimpleArticleDto(article));
-        }
-
-        CategoryDto.CategoryDtoBuilder categoryDtoBuilder = CategoryDto.builder()
-                .articles(articleDtoList);
-        if (category != null) {
-            // 상위 카테고리
-            Category parentCategory = category.getParentCategory();
-            if (parentCategory == null) parentCategory = category;
-            categoryDtoBuilder
-                    .id(parentCategory.getId())
-                    .name(parentCategory.getName());
-        }
-
-        return builder.category(categoryDtoBuilder.build()).build();
-    }
-
-    private String removeTag(String html) {
-        return html.replaceAll("(<([^>]+)>)", "");
-    }
-
-    private ArticleDto getSimpleArticleDto(Article article) {
-        // 본문 내용 요약처리
-        String content = removeTag(article.getContent());
-        if (content.length() > 200) {
-            content = content.substring(0, 200);
-        }
-        Category category = article.getCategory();
-        long commentCount = commentRepository.countByArticle(article);
-
-        ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
-                .category(category.getName())
-                .id(article.getId())
-                .title(article.getTitle())
-                .summary(content)
-                .commentCount(commentCount)
-                .simpleDate(article.getDate());
-
-        imageRepository.findThumbnailByArticle(article)
-                .ifPresent(image -> {
-                    String serverImg = getServerUrl().concat(image.getName());
-                    builder.thumbnail(serverImg);
-                });
-
-        return builder.build();
-    }
-
-    private String getServerUrl() {
-        HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
-        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + imgPath;
+        CategoryDto categoryDto = categoryService.findArticles(cover.getCategory() != null ? cover.getCategory().getId() : 0L, null);
+        return builder.category(categoryDto).build();
     }
 }

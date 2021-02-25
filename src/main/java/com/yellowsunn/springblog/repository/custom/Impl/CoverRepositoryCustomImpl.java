@@ -4,10 +4,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yellowsunn.springblog.domain.entity.Cover;
 import com.yellowsunn.springblog.domain.entity.QCover;
 import com.yellowsunn.springblog.repository.custom.CoverRepositoryCustom;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
+@Transactional(readOnly = true)
 public class CoverRepositoryCustomImpl implements CoverRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;

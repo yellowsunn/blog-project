@@ -1,12 +1,9 @@
 package com.yellowsunn.springblog.controller.api;
 
-import com.yellowsunn.springblog.domain.dto.CategoryDto;
 import com.yellowsunn.springblog.domain.dto.HeaderDto;
 import com.yellowsunn.springblog.domain.dto.MainDto;
-import com.yellowsunn.springblog.service.CategoryService;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class CoverController {
 
     private final CoverService coverService;
-    private final CategoryService categoryService;
 
     // 헤더 정보
     @GetMapping("/header")
@@ -29,10 +25,5 @@ public class CoverController {
     @GetMapping("/")
     public MainDto findCover() {
         return coverService.findMainInfo();
-    }
-
-    @GetMapping("/test")
-    public CategoryDto test(Pageable pageable) {
-        return categoryService.findArticles(0L, pageable);
     }
 }

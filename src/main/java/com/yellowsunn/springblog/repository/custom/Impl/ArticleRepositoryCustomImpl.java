@@ -38,20 +38,20 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     }
 
     @Override
-    public List<Article> findLatest3ByCategory(Category category) {
+    public List<Article> findLatest3ByCategoryIn(List<Category> categories) {
         return queryFactory
                 .selectFrom(article)
-                .where(equalToCategory(category))
+                .where(categoryIn(categories))
                 .orderBy(article.id.desc())
                 .limit(3)
                 .fetch();
     }
 
     @Override
-    public Page<Article> findByCategory(Category category, Pageable pageable) {
+    public Page<Article> findByCategoryIn(List<Category> categories, Pageable pageable) {
         QueryResults<Article> results = queryFactory
                 .selectFrom(article)
-                .where(equalToCategory(category))
+                .where(categoryIn(categories))
                 .orderBy(article.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -60,7 +60,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
         return new PageImpl<>(results.getResults(), pageable, results.getTotal());
     }
 
-    private BooleanExpression equalToCategory(Category category) {
-        return category != null ? article.category.eq(category) : null;
+    private BooleanExpression categoryIn(List<Category> categories) {
+        return !categories.isEmpty() ? article.category.in(categories) : null;
     }
 }
