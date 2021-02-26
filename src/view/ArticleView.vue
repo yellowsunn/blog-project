@@ -18,6 +18,8 @@ export default {
     this.$store.state.isMainPage = false;
     this.$store.state.isCategoryPage = false;
     document.body.id = "tt-body-page";
+
+    this.$store.dispatch('GET_ARTICLE_DATA', this.$route.params.articleId);
   }
 };
 </script>

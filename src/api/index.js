@@ -21,8 +21,13 @@ const getCategoryData = async (categoryId, page) => {
   })
 };
 
+const getArticleData = async (articleId) => {
+  return await axios.get(`/article/${articleId}`, config);
+}
+
 export {
   getHeaderData,
   getMainPageData,
-  getCategoryData
+  getCategoryData,
+  getArticleData
 };

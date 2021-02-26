@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import MainView from '@/view/MainView';
 import CategoryView from '@/view/CategoryView';
-import ViewPageView from '@/view/ViewPageView';
+import ArticleView from '@/view/ArticleView';
 
 Vue.use(VueRouter);
 
@@ -18,12 +18,12 @@ export const router = new VueRouter({
       component: CategoryView
     },
     {
-      path: '/category/:categoryId',
-      component: CategoryView
+      path: '/:articleId',
+      component: ArticleView
     },
     {
-      path: '/view',
-      component: ViewPageView
+      path: '/category/:categoryId',
+      component: CategoryView
     }
   ]
 });

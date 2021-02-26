@@ -1,12 +1,12 @@
 <template>
-  <div class="article-header" :style="{ backgroundImage: `url(${data.cover_item_thumbnail})` }">
+  <div class="article-header" :style="{ backgroundImage: `url(${data.thumbnail})` }">
     <div class="inner-header">
       <div class="box-meta">
-        <p class="category">{{ data.cover_item_category }}</p>
-        <h2 class="title-article">{{ data.cover_item_title }}</h2>
+        <p class="category">{{ category }}</p>
+        <h2 class="title-article">{{ data.title }}</h2>
         <div class="box-info">
           <span class="writer">{{ data.writer }} </span>
-          <span class="date">{{ data.cover_item_simple_date }}</span>
+          <span class="date">{{ data.date }}</span>
         </div>
       </div>
     </div>
@@ -19,6 +19,13 @@ export default {
   computed: {
     data() {
       return this.$store.state.articleData;
+    },
+    category() {
+      const parentCategory = this.data.parentCategory;
+      if (parentCategory) {
+        return `${parentCategory}/${this.data.category}`;
+      }
+      return this.data.category;
     }
   }
 };

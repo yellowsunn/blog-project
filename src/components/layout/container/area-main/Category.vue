@@ -26,10 +26,11 @@ export default {
   },
   computed: {
     category() {
-      const base = this.categoryData.baseCategory;
-      const child = this.categoryData.category;
-      if (base === child) return base;
-      else return `${base}/${child}`;
+      const parentCategory = this.categoryData.parentCategory;
+      const category = this.categoryData.category;
+      if (!category) return '';
+      if (!parentCategory) return category;
+      return `${parentCategory}/${category}`;
     }
   }
 };
