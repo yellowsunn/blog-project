@@ -52,12 +52,12 @@ public class CategoryServiceImpl implements CategoryService {
         if (pageable != null) {
             articlePage = articleRepository.findByCategoryIn(categories, pageable);
             for (Article article : articlePage) {
-                articleDtoList.add(getSimpleArticleDto(article));
+                articleDtoList.add(getSimpleArticle(article));
             }
         } else {
             // 커버 카테고리인 경우
             for (Article article : articleRepository.findLatest3ByCategoryIn(categories)) {
-                articleDtoList.add(getSimpleArticleDto(article));
+                articleDtoList.add(getSimpleArticle(article));
             }
         }
 
@@ -66,12 +66,10 @@ public class CategoryServiceImpl implements CategoryService {
 
         if (category != null) {
             // 상위 카테고리
-            Category parentCategory = category.getParentCategory();
-            if (parentCategory == null) parentCategory = category;
             categoryDtoBuilder
                     .id(category.getId())
                     .category(category.getName())
-                    .baseCategory(parentCategory.getName());
+                    .parentCategory(category.getParentCategory() != null ? category.getParentCategory().getName() : "");
         }
 
         if (articlePage != null) {
@@ -89,7 +87,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ArticleDto getSimpleArticleDto(Article article) {
+    public ArticleDto getSimpleArticle(Article article) {
         // 본문 내용 요약처리
         String content = removeTag(article.getContent());
         if (content.length() > 200) {
@@ -113,6 +111,11 @@ public class CategoryServiceImpl implements CategoryService {
                     builder.thumbnail(serverImg);
                 });
 
+        // 부모 카테고리
+        Category parentCategory = article.getCategory().getParentCategory();
+        if (parentCategory != null) {
+            builder.parentCategory(parentCategory.getName());
+        }
 
         return builder.build();
     }

@@ -57,7 +57,7 @@ public class CoverServiceImpl implements CoverService {
         if (cover.getCoverCategory() != null) {
             articleRepository.findLatestByCategory(cover.getCoverCategory())
                     .ifPresent(article -> {
-                        ArticleDto articleDto = categoryService.getSimpleArticleDto(article);
+                        ArticleDto articleDto = categoryService.getSimpleArticle(article);
 
                         // 상위 카테고리
                         Category parentCategory = cover.getCoverCategory().getParentCategory();

@@ -2,41 +2,70 @@ package com.yellowsunn.springblog.domain.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.*;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
-@Data
-@Builder
-public class ArticleDto {
+@Getter @Setter
+@ToString
+@EqualsAndHashCode(callSuper = false)
+public class ArticleDto extends PageDto {
 
     private Long id;
     private String title;
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(NON_EMPTY)
     private String writer;
 
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(NON_EMPTY)
     private String content;
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(NON_EMPTY)
     private String summary;
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(NON_EMPTY)
     private Long commentCount;
-
+    @JsonInclude(NON_EMPTY)
     private String thumbnail;
 
+    @JsonInclude(NON_EMPTY)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd", timezone = "Asia/Seoul", locale = "ko")
-    private LocalDate simpleDate;
+    private LocalDateTime simpleDate;
+    @JsonInclude(NON_EMPTY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd. HH:mm", timezone = "Asia/Seoul", locale = "ko")
+    private LocalDateTime date;
 
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(NON_EMPTY)
     private Long like;
 
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(NON_EMPTY)
     private Long categoryId;
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(NON_EMPTY)
     private String parentCategory;
-    @JsonInclude(Include.NON_EMPTY)
+    @JsonInclude(NON_EMPTY)
     private String category;
+
+    @JsonInclude(NON_EMPTY)
+    private ArticleDto before;
+    @JsonInclude(NON_EMPTY)
+    private ArticleDto after;
+
+    @Builder
+    public ArticleDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String title, String writer, String content, String summary, Long commentCount, String thumbnail, LocalDateTime simpleDate, LocalDateTime date, Long like, Long categoryId, String parentCategory, String category, ArticleDto before, ArticleDto after) {
+        super(totalElements, totalPages, pageNumber, isFirst, isLast, hasNext, hasPrevious);
+        this.id = id;
+        this.title = title;
+        this.writer = writer;
+        this.content = content;
+        this.summary = summary;
+        this.commentCount = commentCount;
+        this.thumbnail = thumbnail;
+        this.simpleDate = simpleDate;
+        this.date = date;
+        this.like = like;
+        this.categoryId = categoryId;
+        this.parentCategory = parentCategory;
+        this.category = category;
+        this.before = before;
+        this.after = after;
+    }
 }

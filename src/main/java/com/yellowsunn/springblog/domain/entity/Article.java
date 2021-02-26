@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class Article {
     private String content;
 
     @CreatedDate
-    private LocalDate date;
+    private LocalDateTime date;
 
     @ColumnDefault("0")
     @Column(name = "article_like")

@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
+import static com.yellowsunn.springblog.domain.entity.QCover.*;
+
 @Transactional(readOnly = true)
 public class CoverRepositoryCustomImpl implements CoverRepositoryCustom {
 
@@ -20,11 +22,13 @@ public class CoverRepositoryCustomImpl implements CoverRepositoryCustom {
 
     @Override
     public Optional<Cover> findFirst() {
-        Cover cover = queryFactory
-                .selectFrom(QCover.cover)
+        Cover findCover = queryFactory
+                .selectFrom(cover)
+                .leftJoin(cover.category).fetchJoin()
+                .leftJoin(cover.coverCategory).fetchJoin()
                 .limit(1)
                 .fetchFirst();
 
-        return Optional.ofNullable(cover);
+        return Optional.ofNullable(findCover);
     }
 }

@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
+import com.yellowsunn.springblog.domain.entity.QArticle;
 import com.yellowsunn.springblog.repository.custom.ArticleRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -30,6 +31,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     public Optional<Article> findLatestByCategory(Category category) {
         Article latestArticle = queryFactory
                 .selectFrom(article)
+                .join(article.category).fetchJoin()
                 .where(article.category.eq(category))
                 .orderBy(article.id.desc())
                 .fetchFirst();
@@ -41,6 +43,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     public List<Article> findLatest3ByCategoryIn(List<Category> categories) {
         return queryFactory
                 .selectFrom(article)
+                .join(article.category).fetchJoin()
                 .where(categoryIn(categories))
                 .orderBy(article.id.desc())
                 .limit(3)
@@ -58,6 +61,34 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 .fetchResults();
 
         return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+    @Override
+    public Page<Article> findByCategory(Category category, Pageable pageable) {
+        QueryResults<Article> results = queryFactory
+                .selectFrom(article)
+                .where(categoryEqual(category))
+                .orderBy(article.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+    @Override
+    public long findIdxByCategoryAndId(Category category, Long id) {
+        long count = queryFactory
+                .selectFrom(article)
+                .where(categoryEqual(category), article.id.goe(id))
+                .orderBy(article.id.desc())
+                .fetchCount();
+
+        return count - 1;
+    }
+
+    private BooleanExpression categoryEqual(Category category) {
+        return category != null ? article.category.eq(category) : null;
     }
 
     private BooleanExpression categoryIn(List<Category> categories) {

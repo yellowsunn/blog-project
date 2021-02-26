@@ -10,5 +10,5 @@ public interface CategoryService {
     CategoryDto findArticles(Long categoryId, Pageable pageable);
 
     // 게시글을 단순화
-    ArticleDto getSimpleArticleDto(Article article);
+    ArticleDto getSimpleArticle(Article article);
 }
