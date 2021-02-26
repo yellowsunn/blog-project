@@ -6,7 +6,7 @@
         <strong>{{ comment.name }}</strong>
         <span class="date">{{ comment.date }}</span>
       </div>
-      <p class="text" v-html="comment.desc"></p>
+      <p class="text" v-html="comment.content"></p>
       <a class="link-comment" @click="replyEvent">답글</a>
 
       <!-- 댓글 삭제 -->
@@ -15,8 +15,8 @@
       </div>
     </div>
 
-    <ul class="list-reply-comment" v-if="comment.reply !== undefined">
-      <Reply v-for="(reply, index) in comment.reply" :reply="reply" :key="index"></Reply>
+    <ul class="list-reply-comment" v-if="comment.subComment">
+      <Reply v-for="(reply, index) in comment.subComment" :reply="reply" :key="index"></Reply>
     </ul>
   </li>
 </template>

@@ -6,7 +6,7 @@
         <strong>{{ reply.name }}</strong>
         <span class="date">{{ reply.date }}</span>
       </div>
-      <p class="text" v-html="reply.desc"></p>
+      <p class="text" v-html="reply.content"></p>
 
       <!-- 댓글 삭제 -->
       <div class="box-modify">

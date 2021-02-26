@@ -23,11 +23,24 @@ const getCategoryData = async (categoryId, page) => {
 
 const getArticleData = async (articleId) => {
   return await axios.get(`/article/${articleId}`, config);
-}
+};
+
+const getCommentData = async (articleId, page) => {
+  return await axios.get(`/comment/${articleId}?size=30`, {
+    ...config,
+    params: { page }
+  });
+};
+
+const getCommentCount = async (articleId) => {
+  return await axios.get(`/comment/count/${articleId}`, config);
+};
 
 export {
   getHeaderData,
   getMainPageData,
   getCategoryData,
-  getArticleData
+  getArticleData,
+  getCommentData,
+  getCommentCount
 };

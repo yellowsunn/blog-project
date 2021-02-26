@@ -20,6 +20,9 @@ export default {
     document.body.id = "tt-body-page";
 
     this.$store.dispatch('GET_ARTICLE_DATA', this.$route.params.articleId);
+    this.$store.dispatch('GET_COMMENT_DATA', {
+      articleId: this.$route.params.articleId
+    });
   }
 };
 </script>
