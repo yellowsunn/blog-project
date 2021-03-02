@@ -18,6 +18,8 @@ public interface ArticleRepositoryCustom {
 
     Page<Article> findByCategory(Category category, Pageable pageable);
 
+    Page<Long> findIdByCategory(Category category, Pageable pageable);
+
     // 카테고리에서 최신순으로 몇번째 게시글인지 인덱스를 구한다.
     long findIdxByCategoryAndId(Category category, Long id);
 }

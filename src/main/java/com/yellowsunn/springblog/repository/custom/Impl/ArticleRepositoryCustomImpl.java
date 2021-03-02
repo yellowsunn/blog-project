@@ -77,6 +77,20 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     }
 
     @Override
+    public Page<Long> findIdByCategory(Category category, Pageable pageable) {
+        QueryResults<Long> results = queryFactory
+                .select(article.id)
+                .from(article)
+                .where(categoryEqual(category))
+                .orderBy(article.id.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchResults();
+
+        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+    }
+
+    @Override
     public long findIdxByCategoryAndId(Category category, Long id) {
         long count = queryFactory
                 .selectFrom(article)
