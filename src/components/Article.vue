@@ -2,7 +2,10 @@
 <template>
   <article class="article-type-common article-type-thumbnail checked-item">
     <a :href="`/${data.id}`" class="link-article">
-      <p class="thumbnail" has-thumbnail="1" :style="{backgroundImage: `url(${data.thumbnail})`}">
+      <p class="thumbnail" has-thumbnail="1" v-if="data.thumbnail" :style="{backgroundImage: `url(${data.thumbnail})`}">
+        <img src="" class="img-thumbnail" role="presentation">
+      </p>
+      <p class="thumbnail" has-thumbnail="1" v-else style="background-image: url(/src/assets/no-image.jpg)}">
         <img src="" class="img-thumbnail" role="presentation">
       </p>
     </a>
