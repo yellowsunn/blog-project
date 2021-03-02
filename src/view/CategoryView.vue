@@ -23,6 +23,7 @@ export default {
 
     this.$store.dispatch('GET_CATEGORY_DATA', {
       categoryId: this.$route.params.categoryId,
+      page: this.$route.query.page,
     });
   }
 };

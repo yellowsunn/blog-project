@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  getArticleData,
+  getArticleData, getArticleId,
   getCategoryData, getCommentCount, getCommentData,
   getHeaderData,
   getMainPageData,
@@ -19,42 +19,17 @@ export const store = new Vuex.Store({
     isViewPage: false,
     // 댓글이 로딩되고 있을때 true
     loadComments: false,
+    // 페이지가 로딩되고 있을때 true
+    loadPage: false,
 
     coverHeaderData: {},
     // 메인 페이지에 뜨는 커버 게시글
     coverArticle: {},
     // 메인 페이지에 뜨는 카테고리 게시글 목록
     coverCategoryData: {},
-    // 위에랑 통합할 수 있을듯
     categoryData: {},
     articleData: {},
-    commentData: {
-      total: 3,
-      item: [
-        {
-          name: '닉네임1',
-          date: '2021.02.13 23:40',
-          desc: '예제 텍스트입니다.<br> 예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>',
-          reply: [
-            {
-              name: '닉네임2',
-              date: '2021.02.13 23:40',
-              desc: '예제 텍스트입니다.<br> 예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>',
-            },
-            {
-              name: '닉네임2',
-              date: '2021.02.13 23:40',
-              desc: '예제 텍스트입니다.<br> 예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>',
-            },
-          ]
-        },
-        {
-          name: '닉네임3',
-          date: '2021.02.13 23:40',
-          desc: '예제 텍스트입니다.<br> 예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>예제 텍스트입니다.<br>',
-        }
-      ]
-    }
+    commentData: {},
   },
   getters: {
     isCommentFirst(state) {
@@ -87,6 +62,17 @@ export const store = new Vuex.Store({
         console.log(error);
       }
     },
+    async UPDATE_CATEGORY_DATA({ state, commit }, { categoryId, page }) {
+      state.loadPage = true;
+      try {
+        const response = await getCategoryData(categoryId, page);
+        commit('UPDATE_CATEGORY_DATA', response.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        state.loadPage = false;
+      }
+    },
     async GET_ARTICLE_DATA({ commit }, articleId) {
       try {
         const response = await getArticleData(articleId);
@@ -94,6 +80,9 @@ export const store = new Vuex.Store({
       } catch (error) {
         console.log(error);
       }
+    },
+    async GET_ARTICLE_ID(context, { categoryId, page }) {
+      return await getArticleId(categoryId, page);
     },
     async GET_COMMENT_DATA({ commit }, { articleId, page }) {
       try {
@@ -129,6 +118,13 @@ export const store = new Vuex.Store({
     },
     GET_CATEGORY_DATA(state, data) {
       state.categoryData = data;
+    },
+    UPDATE_CATEGORY_DATA(state, data) {
+      const articles = [];
+      articles.push(...state.categoryData.articles);
+      articles.push(...data.articles);
+      state.categoryData = data;
+      state.categoryData.articles = articles;
     },
     GET_ARTICLE_DATA(state, data) {
       state.articleData = data;

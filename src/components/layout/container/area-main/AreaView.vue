@@ -11,7 +11,7 @@
     <ArticleFooter v-if="isViewPage"></ArticleFooter>
 
     <!-- area-paging -->
-    <AreaPage></AreaPage>
+    <AreaPage :pageData="pageData"></AreaPage>
   </div>
 </template>
 
@@ -33,7 +33,15 @@ export default {
     isViewPage() {
       return this.$store.state.isViewPage;
     },
-  }
+    pageData() {
+      if (this.$route.path.startsWith("/category")) {
+        return this.$store.state.categoryData;
+      } else if (this.$route.path.startsWith("/")) {
+        return this.$store.state.articleData;
+      }
+      return {};
+    }
+  },
 };
 </script>
 

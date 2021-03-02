@@ -17,13 +17,17 @@ const getCategoryData = async (categoryId, page) => {
 
   return await axios.get(`/category/${categoryId}`, {
     ...config,
-    params: { page }
+    params: { page, size: 10 }
   })
 };
 
 const getArticleData = async (articleId) => {
   return await axios.get(`/article/${articleId}`, config);
 };
+
+const getArticleId = async (categoryId, page) => {
+  return await axios.get(`/article/find?categoryId=${categoryId}&page=${page}`, config);
+}
 
 const getCommentData = async (articleId, page) => {
   return await axios.get(`/comment/${articleId}?size=30`, {
@@ -41,6 +45,7 @@ export {
   getMainPageData,
   getCategoryData,
   getArticleData,
+  getArticleId,
   getCommentData,
   getCommentCount
 };
