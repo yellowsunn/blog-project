@@ -2,6 +2,7 @@ package com.yellowsunn.springblog.controller.api;
 
 import com.yellowsunn.springblog.domain.dto.HeaderDto;
 import com.yellowsunn.springblog.domain.dto.MainDto;
+import com.yellowsunn.springblog.domain.dto.ProfileDto;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,5 +26,10 @@ public class CoverController {
     @GetMapping("/")
     public MainDto findCover() {
         return coverService.findMainInfo();
+    }
+
+    @GetMapping("/profile")
+    public ProfileDto findProfile() {
+        return coverService.findProfile();
     }
 }

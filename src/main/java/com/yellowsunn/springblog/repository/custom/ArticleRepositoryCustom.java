@@ -1,5 +1,6 @@
 package com.yellowsunn.springblog.repository.custom;
 
+import com.querydsl.core.Tuple;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
 import org.springframework.data.domain.Page;
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 public interface ArticleRepositoryCustom {
 
-    Optional<Article> findLatestByCategory(Category category);
+    List<Tuple> findSimpleArticles(Category baseCategory, Integer limit);
 
     List<Article> findLatest3ByCategoryIn(List<Category> categories);
 

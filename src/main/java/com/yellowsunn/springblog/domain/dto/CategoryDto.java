@@ -18,6 +18,7 @@ public class CategoryDto extends PageDto {
     @JsonInclude(Include.NON_EMPTY)
     private String parentCategory;
 
+    @JsonInclude(Include.NON_EMPTY)
     private List<CategoryDto> children;
 
     @JsonInclude(Include.NON_EMPTY)

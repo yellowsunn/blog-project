@@ -1,11 +1,11 @@
 package com.yellowsunn.springblog.repository.custom.Impl;
 
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
-import com.yellowsunn.springblog.domain.entity.QArticle;
 import com.yellowsunn.springblog.repository.custom.ArticleRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,9 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
 
+import static com.querydsl.jpa.JPAExpressions.select;
+import static com.querydsl.jpa.JPAExpressions.selectFrom;
 import static com.yellowsunn.springblog.domain.entity.QArticle.article;
+import static com.yellowsunn.springblog.domain.entity.QCategory.category;
+import static com.yellowsunn.springblog.domain.entity.QComment.comment;
+import static com.yellowsunn.springblog.domain.entity.QImage.image;
 
 @Transactional(readOnly = true)
 public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
@@ -28,15 +32,17 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     }
 
     @Override
-    public Optional<Article> findLatestByCategory(Category category) {
-        Article latestArticle = queryFactory
-                .selectFrom(article)
-                .join(article.category).fetchJoin()
-                .where(article.category.eq(category))
+    public List<Tuple> findSimpleArticles(Category baseCategory, Integer limit) {
+        return queryFactory
+                .select(article.id, article.title, article.content, article.date, article.category.id,
+                        select(image.name).from(image).where(image.article.eq(article) ,image.isThumbnail.eq(true)).limit(1),
+                        select(comment.count()).from(comment).where(comment.article.eq(article))
+                )
+                .from(article)
+                .where(baseCategoryEqual(baseCategory))
                 .orderBy(article.id.desc())
-                .fetchFirst();
-
-        return Optional.ofNullable(latestArticle);
+                .limit(limit)
+                .fetch();
     }
 
     @Override
@@ -99,6 +105,12 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 .fetchCount();
 
         return count - 1;
+    }
+
+    private BooleanExpression baseCategoryEqual(Category baseCategory) {
+        return baseCategory != null ? article.category.in(
+                selectFrom(category).where(category.parentCategory.eq(baseCategory).or(category.eq(baseCategory)))
+        ) : null;
     }
 
     private BooleanExpression categoryEqual(Category category) {

@@ -1,74 +1,122 @@
 package com.yellowsunn.springblog.service.impl;
 
-import com.yellowsunn.springblog.domain.dto.ArticleDto;
-import com.yellowsunn.springblog.domain.dto.CategoryDto;
-import com.yellowsunn.springblog.domain.dto.HeaderDto;
-import com.yellowsunn.springblog.domain.dto.MainDto;
+import com.querydsl.core.Tuple;
+import com.yellowsunn.springblog.domain.dto.*;
 import com.yellowsunn.springblog.domain.entity.Category;
-import com.yellowsunn.springblog.domain.entity.Cover;
 import com.yellowsunn.springblog.repository.ArticleRepository;
+import com.yellowsunn.springblog.repository.CategoryRepository;
 import com.yellowsunn.springblog.repository.CoverRepository;
-import com.yellowsunn.springblog.service.CategoryService;
+import com.yellowsunn.springblog.service.Common;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
+import static com.yellowsunn.springblog.domain.entity.QArticle.article;
+import static com.yellowsunn.springblog.domain.entity.QCover.cover;
+
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CoverServiceImpl implements CoverService {
 
-    private final CategoryService categoryService;
+    private final Common common;
+
+    private final CategoryRepository categoryRepository;
 
     private final CoverRepository coverRepository;
     private final ArticleRepository articleRepository;
 
-    @Transactional(readOnly = true)
     @Override
     public HeaderDto findHeader() {
-        Optional<Cover> coverOptional = coverRepository.findFirst();
-        if (coverOptional.isEmpty()) {
-            return HeaderDto.builder().build();
-        }
+        Optional<Tuple> tupleOptional = coverRepository.findHeader();
+        if (tupleOptional.isEmpty()) return null;
 
-        Cover cover = coverOptional.get();
+        Tuple tuple = tupleOptional.get();
         return HeaderDto.builder()
-                .title(cover.getTitle())
-                .slogunTitle(cover.getSlogunTitle())
-                .slogunText(cover.getSlogunText())
+                .title(tuple.get(cover.title))
+                .slogunTitle(tuple.get(cover.slogunTitle))
+                .slogunText(tuple.get(cover.slogunText))
                 .build();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public MainDto findMainInfo() {
-        Optional<Cover> coverOptional = coverRepository.findFirst();
-        if (coverOptional.isEmpty()) {
-            return MainDto.builder().build();
-        }
 
-        Cover cover = coverOptional.get();
+        Optional<Tuple> tupleOptional = coverRepository.findMain();
+        if (tupleOptional.isEmpty()) return null;
+
+        Tuple tuple = tupleOptional.get();
+        Category coverCategory = tuple.get(cover.coverCategory);
+        Category category = tuple.get(cover.category);
+        String parentCoverCategoryName = tuple.get(2, String.class);
+        String parentCategoryName = tuple.get(3, String.class);
+
         MainDto.MainDtoBuilder builder = MainDto.builder();
 
         // 커버 게시글
-        if (cover.getCoverCategory() != null) {
-            articleRepository.findLatestByCategory(cover.getCoverCategory())
-                    .ifPresent(article -> {
-                        ArticleDto articleDto = categoryService.getSimpleArticle(article);
-
-                        // 상위 카테고리
-                        Category parentCategory = cover.getCoverCategory().getParentCategory();
-                        if (parentCategory == null) parentCategory = cover.getCoverCategory();
-                        articleDto.setParentCategory(parentCategory.getName());
-                        builder.cover(articleDto);
-                    });
+        List<Tuple> simpleArticles = articleRepository.findSimpleArticles(coverCategory, 1);
+        if (!simpleArticles.isEmpty()) {
+            tuple = simpleArticles.get(0);
+            ArticleDto articleDto = getArticleDto(categoryRepository, tuple, coverCategory, parentCoverCategoryName);
+            builder.cover(articleDto);
         }
 
-        // 커버 카테고리 (카테고리가 null 이면 전체 글에서 선택)
-        CategoryDto categoryDto = categoryService.findArticles(cover.getCategory() != null ? cover.getCategory().getId() : 0L, null);
+        // 카테고리 목록
+        simpleArticles = articleRepository.findSimpleArticles(category, 3);
+        List<ArticleDto> articles = new ArrayList<>();
+        for (Tuple t : simpleArticles) {
+            ArticleDto articleDto = getArticleDto(categoryRepository, t, category, parentCategoryName);
+            articles.add(articleDto);
+        }
+
+        CategoryDto categoryDto = CategoryDto.builder()
+                .id(category != null ? category.getId() : null)
+                .category(category != null ? category.getName() : null)
+                .articles(articles)
+                .build();
+
         return builder.category(categoryDto).build();
+    }
+
+    @Override
+    public ProfileDto findProfile() {
+        Optional<Tuple> tupleOptional = coverRepository.findProfile();
+        if (tupleOptional.isEmpty()) return null;
+
+        Tuple tuple = tupleOptional.get();
+        return ProfileDto.builder()
+                .profileImage(common.getServerUrlImage(tuple.get(cover.profile.name)))
+                .profileText(tuple.get(cover.profileText))
+                .build();
+    }
+
+    private ArticleDto getArticleDto(CategoryRepository categoryRepository, Tuple tuple, Category category, String parentCategoryName) {
+        ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
+                .id(tuple.get(article.id))
+                .title(tuple.get(article.title))
+                .summary(common.getSummary(tuple.get(article.content)))
+                .commentCount(tuple.get(6, Long.class))
+                .thumbnail(common.getServerUrlImage(tuple.get(5, String.class)))
+                .simpleDate(tuple.get(article.date));
+
+        if (category == null) {
+            Long id = tuple.get(article.category.id);
+            if (id != null) {
+                categoryRepository.findById(id).ifPresent(c ->
+                    builder.categoryId(c.getId())
+                            .category(c.getName())
+                            .parentCategory(c.getParentCategory() != null ? c.getParentCategory().getName() : null)
+                );
+            }
+        } else {
+            builder.categoryId(category.getId())
+                    .category(category.getName()).parentCategory(parentCategoryName);
+        }
+        return builder.build();
     }
 }
