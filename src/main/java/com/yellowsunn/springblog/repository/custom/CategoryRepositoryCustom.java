@@ -7,4 +7,6 @@ import java.util.List;
 public interface CategoryRepositoryCustom {
 
     List<Category> findChildCategories(Category baseCategory);
+
+    List<Category> findAllParentCategories();
 }

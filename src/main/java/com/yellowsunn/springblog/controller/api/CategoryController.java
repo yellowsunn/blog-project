@@ -1,6 +1,7 @@
 package com.yellowsunn.springblog.controller.api;
 
 import com.yellowsunn.springblog.domain.dto.CategoryDto;
+import com.yellowsunn.springblog.domain.dto.CategoryListDto;
 import com.yellowsunn.springblog.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -19,5 +20,10 @@ public class CategoryController {
     @GetMapping(value = {"/category", "/category/{categoryId}"})
     public CategoryDto findArticles(@PathVariable(value = "categoryId", required = false) Long categoryId, Pageable pageable) {
         return categoryService.findArticles(categoryId != null ? categoryId : 0L, pageable);
+    }
+
+    @GetMapping("/categoryList")
+    public CategoryListDto findCategoryList() {
+        return categoryService.findAll();
     }
 }

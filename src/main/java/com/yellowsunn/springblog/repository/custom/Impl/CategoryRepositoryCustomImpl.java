@@ -26,4 +26,12 @@ public class CategoryRepositoryCustomImpl implements CategoryRepositoryCustom {
                 .where(category.parentCategory.eq(baseCategory))
                 .fetch();
     }
+
+    @Override
+    public List<Category> findAllParentCategories() {
+        return queryFactory.selectFrom(category)
+                .where(category.parentCategory.isNull())
+                .orderBy(category.order.asc())
+                .fetch();
+    }
 }

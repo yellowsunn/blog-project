@@ -2,6 +2,7 @@ package com.yellowsunn.springblog.service.impl;
 
 import com.yellowsunn.springblog.domain.dto.ArticleDto;
 import com.yellowsunn.springblog.domain.dto.CategoryDto;
+import com.yellowsunn.springblog.domain.dto.CategoryListDto;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.repository.ArticleRepository;
@@ -21,9 +22,10 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
@@ -35,7 +37,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Value("${imagePath}")
     private String imgPath;
 
-    @Transactional(readOnly = true)
     @Override
     public CategoryDto findArticles(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
@@ -84,6 +85,32 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         return categoryDtoBuilder.build();
+    }
+
+    @Override
+    public CategoryListDto findAll() {
+        List<CategoryDto> categories = categoryRepository.findAllParentCategories()
+                .stream().map(category -> {
+                    List<CategoryDto> childCategories = categoryRepository.findChildCategories(category).stream().map(childCategory ->
+                            CategoryDto.builder()
+                                    .id(childCategory.getId())
+                                    .category(childCategory.getName())
+                                    .totalArticles(articleRepository.countByCategory(childCategory))
+                                    .build()
+                    ).collect(Collectors.toList());
+
+                    return CategoryDto.builder()
+                            .id(category.getId())
+                            .category(category.getName())
+                            .children(childCategories)
+                            .totalArticles(articleRepository.countByCategory(category))
+                            .build();
+                }).collect(Collectors.toList());
+
+        return CategoryListDto.builder()
+                .list(categories)
+                .total(articleRepository.count())
+                .build();
     }
 
     @Override
