@@ -1,7 +1,7 @@
 <!-- 메인페이지 상단에 노출되는 커버 게시글 -->
 <template>
   <div class="area-cover">
-    <h2 class="title-cover">{{ data.parentCategory }}</h2>
+    <h2 class="title-cover">{{ !data.parentCategory ? data.category : data.parentCategory }}</h2>
     <div class="box-article">
       <article class="article-type-common article-type-crop checked-item">
         <a :href="data.id" class="link-article">

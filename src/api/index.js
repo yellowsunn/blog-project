@@ -40,6 +40,14 @@ const getCommentCount = async (articleId) => {
   return await axios.get(`/comment/count/${articleId}`, config);
 };
 
+const getAsideProfileData = async () => {
+  return await axios.get("/profile", config);
+}
+
+const getAsideCategoryList = async () => {
+  return await axios.get('/categoryList', config);
+};
+
 export {
   getHeaderData,
   getMainPageData,
@@ -47,5 +55,7 @@ export {
   getArticleData,
   getArticleId,
   getCommentData,
-  getCommentCount
+  getCommentCount,
+  getAsideProfileData,
+  getAsideCategoryList
 };

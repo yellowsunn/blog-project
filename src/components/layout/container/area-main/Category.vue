@@ -13,7 +13,16 @@
     <h2 class="title-search article-title-thumbnail title-border" list-style="thumbnail">
       <b class="archives">{{ category || '전체 글' }}</b> <span>{{ categoryData.totalElements }}</span>
     </h2>
-    <Article :data="data" v-for="(data, index) in categoryData.articles" :key="index"></Article>
+
+    <template v-if="categoryData.articles">
+      <Article :data="data" v-for="(data, index) in categoryData.articles" :key="index"></Article>
+    </template>
+
+    <!-- 해당 카테고리에 게시글이 없는 경우 -->
+    <div v-else class="box-no-search type-category">
+      <span>선택하신 카테고리에 해당하는 글이 없습니다.</span>
+      <span>다른 카테고리를 선택하시거나, 검색 기능을 활용해 보세요.</span>
+    </div>
   </div>
 </template>
 

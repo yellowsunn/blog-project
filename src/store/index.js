@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  getArticleData, getArticleId,
+  getArticleData, getArticleId, getAsideCategoryList, getAsideProfileData,
   getCategoryData, getCommentCount, getCommentData,
   getHeaderData,
   getMainPageData,
@@ -30,6 +30,8 @@ export const store = new Vuex.Store({
     categoryData: {},
     articleData: {},
     commentData: {},
+    asideCategoryList: {},
+    asideProfileData: {},
   },
   getters: {
     isCommentFirst(state) {
@@ -105,6 +107,22 @@ export const store = new Vuex.Store({
         commit('INIT_COMMENT_STATE')
       }
     },
+    async GET_ASIDE_PROFILE_DATA({ commit }) {
+      try {
+        const response = await getAsideProfileData();
+        commit('GET_ASIDE_PROFILE_DATA', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async GET_ASIDE_CATEGORY_LIST({ commit }) {
+      try {
+        const response = await getAsideCategoryList();
+        commit('GET_ASIDE_CATEGORY_LIST', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   mutations: {
     GET_HEADER_DATA(state, data) {
@@ -155,6 +173,12 @@ export const store = new Vuex.Store({
     },
     INIT_COMMENT_STATE(state) {
       state.loadComments = false;
+    },
+    GET_ASIDE_PROFILE_DATA(state, data) {
+      state.asideProfileData = data;
+    },
+    GET_ASIDE_CATEGORY_LIST(state, data) {
+      state.asideCategoryList = data;
     }
   }
 });

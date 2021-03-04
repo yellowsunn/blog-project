@@ -19,12 +19,6 @@ export default {
     categoryData: Object,
   },
   computed: {
-    // category() {
-    //   const base = this.categoryData.baseCategory;
-    //   const child = this.categoryData.category;
-    //   if (base === child) return base;
-    //   else return `${base}/${child}`;
-    // },
     category() {
       const parentCategory = this.categoryData.parentCategory;
       const category = this.categoryData.category;
