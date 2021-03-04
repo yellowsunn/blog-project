@@ -1,10 +1,12 @@
 package com.yellowsunn.springblog.service.impl;
 
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
 import com.yellowsunn.springblog.domain.dto.ArticleDto;
 import com.yellowsunn.springblog.domain.dto.CategoryDto;
 import com.yellowsunn.springblog.domain.dto.CategoryListDto;
 import com.yellowsunn.springblog.domain.entity.Category;
+import com.yellowsunn.springblog.domain.entity.QCategory;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CategoryRepository;
 import com.yellowsunn.springblog.service.ArticleService;
@@ -15,9 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.yellowsunn.springblog.domain.entity.QCategory.category;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,27 +66,58 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryListDto findAll() {
-        List<CategoryDto> categories = categoryRepository.findAllParentCategories()
-                .stream().map(category -> {
-                    List<CategoryDto> childCategories = categoryRepository.findChildCategories(category).stream().map(childCategory ->
-                            CategoryDto.builder()
-                                    .id(childCategory.getId())
-                                    .category(childCategory.getName())
-                                    .totalArticles(articleRepository.countByCategory(childCategory))
-                                    .build()
-                    ).collect(Collectors.toList());
 
-                    return CategoryDto.builder()
-                            .id(category.getId())
-                            .category(category.getName())
-                            .children(childCategories)
-                            .totalArticles(articleRepository.countByCategory(category))
-                            .build();
-                }).collect(Collectors.toList());
+        // 상위 카테고리의 id를 key로 한 Map
+        Map<Long, CategoryDto> map = new HashMap<>();
+        Queue<Tuple> tuples = categoryRepository.findCategoryList();
+        List<CategoryDto> categoryList = new ArrayList<>();
+
+        long total = 0;
+
+        // 상위 카테고리 DTO 변환
+        while (!tuples.isEmpty()) {
+            Tuple tuple = tuples.peek();
+            Category category = tuple.get(QCategory.category);
+            Long totalArticles = tuple.get(1, Long.class);
+            if (category.getParentCategory() != null) break;
+
+            CategoryDto categoryDto = CategoryDto.builder()
+                    .id(category.getId())
+                    .category(category.getName())
+                    .totalArticles(totalArticles)
+                    .build();
+
+            categoryList.add(categoryDto);
+            total += (totalArticles != null ? totalArticles : 0);
+            map.put(category.getId(), categoryDto);
+            tuples.poll();
+        }
+
+        // 하위 카테고리 DTO 변환
+        while (!tuples.isEmpty()) {
+            Tuple tuple = tuples.poll();
+            Category subCategory = tuple.get(QCategory.category);
+            Long totalArticles = tuple.get(1, Long.class);
+
+            CategoryDto childCategoryDto = CategoryDto.builder()
+                    .id(subCategory.getId())
+                    .category(subCategory.getName())
+                    .totalArticles(totalArticles)
+                    .build();
+
+            CategoryDto parentCategoryDto = map.get(subCategory.getParentCategory().getId());
+            if (parentCategoryDto.getChildren() == null) {
+                parentCategoryDto.setChildren(new ArrayList<>());
+            }
+            parentCategoryDto.getChildren().add(childCategoryDto);
+            parentCategoryDto.setTotalArticles(parentCategoryDto.getTotalArticles() + childCategoryDto.getTotalArticles());
+
+            total += (totalArticles != null ? totalArticles : 0);
+        }
 
         return CategoryListDto.builder()
-                .list(categories)
-                .total(articleRepository.count())
+                .list(categoryList)
+                .total(total)
                 .build();
     }
 }

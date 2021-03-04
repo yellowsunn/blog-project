@@ -3,6 +3,7 @@ package com.yellowsunn.springblog.domain.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;

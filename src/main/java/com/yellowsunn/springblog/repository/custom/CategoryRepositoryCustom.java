@@ -1,12 +1,10 @@
 package com.yellowsunn.springblog.repository.custom;
 
-import com.yellowsunn.springblog.domain.entity.Category;
+import com.querydsl.core.Tuple;
 
-import java.util.List;
+import java.util.Queue;
 
 public interface CategoryRepositoryCustom {
 
-    List<Category> findChildCategories(Category baseCategory);
-
-    List<Category> findAllParentCategories();
+    Queue<Tuple> findCategoryList();
 }
