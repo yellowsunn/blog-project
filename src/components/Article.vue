@@ -2,10 +2,7 @@
 <template>
   <article class="article-type-common article-type-thumbnail checked-item">
     <a :href="`/${data.id}`" class="link-article">
-      <p class="thumbnail" has-thumbnail="1" v-if="data.thumbnail" :style="{backgroundImage: `url(${data.thumbnail})`}">
-        <img src="" class="img-thumbnail" role="presentation">
-      </p>
-      <p class="thumbnail" has-thumbnail="1" v-else style="background-image: url(/src/assets/no-image.jpg)}">
+      <p class="thumbnail" has-thumbnail="1" :style="{backgroundImage: `url(${!data.thumbnail ? noImage : data.thumbnail})`}">
         <img src="" class="img-thumbnail" role="presentation">
       </p>
     </a>
@@ -24,6 +21,8 @@
 </template>
 
 <script>
+import noImage from '@/assets/no-image.jpg';
+
 export default {
   props: {
     data: Object,
@@ -33,6 +32,11 @@ export default {
       const parentCategory = this.data.parentCategory;
       if (!parentCategory) return this.data.category;
       return `${parentCategory}/${this.data.category}`;
+    }
+  },
+  data() {
+    return {
+      noImage
     }
   }
 };

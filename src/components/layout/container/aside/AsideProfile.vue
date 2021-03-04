@@ -1,8 +1,7 @@
 <template>
   <div class="box-profile" style="background-image: url('#')">
     <div class="inner-box">
-      <img :src="profileImage" v-if="profileImage" class="img-profile" alt="프로필사진">
-      <img src="@/assets/profile.png" v-else class="img-profile" alt="프로필사진">
+      <img :src="!profileImage ? noImage : profileImage" class="img-profile" alt="프로필사진">
       <p class="text-profile">{{ data.profileText }}</p>
 
       <div class="box_sns">
@@ -13,6 +12,8 @@
 </template>
 
 <script>
+import noImage from '@/assets/profile.png';
+
 export default {
   created() {
     this.$store.dispatch('GET_ASIDE_PROFILE_DATA');
@@ -23,6 +24,11 @@ export default {
     },
     profileImage() {
       return this.data.profileImage;
+    }
+  },
+  data() {
+    return {
+      noImage
     }
   }
 };

@@ -1,8 +1,14 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  getArticleData, getArticleId, getAsideCategoryList, getAsideProfileData,
-  getCategoryData, getCommentCount, getCommentData,
+  getArticleData,
+  getArticleId,
+  getAsideArticles,
+  getAsideCategoryList,
+  getAsideProfileData,
+  getCategoryData,
+  getCommentCount,
+  getCommentData,
   getHeaderData,
   getMainPageData,
 } from '@/api';
@@ -32,6 +38,7 @@ export const store = new Vuex.Store({
     commentData: {},
     asideCategoryList: {},
     asideProfileData: {},
+    asideArticles: {}
   },
   getters: {
     isCommentFirst(state) {
@@ -123,6 +130,14 @@ export const store = new Vuex.Store({
         console.log(error);
       }
     },
+    async GET_ASIDE_ARTICLES({ commit }) {
+      try {
+        const response = await getAsideArticles();
+        commit('GET_ASIDE_ARTICLES', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   },
   mutations: {
     GET_HEADER_DATA(state, data) {
@@ -179,6 +194,9 @@ export const store = new Vuex.Store({
     },
     GET_ASIDE_CATEGORY_LIST(state, data) {
       state.asideCategoryList = data;
+    },
+    GET_ASIDE_ARTICLES(state, data) {
+      state.asideArticles = data;
     }
   }
 });

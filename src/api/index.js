@@ -48,6 +48,10 @@ const getAsideCategoryList = async () => {
   return await axios.get('/categoryList', config);
 };
 
+const getAsideArticles = async () => {
+  return await axios.get('/asideArticles', config);
+}
+
 export {
   getHeaderData,
   getMainPageData,
@@ -57,5 +61,6 @@ export {
   getCommentData,
   getCommentCount,
   getAsideProfileData,
-  getAsideCategoryList
+  getAsideCategoryList,
+  getAsideArticles
 };
