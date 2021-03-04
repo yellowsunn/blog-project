@@ -6,6 +6,7 @@ import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CategoryRepository;
 import com.yellowsunn.springblog.repository.CoverRepository;
+import com.yellowsunn.springblog.service.ArticleService;
 import com.yellowsunn.springblog.service.Common;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.yellowsunn.springblog.domain.entity.QArticle.article;
 import static com.yellowsunn.springblog.domain.entity.QCover.cover;
 
 @Service
@@ -26,8 +26,9 @@ public class CoverServiceImpl implements CoverService {
 
     private final Common common;
 
-    private final CategoryRepository categoryRepository;
+    private final ArticleService articleService;
 
+    private final CategoryRepository categoryRepository;
     private final CoverRepository coverRepository;
     private final ArticleRepository articleRepository;
 
@@ -62,7 +63,7 @@ public class CoverServiceImpl implements CoverService {
         List<Tuple> simpleArticles = articleRepository.findSimpleArticles(coverCategory, 1);
         if (!simpleArticles.isEmpty()) {
             tuple = simpleArticles.get(0);
-            ArticleDto articleDto = getArticleDto(categoryRepository, tuple, coverCategory, parentCoverCategoryName);
+            ArticleDto articleDto = articleService.changeSimple(categoryRepository, tuple, coverCategory, parentCoverCategoryName);
             builder.cover(articleDto);
         }
 
@@ -70,7 +71,7 @@ public class CoverServiceImpl implements CoverService {
         simpleArticles = articleRepository.findSimpleArticles(category, 3);
         List<ArticleDto> articles = new ArrayList<>();
         for (Tuple t : simpleArticles) {
-            ArticleDto articleDto = getArticleDto(categoryRepository, t, category, parentCategoryName);
+            ArticleDto articleDto = articleService.changeSimple(categoryRepository, t, category, parentCategoryName);
             articles.add(articleDto);
         }
 
@@ -93,30 +94,5 @@ public class CoverServiceImpl implements CoverService {
                 .profileImage(common.getServerUrlImage(tuple.get(cover.profile.name)))
                 .profileText(tuple.get(cover.profileText))
                 .build();
-    }
-
-    private ArticleDto getArticleDto(CategoryRepository categoryRepository, Tuple tuple, Category category, String parentCategoryName) {
-        ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
-                .id(tuple.get(article.id))
-                .title(tuple.get(article.title))
-                .summary(common.getSummary(tuple.get(article.content)))
-                .commentCount(tuple.get(6, Long.class))
-                .thumbnail(common.getServerUrlImage(tuple.get(5, String.class)))
-                .simpleDate(tuple.get(article.date));
-
-        if (category == null) {
-            Long id = tuple.get(article.category.id);
-            if (id != null) {
-                categoryRepository.findById(id).ifPresent(c ->
-                    builder.categoryId(c.getId())
-                            .category(c.getName())
-                            .parentCategory(c.getParentCategory() != null ? c.getParentCategory().getName() : null)
-                );
-            }
-        } else {
-            builder.categoryId(category.getId())
-                    .category(category.getName()).parentCategory(parentCategoryName);
-        }
-        return builder.build();
     }
 }

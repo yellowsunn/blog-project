@@ -19,7 +19,7 @@ public class CategoryController {
 
     @GetMapping(value = {"/category", "/category/{categoryId}"})
     public CategoryDto findArticles(@PathVariable(value = "categoryId", required = false) Long categoryId, Pageable pageable) {
-        return categoryService.findArticles(categoryId != null ? categoryId : 0L, pageable);
+        return categoryService.findCategory(categoryId != null ? categoryId : 0L, pageable);
     }
 
     @GetMapping("/categoryList")

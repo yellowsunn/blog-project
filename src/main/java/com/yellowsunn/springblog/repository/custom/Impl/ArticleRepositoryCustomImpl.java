@@ -3,6 +3,7 @@ package com.yellowsunn.springblog.repository.custom.Impl;
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
@@ -33,40 +34,25 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
     @Override
     public List<Tuple> findSimpleArticles(Category baseCategory, Integer limit) {
-        return queryFactory
-                .select(article.id, article.title, article.content, article.date, article.category.id,
-                        select(image.name).from(image).where(image.article.eq(article) ,image.isThumbnail.eq(true)).limit(1),
-                        select(comment.count()).from(comment).where(comment.article.eq(article))
-                )
-                .from(article)
-                .where(baseCategoryEqual(baseCategory))
-                .orderBy(article.id.desc())
+        return simpleArticlesQuery(baseCategory)
                 .limit(limit)
                 .fetch();
     }
 
     @Override
-    public List<Article> findLatest3ByCategoryIn(List<Category> categories) {
-        return queryFactory
-                .selectFrom(article)
-                .join(article.category).fetchJoin()
-                .where(categoryIn(categories))
-                .orderBy(article.id.desc())
-                .limit(3)
-                .fetch();
-    }
-
-    @Override
-    public Page<Article> findByCategoryIn(List<Category> categories, Pageable pageable) {
-        QueryResults<Article> results = queryFactory
-                .selectFrom(article)
-                .where(categoryIn(categories))
-                .orderBy(article.id.desc())
+    public Page<Tuple> findSimpleArticles(Category baseCategory, Pageable pageable) {
+        List<Tuple> content = simpleArticlesQuery(baseCategory)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
+                .fetch();
 
-        return new PageImpl<>(results.getResults(), pageable, results.getTotal());
+        long total = queryFactory.selectFrom(article)
+                .where(baseCategoryEqual(baseCategory))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchCount();
+
+        return new PageImpl<>(content, pageable, total);
     }
 
     @Override
@@ -107,6 +93,17 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
         return count - 1;
     }
 
+    private JPAQuery<Tuple> simpleArticlesQuery(Category baseCategory) {
+        return queryFactory
+                .select(article.id, article.title, article.content, article.date, article.category.id,
+                        select(image.name).from(image).where(image.article.eq(article), image.isThumbnail.eq(true)).limit(1),
+                        select(comment.count()).from(comment).where(comment.article.eq(article))
+                )
+                .from(article)
+                .where(baseCategoryEqual(baseCategory))
+                .orderBy(article.id.desc());
+    }
+
     private BooleanExpression baseCategoryEqual(Category baseCategory) {
         return baseCategory != null ? article.category.in(
                 selectFrom(category).where(category.parentCategory.eq(baseCategory).or(category.eq(baseCategory)))
@@ -115,9 +112,5 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
     private BooleanExpression categoryEqual(Category category) {
         return category != null ? article.category.eq(category) : null;
-    }
-
-    private BooleanExpression categoryIn(List<Category> categories) {
-        return !categories.isEmpty() ? article.category.in(categories) : null;
     }
 }

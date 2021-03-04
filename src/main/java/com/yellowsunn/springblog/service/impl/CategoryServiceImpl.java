@@ -1,25 +1,20 @@
 package com.yellowsunn.springblog.service.impl;
 
+import com.querydsl.core.Tuple;
 import com.yellowsunn.springblog.domain.dto.ArticleDto;
 import com.yellowsunn.springblog.domain.dto.CategoryDto;
 import com.yellowsunn.springblog.domain.dto.CategoryListDto;
-import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CategoryRepository;
-import com.yellowsunn.springblog.repository.CommentRepository;
-import com.yellowsunn.springblog.repository.ImageRepository;
+import com.yellowsunn.springblog.service.ArticleService;
 import com.yellowsunn.springblog.service.CategoryService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,62 +24,41 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
+    private final ArticleService articleService;
+
     private final CategoryRepository categoryRepository;
     private final ArticleRepository articleRepository;
-    private final CommentRepository commentRepository;
-    private final ImageRepository imageRepository;
-
-    @Value("${imagePath}")
-    private String imgPath;
 
     @Override
-    public CategoryDto findArticles(Long categoryId, Pageable pageable) {
+    public CategoryDto findCategory(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
+        String parentCategoryName = null;
 
-        List<ArticleDto> articleDtoList = new ArrayList<>();
-        Page<Article> articlePage = null;
+        Page<Tuple> tuplePage = articleRepository.findSimpleArticles(category, pageable);
 
-        List<Category> categories = new ArrayList<>();
-        if (category != null) {
-            categories.add(category);
-            categories.addAll(categoryRepository.findChildCategories(category));
-        }
-
-        if (pageable != null) {
-            articlePage = articleRepository.findByCategoryIn(categories, pageable);
-            for (Article article : articlePage) {
-                articleDtoList.add(getSimpleArticle(article));
+        List<ArticleDto> articles = new ArrayList<>();
+        for (Tuple t : tuplePage) {
+            if (category != null) {
+                parentCategoryName = category.getParentCategory() != null ? category.getParentCategory().getName() : null;
             }
-        } else {
-            // 커버 카테고리인 경우
-            for (Article article : articleRepository.findLatest3ByCategoryIn(categories)) {
-                articleDtoList.add(getSimpleArticle(article));
-            }
+            ArticleDto articleDto = articleService.changeSimple(categoryRepository, t, category, parentCategoryName);
+            articles.add(articleDto);
         }
 
-        CategoryDto.CategoryDtoBuilder categoryDtoBuilder = CategoryDto.builder()
-                .articles(articleDtoList);
+        return CategoryDto.builder()
+                .id(category != null ? category.getId() : null)
+                .category(category != null ? category.getName() : null)
+                .parentCategory(parentCategoryName)
+                .articles(articles)
 
-        if (category != null) {
-            // 상위 카테고리
-            categoryDtoBuilder
-                    .id(category.getId())
-                    .category(category.getName())
-                    .parentCategory(category.getParentCategory() != null ? category.getParentCategory().getName() : "");
-        }
-
-        if (articlePage != null) {
-            categoryDtoBuilder
-                    .totalElements(articlePage.getTotalElements())
-                    .totalPages(articlePage.getTotalPages())
-                    .pageNumber(articlePage.getNumber())
-                    .isFirst(articlePage.isFirst())
-                    .isLast(articlePage.isLast())
-                    .hasNext(articlePage.hasNext())
-                    .hasPrevious(articlePage.hasPrevious());
-        }
-
-        return categoryDtoBuilder.build();
+                .totalElements(tuplePage.getTotalElements())
+                .totalPages(tuplePage.getTotalPages())
+                .pageNumber(tuplePage.getNumber())
+                .isFirst(tuplePage.isFirst())
+                .isLast(tuplePage.isLast())
+                .hasNext(tuplePage.hasNext())
+                .hasPrevious(tuplePage.hasPrevious())
+                .build();
     }
 
     @Override
@@ -111,48 +85,5 @@ public class CategoryServiceImpl implements CategoryService {
                 .list(categories)
                 .total(articleRepository.count())
                 .build();
-    }
-
-    @Override
-    public ArticleDto getSimpleArticle(Article article) {
-        // 본문 내용 요약처리
-        String content = removeTag(article.getContent());
-        if (content.length() > 200) {
-            content = content.substring(0, 200);
-        }
-        Category category = article.getCategory();
-        long commentCount = commentRepository.countByArticle(article);
-
-        ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
-                .categoryId(category.getId())
-                .category(category.getName())
-                .id(article.getId())
-                .title(article.getTitle())
-                .summary(content)
-                .commentCount(commentCount)
-                .simpleDate(article.getDate());
-
-        imageRepository.findThumbnailByArticle(article)
-                .ifPresent(image -> {
-                    String serverImg = getServerUrl().concat(image.getName());
-                    builder.thumbnail(serverImg);
-                });
-
-        // 부모 카테고리
-        Category parentCategory = article.getCategory().getParentCategory();
-        if (parentCategory != null) {
-            builder.parentCategory(parentCategory.getName());
-        }
-
-        return builder.build();
-    }
-
-    private String removeTag(String html) {
-        return html.replaceAll("(<([^>]+)>)", "");
-    }
-
-    private String getServerUrl() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + imgPath;
     }
 }

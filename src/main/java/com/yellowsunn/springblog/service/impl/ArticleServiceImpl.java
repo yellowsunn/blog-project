@@ -1,5 +1,6 @@
 package com.yellowsunn.springblog.service.impl;
 
+import com.querydsl.core.Tuple;
 import com.yellowsunn.springblog.domain.dto.ArticleDto;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
@@ -7,32 +8,29 @@ import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CategoryRepository;
 import com.yellowsunn.springblog.repository.ImageRepository;
 import com.yellowsunn.springblog.service.ArticleService;
+import com.yellowsunn.springblog.service.Common;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.yellowsunn.springblog.domain.entity.QArticle.article;
+
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ArticleServiceImpl implements ArticleService {
+
+    private final Common common;
 
     private final CategoryRepository categoryRepository;
     private final ArticleRepository articleRepository;
     private final ImageRepository imageRepository;
-    @Value("${imagePath}")
-    private String imgPath;
 
     @Override
     public ArticleDto findArticle(Long articleId) {
@@ -52,8 +50,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         // 섬네일 이미지
         imageRepository.findThumbnailByArticle(article).ifPresent(image -> {
-            String serverImg = getServerUrl().concat(image.getName());
-            builder.thumbnail(serverImg);
+            builder.thumbnail(common.getServerUrlImage(image.getName()));
         });
 
         // 부모 카테고리
@@ -108,8 +105,25 @@ public class ArticleServiceImpl implements ArticleService {
         return !content.isEmpty() ? content.get(0) : null;
     }
 
-    private String getServerUrl() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + imgPath;
+    @Override
+    public ArticleDto changeSimple(CategoryRepository categoryRepository, Tuple tuple, Category category, String parentCategoryName) {
+        ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
+                .id(tuple.get(article.id))
+                .title(tuple.get(article.title))
+                .summary(common.getSummary(tuple.get(article.content)))
+                .commentCount(tuple.get(6, Long.class))
+                .thumbnail(common.getServerUrlImage(tuple.get(5, String.class)))
+                .simpleDate(tuple.get(article.date));
+
+        Long id = tuple.get(article.category.id);
+        if (id != null) {
+            categoryRepository.findById(id).ifPresent(c ->
+                    builder.categoryId(c.getId())
+                            .category(c.getName())
+                            .parentCategory(c.getParentCategory() != null ? c.getParentCategory().getName() : null)
+            );
+        }
+
+        return builder.build();
     }
 }

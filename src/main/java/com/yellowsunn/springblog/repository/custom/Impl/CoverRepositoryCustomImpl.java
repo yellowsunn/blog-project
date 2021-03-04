@@ -1,15 +1,11 @@
 package com.yellowsunn.springblog.repository.custom.Impl;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.yellowsunn.springblog.domain.entity.Cover;
-import com.yellowsunn.springblog.domain.entity.QCategory;
 import com.yellowsunn.springblog.repository.custom.CoverRepositoryCustom;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 import java.util.Optional;
 
 import static com.querydsl.jpa.JPAExpressions.select;
@@ -23,19 +19,6 @@ public class CoverRepositoryCustomImpl implements CoverRepositoryCustom {
 
     public CoverRepositoryCustomImpl(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
-    }
-
-    @Override
-    public Optional<Cover> findFirst() {
-        Cover findCover = queryFactory
-                .select(cover)
-                .from(cover)
-                .leftJoin(cover.category).fetchJoin()
-                .leftJoin(cover.coverCategory).fetchJoin()
-                .limit(1)
-                .fetchFirst();
-
-        return Optional.ofNullable(findCover);
     }
 
     @Override
