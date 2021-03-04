@@ -14,6 +14,9 @@ public interface ArticleRepositoryCustom {
 
     Page<Tuple> findSimpleArticles(Category baseCategory, Pageable pageable);
 
+    // 사이드바에 있는 매우 간략한 정보의 게시글
+    List<Tuple> findVerySimpleArticles(boolean isPopular);
+
     Page<Article> findByCategory(Category category, Pageable pageable);
 
     Page<Long> findIdByCategory(Category category, Pageable pageable);

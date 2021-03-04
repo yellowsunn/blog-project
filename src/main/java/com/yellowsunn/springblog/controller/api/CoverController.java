@@ -28,6 +28,7 @@ public class CoverController {
         return coverService.findMainInfo();
     }
 
+    // 프로필 정보
     @GetMapping("/profile")
     public ProfileDto findProfile() {
         return coverService.findProfile();

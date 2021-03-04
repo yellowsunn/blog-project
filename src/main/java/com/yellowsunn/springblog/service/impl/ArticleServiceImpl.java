@@ -2,6 +2,7 @@ package com.yellowsunn.springblog.service.impl;
 
 import com.querydsl.core.Tuple;
 import com.yellowsunn.springblog.domain.dto.ArticleDto;
+import com.yellowsunn.springblog.domain.dto.AsideArticlesDto;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.repository.ArticleRepository;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -106,6 +108,26 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public AsideArticlesDto findAsideArticles() {
+        List<Tuple> recentTuples = articleRepository.findVerySimpleArticles(false);
+        List<Tuple> popularTuples = articleRepository.findVerySimpleArticles(true);
+
+        List<ArticleDto> recent = new ArrayList<>();
+        for (Tuple recentTuple : recentTuples) {
+            recent.add(changeVerySimple(recentTuple));
+        }
+        List<ArticleDto> popular = new ArrayList<>();
+        for (Tuple popularTuple : popularTuples) {
+            popular.add(changeVerySimple(popularTuple));
+        }
+
+        return AsideArticlesDto.builder()
+                .recentArticles(recent)
+                .popularArticles(popular)
+                .build();
+    }
+
+    @Override
     public ArticleDto changeSimple(CategoryRepository categoryRepository, Tuple tuple, Category category, String parentCategoryName) {
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
                 .id(tuple.get(article.id))
@@ -125,5 +147,14 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return builder.build();
+    }
+
+    public ArticleDto changeVerySimple(Tuple tuple) {
+        return ArticleDto.builder()
+                .id(tuple.get(article.id))
+                .title(tuple.get(article.title))
+                .simpleDate(tuple.get(article.date))
+                .thumbnail(common.getServerUrlImage(tuple.get(3, String.class)))
+                .build();
     }
 }

@@ -2,6 +2,7 @@ package com.yellowsunn.springblog.repository.custom.Impl;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -53,6 +54,23 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
                 .fetchCount();
 
         return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
+    public List<Tuple> findVerySimpleArticles(boolean isPopular) {
+        JPAQuery<Tuple> query = queryFactory
+                .select(article.id, article.title, article.date,
+                        select(image.name).from(image).where(image.article.eq(article), image.isThumbnail.eq(true)).limit(1)
+                )
+                .from(article);
+
+        if (isPopular) {
+            query.orderBy(article.hit.desc(), article.id.desc());
+        } else {
+            query.orderBy(article.id.desc());
+        }
+
+        return query.limit(3).fetch();
     }
 
     @Override

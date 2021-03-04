@@ -6,7 +6,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +29,9 @@ public class Article {
     private LocalDateTime date;
 
     @ColumnDefault("0")
+    private long hit;
+
+    @ColumnDefault("0")
     @Column(name = "article_like")
     private long like;
 
@@ -42,6 +44,10 @@ public class Article {
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
+
+    public void updateHit() {
+        hit += 1;
+    }
 
     public void addLike() {
         like += 1;
