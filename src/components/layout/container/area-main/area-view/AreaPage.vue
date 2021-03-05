@@ -1,5 +1,5 @@
 <template>
-  <div class="area-paging-more" v-if="isMobile && $route.path.startsWith('/category')">
+  <div class="area-paging-more" v-if="isMobile && ($route.path.startsWith('/category') || $route.path.startsWith('/search'))">
     <a class="paging-more" :class="{ 'paging-more-loading' : loadingPage }" v-if="pageData.hasNext" @click="loadMorePage(pageData.pageNumber + 1)">더보기</a>
   </div>
   <div class="area-paging" v-else>
@@ -95,6 +95,10 @@ export default {
         let categoryId = this.$route.params.categoryId;
         if (!categoryId) categoryId = '';
         window.location.href = `${url}/category/${categoryId}?page=${page}`
+      } else if (this.$route.path.startsWith("/search")) {
+        let search = this.$route.params.search;
+        if (!search) search = '';
+        window.location.href = `${url}/search/${search}?page=${page}`;
       } else if (this.$route.path.startsWith("/")) {
         try {
           const id = await this.$store.dispatch('GET_ARTICLE_ID', {
@@ -111,8 +115,13 @@ export default {
         let categoryId = this.$route.params.categoryId;
         if (!categoryId) categoryId = '';
         await this.$store.dispatch('UPDATE_CATEGORY_DATA', {
-          categoryId: this.$route.params.categoryId,
-          page: page,
+          categoryId, page,
+        });
+      } else if (this.$route.path.startsWith('/search')) {
+        let search = this.$route.params.search;
+        if (!search) search = '';
+        await this.$store.dispatch('UPDATE_SEARCH_DATA', {
+          search, page,
         });
       }
     }
@@ -123,5 +132,8 @@ export default {
 <style scoped>
 a {
   cursor: pointer;
+}
+#tt-body-search .area-paging {
+  display: block;
 }
 </style>

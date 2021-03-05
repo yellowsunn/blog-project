@@ -8,7 +8,7 @@
         <div class="wrap_btn">
           <button class="btn_post uoc-icon">
             <!-- 클래스 추가: empathy_up_without_ani like_on -->
-            <div class="uoc-icon" :class="[{ 'empathy_up_without_ani' : isLike }, { 'like on' : isLike }]">
+            <div class="uoc-icon" :class="[{ 'empathy_up_without_ani' : data.isAlreadyLike }, { 'like on' : data.isAlreadyLike }]">
               <span class="ico_postbtn ico_like">좋아요</span>
               <span class="txt_like uoc-count">{{ data.like > 0 ? data.like : "공감" }}</span>
             </div>
@@ -26,19 +26,20 @@ export default {
       return this.$store.state.articleData;
     },
   },
-  data() {
-    return {
-      isLike : false,
-    }
-  },
   methods: {
     likeClickEvent() {
-      this.isLike = !this.isLike;
-      // axios 추가해야
-      if (this.isLike) {
-        this.$store.state.articleData.like += 1;
-      } else {
-        this.$store.state.articleData.like -= 1;
+      try {
+        this.$store.dispatch('UPDATE_ARTICLE_LIKE', this.$route.params.articleId);
+        const articleData = this.$store.state.articleData;
+
+        articleData.isAlreadyLike = !articleData.isAlreadyLike;
+        if (articleData.isAlreadyLike) {
+          articleData.like += 1;
+        } else {
+          articleData.like -= 1;
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
   }

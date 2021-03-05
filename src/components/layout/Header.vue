@@ -13,7 +13,7 @@
         <!-- search-bar for PC -->
         <div class="util use-top">
           <div class="search">
-            <input class="searchInput" type="text" name="search" value="" placeholder="Search..." onkeypress="if (event.keyCode == 13) { requestSearch('.util.use-top .searchInput') }"/>
+            <input class="searchInput" type="text" name="search" :value="search" @input="search = $event.target.value" placeholder="Search..." @keyup.enter="searchData"/>
           </div>
         </div>
       </div>
@@ -46,6 +46,9 @@
 
 <script>
 export default {
+  created() {
+    this.$store.dispatch('GET_HEADER_DATA');
+  },
   computed: {
     data() {
       return this.$store.state.coverHeaderData;
@@ -54,8 +57,10 @@ export default {
       return !(this.data.slogunTitle === undefined || this.data.slogunTitle === '');
     }
   },
-  created() {
-    this.$store.dispatch('GET_HEADER_DATA');
+  data() {
+    return {
+      search: '',
+    }
   },
   methods: {
     asideOnEvent(event) {
@@ -63,6 +68,12 @@ export default {
       document.body.classList.add('bg-dimmed');
       document.body.style.overflow = 'hidden';
       event.stopImmediatePropagation();
+    },
+    searchData() {
+      if (!this.search) return;
+
+      const url = `${window.location.protocol}//${window.location.host}`;
+      window.location.href = `${url}/search/${this.search}`;
     }
   }
 };

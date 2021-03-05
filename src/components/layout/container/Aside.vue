@@ -11,7 +11,7 @@
     <!-- search-bar for MOBILE -->
     <div class="util use-sidebar">
       <div class="search">
-        <input class="searchInput" type="text" name="search" value="" placeholder="검색내용을 입력하세요." onkeypress="if (event.keyCode == 13) { requestSearch('.util.use-sidebar .searchInput') }">
+        <input class="searchInput" type="text" name="search" :value="search" @input="search = $event.target.value" placeholder="검색내용을 입력하세요." @keyup.enter="searchData">
       </div>
     </div>
   </aside>
@@ -33,6 +33,11 @@ export default {
       return this.$store.state.asideOn;
     }
   },
+  data() {
+    return {
+      search: '',
+    }
+  },
   methods: {
     asideOffEvent() {
       if (this.$store.state.asideOn === true) {
@@ -40,6 +45,12 @@ export default {
         document.body.classList.remove('bg-dimmed');
         document.body.style.overflow = '';
       }
+    },
+    searchData() {
+      if (!this.search) return;
+
+      const url = `${window.location.protocol}//${window.location.host}`;
+      window.location.href = `${url}/search/${this.search}`;
     }
   }
 };

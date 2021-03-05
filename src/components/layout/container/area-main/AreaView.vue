@@ -34,7 +34,7 @@ export default {
       return this.$store.state.isViewPage;
     },
     pageData() {
-      if (this.$route.path.startsWith("/category")) {
+      if (this.$route.path.startsWith("/category") || this.$route.path.startsWith("/search")) {
         return this.$store.state.categoryData;
       } else if (this.$route.path.startsWith("/")) {
         return this.$store.state.articleData;

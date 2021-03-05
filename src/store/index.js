@@ -10,7 +10,7 @@ import {
   getCommentCount,
   getCommentData,
   getHeaderData,
-  getMainPageData,
+  getMainPageData, getSearchData, updateArticleLike,
 } from '@/api';
 
 Vue.use(Vuex);
@@ -82,6 +82,25 @@ export const store = new Vuex.Store({
         state.loadPage = false;
       }
     },
+    async GET_SEARCH_DATA({ commit }, {search, page}) {
+      try {
+        const response = await getSearchData(search, page);
+        commit('GET_CATEGORY_DATA', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async UPDATE_SEARCH_DATA({ state, commit }, { search, page }) {
+      state.loadPage = true;
+      try {
+        const response = await getSearchData(search, page);
+        commit('UPDATE_CATEGORY_DATA', response.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        state.loadPage = false;
+      }
+    },
     async GET_ARTICLE_DATA({ commit }, articleId) {
       try {
         const response = await getArticleData(articleId);
@@ -92,6 +111,13 @@ export const store = new Vuex.Store({
     },
     async GET_ARTICLE_ID(context, { categoryId, page }) {
       return await getArticleId(categoryId, page);
+    },
+    async UPDATE_ARTICLE_LIKE(context, articleId) {
+      try {
+        await updateArticleLike(articleId);
+      } catch (error) {
+        Error("Failed to update like");
+      }
     },
     async GET_COMMENT_DATA({ commit }, { articleId, page }) {
       try {

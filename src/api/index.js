@@ -1,10 +1,15 @@
 import axios from 'axios';
 
 const config = {
-  baseURL: `http://localhost:8080`,
+  baseURL: `http://localhost:8080`
+};
+const securityConfig = {
+  ...config,
+  withCredentials: true
 };
 
 const getHeaderData = async () => {
+  // await axios.get("/login", securityConfig);
   return await axios.get('/header', config);
 };
 
@@ -21,12 +26,24 @@ const getCategoryData = async (categoryId, page) => {
   })
 };
 
+const getSearchData = async (search, page) => {
+  if (!search) search = '';
+  return await axios.get(`/search/${search}`, {
+    ...config,
+    params: { page, size: 10 }
+  })
+};
+
 const getArticleData = async (articleId) => {
-  return await axios.get(`/article/${articleId}`, config);
+  return await axios.get(`/article/${articleId}`, securityConfig);
 };
 
 const getArticleId = async (categoryId, page) => {
-  return await axios.get(`/article/find?categoryId=${categoryId}&page=${page}`, config);
+  return await axios.get(`/article/find?categoryId=${categoryId}&page=${page}`, securityConfig);
+}
+
+const updateArticleLike = async (articleId) => {
+  return await axios.put(`/article/like/${articleId}`, null, securityConfig);
 }
 
 const getCommentData = async (articleId, page) => {
@@ -56,8 +73,10 @@ export {
   getHeaderData,
   getMainPageData,
   getCategoryData,
+  getSearchData,
   getArticleData,
   getArticleId,
+  updateArticleLike,
   getCommentData,
   getCommentCount,
   getAsideProfileData,
