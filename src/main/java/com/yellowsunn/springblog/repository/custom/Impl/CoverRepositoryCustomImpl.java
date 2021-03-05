@@ -24,10 +24,7 @@ public class CoverRepositoryCustomImpl implements CoverRepositoryCustom {
     @Override
     public Optional<Tuple> findMain() {
         Tuple tuple = queryFactory
-                .select(cover.coverCategory, cover.category,
-                        select(category.name).from(category).where(category.eq(cover.coverCategory.parentCategory)),
-                        select(category.name).from(category).where(category.eq(cover.category.parentCategory))
-                )
+                .select(cover.coverCategory, cover.category)
                 .from(cover)
                 .leftJoin(cover.coverCategory)
                 .leftJoin(cover.category)

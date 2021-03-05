@@ -34,12 +34,14 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final ImageRepository imageRepository;
 
+    @Transactional
     @Override
     public ArticleDto findArticle(Long articleId) {
         Optional<Article> articleOptional = articleRepository.findById(articleId);
         if (articleOptional.isEmpty()) return null;
 
         Article article = articleOptional.get();
+        article.updateHit(); // 조회수 증가
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
                 .categoryId(article.getCategory().getId())
                 .category(article.getCategory().getName())
@@ -128,7 +130,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ArticleDto changeSimple(CategoryRepository categoryRepository, Tuple tuple, Category category, String parentCategoryName) {
+    public ArticleDto changeSimple(CategoryRepository categoryRepository, Tuple tuple) {
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
                 .id(tuple.get(article.id))
                 .title(tuple.get(article.title))

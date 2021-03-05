@@ -54,8 +54,6 @@ public class CoverServiceImpl implements CoverService {
         Tuple tuple = tupleOptional.get();
         Category coverCategory = tuple.get(cover.coverCategory);
         Category category = tuple.get(cover.category);
-        String parentCoverCategoryName = tuple.get(2, String.class);
-        String parentCategoryName = tuple.get(3, String.class);
 
         MainDto.MainDtoBuilder builder = MainDto.builder();
 
@@ -63,7 +61,7 @@ public class CoverServiceImpl implements CoverService {
         List<Tuple> simpleArticles = articleRepository.findSimpleArticles(coverCategory, 1);
         if (!simpleArticles.isEmpty()) {
             tuple = simpleArticles.get(0);
-            ArticleDto articleDto = articleService.changeSimple(categoryRepository, tuple, coverCategory, parentCoverCategoryName);
+            ArticleDto articleDto = articleService.changeSimple(categoryRepository, tuple);
             builder.cover(articleDto);
         }
 
@@ -71,7 +69,7 @@ public class CoverServiceImpl implements CoverService {
         simpleArticles = articleRepository.findSimpleArticles(category, 3);
         List<ArticleDto> articles = new ArrayList<>();
         for (Tuple t : simpleArticles) {
-            ArticleDto articleDto = articleService.changeSimple(categoryRepository, t, category, parentCategoryName);
+            ArticleDto articleDto = articleService.changeSimple(categoryRepository, t);
             articles.add(articleDto);
         }
 

@@ -8,5 +8,7 @@ public interface CategoryService {
 
     CategoryDto findCategory(Long categoryId, Pageable pageable);
 
+    CategoryDto search(String search, Pageable pageable);
+
     CategoryListDto findAll();
 }

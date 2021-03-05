@@ -57,6 +57,23 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     }
 
     @Override
+    public Page<Tuple> searchSimpleArticles(String search, Pageable pageable) {
+        List<Tuple> content = simpleArticlesQuery(null)
+                .where(article.title.contains(search).or(article.content.contains(search)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        long total = queryFactory.selectFrom(article)
+                .where(article.title.contains(search).or(article.content.contains(search)))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetchCount();
+
+        return new PageImpl<>(content, pageable, total);
+    }
+
+    @Override
     public List<Tuple> findVerySimpleArticles(boolean isPopular) {
         JPAQuery<Tuple> query = queryFactory
                 .select(article.id, article.title, article.date,

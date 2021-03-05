@@ -31,8 +31,11 @@ public class CategoryDto extends PageDto {
     @JsonInclude(Include.NON_EMPTY)
     private Long totalArticles;
 
+    @JsonInclude(Include.NON_NULL)
+    private String search;
+
     @Builder
-    public CategoryDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String category, String parentCategory, List<CategoryDto> children, Long order, List<ArticleDto> articles, Long totalArticles) {
+    public CategoryDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String category, String parentCategory, List<CategoryDto> children, Long order, List<ArticleDto> articles, Long totalArticles, String search) {
         super(totalElements, totalPages, pageNumber, isFirst, isLast, hasNext, hasPrevious);
         this.id = id;
         this.category = category;
@@ -41,5 +44,6 @@ public class CategoryDto extends PageDto {
         this.order = order;
         this.articles = articles;
         this.totalArticles = totalArticles;
+        this.search = search;
     }
 }

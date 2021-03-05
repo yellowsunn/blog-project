@@ -22,6 +22,19 @@ public class CategoryController {
         return categoryService.findCategory(categoryId != null ? categoryId : 0L, pageable);
     }
 
+    @GetMapping(value = {"/search", "/search/{search}"})
+    public CategoryDto search(@PathVariable(value = "search", required = false) String search, Pageable pageable) {
+        if (search == null) {
+            return CategoryDto.builder().search("")
+                    .totalElements(0L).totalPages(0).pageNumber(0)
+                    .isFirst(true).isLast(true).hasNext(false).hasPrevious(false)
+                    .build();
+        }
+
+        return categoryService.search(search, pageable);
+    }
+
+
     @GetMapping("/categoryList")
     public CategoryListDto findCategoryList() {
         return categoryService.findAll();

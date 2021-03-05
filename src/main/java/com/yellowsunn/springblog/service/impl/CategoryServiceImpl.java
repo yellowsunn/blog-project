@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.yellowsunn.springblog.domain.entity.QArticle.article;
 import static com.yellowsunn.springblog.domain.entity.QCategory.category;
 
 @Service
@@ -44,7 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
             if (category != null) {
                 parentCategoryName = category.getParentCategory() != null ? category.getParentCategory().getName() : null;
             }
-            ArticleDto articleDto = articleService.changeSimple(categoryRepository, t, category, parentCategoryName);
+            ArticleDto articleDto = articleService.changeSimple(categoryRepository, t);
             articles.add(articleDto);
         }
 
@@ -52,6 +53,29 @@ public class CategoryServiceImpl implements CategoryService {
                 .id(category != null ? category.getId() : null)
                 .category(category != null ? category.getName() : null)
                 .parentCategory(parentCategoryName)
+                .articles(articles)
+
+                .totalElements(tuplePage.getTotalElements())
+                .totalPages(tuplePage.getTotalPages())
+                .pageNumber(tuplePage.getNumber())
+                .isFirst(tuplePage.isFirst())
+                .isLast(tuplePage.isLast())
+                .hasNext(tuplePage.hasNext())
+                .hasPrevious(tuplePage.hasPrevious())
+                .build();
+    }
+
+    @Override
+    public CategoryDto search(String search, Pageable pageable) {
+        Page<Tuple> tuplePage = articleRepository.searchSimpleArticles(search, pageable);
+        List<ArticleDto> articles = new ArrayList<>();
+        for (Tuple t : tuplePage) {
+            ArticleDto articleDto = articleService.changeSimple(categoryRepository, t);
+            articles.add(articleDto);
+        }
+
+        return CategoryDto.builder()
+                .search(search)
                 .articles(articles)
 
                 .totalElements(tuplePage.getTotalElements())
