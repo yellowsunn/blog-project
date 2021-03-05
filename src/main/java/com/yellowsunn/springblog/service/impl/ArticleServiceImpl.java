@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +37,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public ArticleDto findArticle(Long articleId) {
+    public ArticleDto findArticle(Long articleId, String sessionId) {
         Optional<Article> articleOptional = articleRepository.findById(articleId);
         if (articleOptional.isEmpty()) return null;
 
@@ -50,6 +51,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .title(article.getTitle())
                 .content(article.getContent())
                 .like(article.getLike())
+                .isAlreadyLike(sessionId != null && sessionId.equals(article.getLikeId()))
                 .date(article.getDate());
 
         // 섬네일 이미지
@@ -127,6 +129,25 @@ public class ArticleServiceImpl implements ArticleService {
                 .recentArticles(recent)
                 .popularArticles(popular)
                 .build();
+    }
+
+    @Transactional
+    @Override
+    public HttpStatus updateLike(Long articleId, String sessionId) {
+        if (sessionId == null) return HttpStatus.UNAUTHORIZED;
+
+        Optional<Article> articleOptional = articleRepository.findById(articleId);
+        if (articleOptional.isEmpty()) return HttpStatus.NOT_FOUND;
+
+        Article article = articleOptional.get();
+
+        // 이미 같은 세션아이디로 LIKE를 누른 경우
+        if (sessionId.equals(article.getLikeId())) {
+            article.rollBackLike();
+        } else {
+            article.updateLike(sessionId);
+        }
+        return HttpStatus.OK;
     }
 
     @Override

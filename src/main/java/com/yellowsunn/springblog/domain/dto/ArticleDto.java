@@ -36,6 +36,8 @@ public class ArticleDto extends PageDto {
 
     @JsonInclude(NON_EMPTY)
     private Long like;
+    @JsonInclude(NON_EMPTY)
+    private Boolean isAlreadyLike;
 
     @JsonInclude(NON_EMPTY)
     private Long categoryId;
@@ -50,7 +52,8 @@ public class ArticleDto extends PageDto {
     private ArticleDto after;
 
     @Builder
-    public ArticleDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String title, String writer, String content, String summary, Long commentCount, String thumbnail, LocalDateTime simpleDate, LocalDateTime date, Long like, Long categoryId, String parentCategory, String category, ArticleDto before, ArticleDto after) {
+
+    public ArticleDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String title, String writer, String content, String summary, Long commentCount, String thumbnail, LocalDateTime simpleDate, LocalDateTime date, Long like, Boolean isAlreadyLike, Long categoryId, String parentCategory, String category, ArticleDto before, ArticleDto after) {
         super(totalElements, totalPages, pageNumber, isFirst, isLast, hasNext, hasPrevious);
         this.id = id;
         this.title = title;
@@ -62,6 +65,7 @@ public class ArticleDto extends PageDto {
         this.simpleDate = simpleDate;
         this.date = date;
         this.like = like;
+        this.isAlreadyLike = isAlreadyLike;
         this.categoryId = categoryId;
         this.parentCategory = parentCategory;
         this.category = category;

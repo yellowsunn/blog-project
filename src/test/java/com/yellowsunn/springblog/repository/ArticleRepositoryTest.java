@@ -32,9 +32,9 @@ class ArticleRepositoryTest {
     @Test
     void update() {
         Article article = articleRepository.findById(1L).get();
-        article.addLike();
+        article.updateLike("2222");
         assertThat(article.getLike()).isEqualTo(1L);
-        article.revertLike();
+        article.rollBackLike();
         assertThat(article.getLike()).isEqualTo(0L);
 
         article.changeTitle("title");

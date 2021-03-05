@@ -35,6 +35,8 @@ public class Article {
     @Column(name = "article_like")
     private long like;
 
+    private String likeId; // like를 누른 세션아이디
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -49,13 +51,15 @@ public class Article {
         hit += 1;
     }
 
-    public void addLike() {
+    public void updateLike(String sessionId) {
         like += 1;
+        likeId = sessionId;
     }
 
-    public void revertLike() {
+    public void rollBackLike() {
         like -= 1;
         if (like < 0) like = 0;
+        likeId = null;
     }
 
     public void changeTitle(String title) {
