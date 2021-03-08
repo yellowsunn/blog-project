@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
+  deleteCommentData,
   getArticleData,
   getArticleId,
   getAsideArticles,
@@ -30,6 +31,8 @@ export const store = new Vuex.Store({
 
     // 답글을 다는 경우에 사용되는 Id
     parentCommentId: null,
+    // 삭제하고자 하는 댓글 Id
+    deleteCommentId: null,
 
     coverHeaderData: {},
     // 메인 페이지에 뜨는 커버 게시글
@@ -145,13 +148,25 @@ export const store = new Vuex.Store({
     },
     async SUBMIT_COMMENT_DATA({ commit }, { commentData, articleId, parentCommentId}) {
       if (!parentCommentId) parentCommentId = '';
+
+      // eslint-disable-next-line no-useless-catch
       try {
         const response = await submitCommentData(commentData, articleId, parentCommentId);
         commit('UPDATE_COMMENT_DATA', response.data);
         console.log(response.data);
         return response;
       } catch (error) {
-        Error("submit comment error");
+        throw error;
+      }
+    },
+    async DELETE_COMMENT_DATA({ commit }, { commentId, password }) {
+
+      // eslint-disable-next-line no-useless-catch
+      try {
+        await deleteCommentData(commentId, password);
+        commit('DELETE_COMMENT_DATA', commentId);
+      } catch (error) {
+        throw error;
       }
     },
     async GET_ASIDE_PROFILE_DATA({ commit }) {
@@ -223,6 +238,31 @@ export const store = new Vuex.Store({
             if (!commentData[i].subComment) commentData[i].subComment = [];
             commentData[i].subComment.push(data);
             break;
+          }
+        }
+      }
+      state.commentData.totalElements += 1;
+    },
+    DELETE_COMMENT_DATA(state, commentId) {
+      const commentData = state.commentData.content;
+
+      for (let i = 0; i < commentData.length; i++) {
+        if (commentData[i].commentId === commentId) {
+          state.commentData.totalElements -= 1;
+          if (commentData[i].subComment) {
+            state.commentData.totalElements -= commentData[i].subComment.length;
+          }
+          commentData.splice(i, 1); // 삭제
+          return;
+        }
+
+        let subCommentData = commentData[i].subComment;
+        if (!subCommentData) continue;
+        for (let j = 0; j < subCommentData.length; j++) {
+          if (subCommentData[j].commentId === commentId) {
+            state.commentData.totalElements -= 1;
+            subCommentData.splice(j, 1); // 삭제
+            return;
           }
         }
       }

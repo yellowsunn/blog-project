@@ -23,7 +23,7 @@ export default {
   },
   methods: {
     deleteEvent(commentId) {
-      console.log("delete : " + commentId);
+      this.$store.state.deleteCommentId = commentId;
       this.$modal.show('delete');
     }
   }

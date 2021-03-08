@@ -40,7 +40,7 @@ export default {
       this.$modal.show('reply');
     },
     deleteEvent(commentId) {
-      console.log("delete : " + commentId);
+      this.$store.state.deleteCommentId = commentId;
       this.$modal.show('delete');
     }
   }

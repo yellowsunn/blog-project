@@ -35,7 +35,7 @@ export default {
       this.$emit('cancel');
     },
     submitEvent() {
-      this.$emit('submit', this.password);
+      this.$emit('delete', this.password);
     }
   }
 };

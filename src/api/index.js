@@ -57,11 +57,17 @@ const getCommentCount = async (articleId) => {
 };
 
 const submitCommentData = async (commentData, articleId, parentCommentId) => {
-  console.log(commentData, articleId, parentCommentId);
   return await axios.post('/comment/upload', {
     ...commentData,
     articleId, parentCommentId
   }, config);
+};
+
+const deleteCommentData = async (commentId, password) => {
+  return await axios.delete('/comment/delete', {
+    ...config,
+    data: { commentId, password }
+  });
 };
 
 const getAsideProfileData = async () => {
@@ -87,6 +93,7 @@ export {
   getCommentData,
   getCommentCount,
   submitCommentData,
+  deleteCommentData,
   getAsideProfileData,
   getAsideCategoryList,
   getAsideArticles
