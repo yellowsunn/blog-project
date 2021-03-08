@@ -6,6 +6,7 @@ import com.yellowsunn.springblog.domain.entity.Comment;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CommentRepository;
 import com.yellowsunn.springblog.service.CommentService;
+import com.yellowsunn.springblog.service.Common;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
+    private final Common common;
     private final ArticleRepository articleRepository;
     private final CommentRepository commentRepository;
     private final PasswordEncoder passwordEncoder;
@@ -38,13 +40,13 @@ public class CommentServiceImpl implements CommentService {
                         .commentId(comment.getId())
                         .parentCommentId(comment.getMainComment() != null ? comment.getMainComment().getId() : null)
                         .name(comment.getName())
-                        .content(replaceNewLine(comment.getContent()))
+                        .content(comment.getContent())
                         .date(comment.getDate())
                         .subComment(comment.getSubComment().stream().map(subComment ->
                                 CommentDto.builder()
                                         .commentId(subComment.getId())
                                         .name(subComment.getName())
-                                        .content(replaceNewLine(subComment.getContent()))
+                                        .content(subComment.getContent())
                                         .date(subComment.getDate())
                                         .build()
                         ).collect(Collectors.toList()))
@@ -54,7 +56,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Transactional
     @Override
-    public ResponseEntity<CommentDto> upload(CommentDto commentDto) {
+    public ResponseEntity<CommentDto> upload(CommentDto commentDto, String ipAddr) {
         Long articleId = commentDto.getArticleId();
         Optional<Article> articleOptional = articleRepository.findById(articleId);
         if (articleOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -63,7 +65,8 @@ public class CommentServiceImpl implements CommentService {
                 .article(articleOptional.get())
                 .name(commentDto.getName())
                 .password(passwordEncoder.encode(commentDto.getPassword()))
-                .content(commentDto.getContent());
+                .content(replaceNewLine(commentDto.getContent()))
+                .ipAddr(ipAddr);
 
         Long parentCommentId = commentDto.getParentCommentId();
         if (parentCommentId != null) {
@@ -87,12 +90,28 @@ public class CommentServiceImpl implements CommentService {
         CommentDto dto = CommentDto.builder()
                 .commentId(saveComment.getId())
                 .name(saveComment.getName())
-                .content(replaceNewLine(saveComment.getContent()))
+                .content(saveComment.getContent())
                 .date(saveComment.getDate())
                 .parentCommentId(saveComment.getMainComment() != null ? saveComment.getMainComment().getId() : null)
                 .build();
 
         return new ResponseEntity<>(dto, HttpStatus.CREATED);
+    }
+
+    @Transactional
+    @Override
+    public HttpStatus delete(CommentDto commentDto) {
+        Long commentId = commentDto.getCommentId();
+        Optional<Comment> commentOptional = commentRepository.findById(commentId);
+        if (commentOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
+
+        Comment comment = commentOptional.get();
+        if (passwordEncoder.matches(commentDto.getPassword(), comment.getPassword())) {
+            commentRepository.delete(comment);
+            return HttpStatus.OK;
+        } else {
+            return HttpStatus.FORBIDDEN;
+        }
     }
 
     @Override
@@ -104,6 +123,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     private String replaceNewLine(String word) {
+        word = common.removeTag(word);
         return word.replaceAll("\n", "<br>");
     }
 }

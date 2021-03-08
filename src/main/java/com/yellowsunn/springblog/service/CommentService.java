@@ -10,7 +10,9 @@ public interface CommentService {
 
     Page<CommentDto> findByArticleId(Long articleId, Pageable pageable);
 
-    ResponseEntity<CommentDto> upload(CommentDto commentDto);
+    ResponseEntity<CommentDto> upload(CommentDto commentDto, String ipAddr);
+
+    HttpStatus delete(CommentDto commentDto);
 
     Long countByArticleId(Long articleId);
 }

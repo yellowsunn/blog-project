@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin("*")
@@ -28,7 +30,13 @@ public class CommentController {
 
     // 댓글 업로드
     @PostMapping("/comment/upload")
-    public ResponseEntity<CommentDto> commentUpload(@RequestBody CommentDto commentDto) {
-        return commentService.upload(commentDto);
+    public ResponseEntity<CommentDto> commentUpload(@RequestBody CommentDto commentDto, HttpServletRequest request) {
+        return commentService.upload(commentDto, request.getRemoteAddr());
+    }
+
+    @DeleteMapping("/comment/delete")
+    public ResponseEntity<?> commentDelete(@RequestBody CommentDto commentDto) {
+        HttpStatus httpStatus = commentService.delete(commentDto);
+        return new ResponseEntity<>(httpStatus);
     }
 }

@@ -24,7 +24,7 @@ public class Common {
         return summary;
     }
 
-    private String removeTag(String html) {
+    public String removeTag(String html) {
         return html.replaceAll("(<([^>]+)>)", "");
     }
 

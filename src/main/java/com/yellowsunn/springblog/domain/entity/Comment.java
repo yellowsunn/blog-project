@@ -29,6 +29,8 @@ public class Comment {
 
     private String orderNumber; // 메인댓글Id_서브댓글Id [ ex) 68_70 ]
 
+    private String ipAddr; // 아이피 주소
+
     // 댓글의 댓글인 경우 기준이 되는 댓글
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "main_comment_id")
