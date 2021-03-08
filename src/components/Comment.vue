@@ -7,16 +7,16 @@
         <span class="date">{{ comment.date }}</span>
       </div>
       <p class="text" v-html="comment.content"></p>
-      <a class="link-comment" @click="replyEvent">답글</a>
+      <a class="link-comment" @click="replyEvent(comment.commentId)">답글</a>
 
       <!-- 댓글 삭제 -->
       <div class="box-modify">
-        <i class="far fa-times-circle" @click="deleteEvent"></i>
+        <i class="far fa-times-circle" @click="deleteEvent(comment.commentId)"></i>
       </div>
     </div>
 
-    <ul class="list-reply-comment" v-if="comment.subComment">
-      <Reply v-for="(reply, index) in comment.subComment" :reply="reply" :key="index"></Reply>
+    <ul class="list-reply-comment" v-if="subComment && subComment.length > 0">
+      <Reply v-for="(reply, index) in subComment" :reply="reply" :key="index"></Reply>
     </ul>
   </li>
 </template>
@@ -29,11 +29,18 @@ export default {
   props: {
     comment: Object,
   },
+  computed: {
+    subComment() {
+      return this.comment.subComment;
+    }
+  },
   methods: {
-    replyEvent() {
+    replyEvent(commentId) {
+      this.$store.state.parentCommentId = commentId;
       this.$modal.show('reply');
     },
-    deleteEvent() {
+    deleteEvent(commentId) {
+      console.log("delete : " + commentId);
       this.$modal.show('delete');
     }
   }

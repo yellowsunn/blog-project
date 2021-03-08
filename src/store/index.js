@@ -10,7 +10,7 @@ import {
   getCommentCount,
   getCommentData,
   getHeaderData,
-  getMainPageData, getSearchData, updateArticleLike,
+  getMainPageData, getSearchData, submitCommentData, updateArticleLike,
 } from '@/api';
 
 Vue.use(Vuex);
@@ -27,6 +27,9 @@ export const store = new Vuex.Store({
     loadComments: false,
     // 페이지가 로딩되고 있을때 true
     loadPage: false,
+
+    // 답글을 다는 경우에 사용되는 Id
+    parentCommentId: null,
 
     coverHeaderData: {},
     // 메인 페이지에 뜨는 커버 게시글
@@ -131,13 +134,24 @@ export const store = new Vuex.Store({
           commit('LOADING_COMMENT_STATE');
 
           const response = await getCommentData(articleId, page);
-          commit('UPDATE_COMMENT_DATA', response.data);
+          commit('LOAD_COMMENT_DATA', response.data);
 
           commit('INIT_COMMENT_STATE');
         }
       } catch (error) {
         console.log(error);
         commit('INIT_COMMENT_STATE')
+      }
+    },
+    async SUBMIT_COMMENT_DATA({ commit }, { commentData, articleId, parentCommentId}) {
+      if (!parentCommentId) parentCommentId = '';
+      try {
+        const response = await submitCommentData(commentData, articleId, parentCommentId);
+        commit('UPDATE_COMMENT_DATA', response.data);
+        console.log(response.data);
+        return response;
+      } catch (error) {
+        Error("submit comment error");
       }
     },
     async GET_ASIDE_PROFILE_DATA({ commit }) {
@@ -195,6 +209,26 @@ export const store = new Vuex.Store({
       });
     },
     UPDATE_COMMENT_DATA(state, data) {
+      // 답글이 아닌 경우
+      const commentData = state.commentData.content;
+
+      if (!data.parentCommentId) {
+        commentData.push(data);
+      }
+      // 답글인 경우
+      else {
+        let i = 0;
+        for (i = 0; i < commentData.length; i++) {
+          if (commentData[i].commentId === data.parentCommentId) {
+            if (!commentData[i].subComment) commentData[i].subComment = [];
+            commentData[i].subComment.push(data);
+            break;
+          }
+        }
+      }
+    },
+    // 더보기로 불러오는 댓글
+    LOAD_COMMENT_DATA(state, data) {
       // 기존 콘텐츠
       const content = state.commentData.content;
       let newContent = data.content.filter((comment) => {

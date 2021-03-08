@@ -10,7 +10,7 @@
 
       <!-- 댓글 삭제 -->
       <div class="box-modify">
-        <i class="far fa-times-circle" @click="deleteEvent"></i>
+        <i class="far fa-times-circle" @click="deleteEvent(reply.commentId)"></i>
       </div>
     </div>
   </li>
@@ -22,7 +22,8 @@ export default {
     reply: Object,
   },
   methods: {
-    deleteEvent() {
+    deleteEvent(commentId) {
+      console.log("delete : " + commentId);
       this.$modal.show('delete');
     }
   }

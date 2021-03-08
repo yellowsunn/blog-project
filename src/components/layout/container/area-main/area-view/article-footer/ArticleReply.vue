@@ -15,7 +15,8 @@
       </div>
 
       <!-- AreaWrite -->
-      <AreaWrite></AreaWrite>
+      <!-- emit으로 받은 이벤트 -->
+      <AreaWrite @submitData="submitComment"></AreaWrite>
     </div>
 
     <Modal></Modal>
@@ -47,6 +48,16 @@ export default {
         articleId: this.$route.params.articleId,
         page: this.data.number - 1,
       })
+    },
+    async submitComment(data) {
+      try {
+        await this.$store.dispatch('SUBMIT_COMMENT_DATA', {
+          articleId: this.$route.params.articleId,
+          commentData: data,
+        });
+      } catch (error) {
+        alert('댓글 등록에 실패하였습니다. 네트워크 상태를 확인해주세요.');
+      }
     }
   }
 };

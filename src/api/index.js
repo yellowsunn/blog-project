@@ -9,7 +9,6 @@ const securityConfig = {
 };
 
 const getHeaderData = async () => {
-  // await axios.get("/login", securityConfig);
   return await axios.get('/header', config);
 };
 
@@ -57,6 +56,14 @@ const getCommentCount = async (articleId) => {
   return await axios.get(`/comment/count/${articleId}`, config);
 };
 
+const submitCommentData = async (commentData, articleId, parentCommentId) => {
+  console.log(commentData, articleId, parentCommentId);
+  return await axios.post('/comment/upload', {
+    ...commentData,
+    articleId, parentCommentId
+  }, config);
+};
+
 const getAsideProfileData = async () => {
   return await axios.get("/profile", config);
 }
@@ -79,6 +86,7 @@ export {
   updateArticleLike,
   getCommentData,
   getCommentCount,
+  submitCommentData,
   getAsideProfileData,
   getAsideCategoryList,
   getAsideArticles
