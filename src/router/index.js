@@ -4,6 +4,7 @@ import MainView from '@/view/MainView';
 import CategoryView from '@/view/CategoryView';
 import ArticleView from '@/view/ArticleView';
 import SearchView from '@/view/SearchView';
+import LoginView from '@/view/LoginView';
 
 Vue.use(VueRouter);
 
@@ -13,6 +14,10 @@ export const router = new VueRouter({
     {
       path: '/',
       component: MainView,
+    },
+    {
+      path: '/login',
+      component: LoginView,
     },
     {
       path: '/category/',

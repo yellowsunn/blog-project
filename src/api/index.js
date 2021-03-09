@@ -8,6 +8,14 @@ const securityConfig = {
   withCredentials: true
 };
 
+const fetchLogin = async (account) => {
+  return await axios.post('/api/login', account, securityConfig);
+};
+
+const getAuthority = async () => {
+  return await axios.get("/api/authority", securityConfig);
+};
+
 const getHeaderData = async () => {
   return await axios.get('/header', config);
 };
@@ -83,6 +91,7 @@ const getAsideArticles = async () => {
 }
 
 export {
+  fetchLogin, getAuthority,
   getHeaderData,
   getMainPageData,
   getCategoryData,

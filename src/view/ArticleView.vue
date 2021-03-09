@@ -19,6 +19,7 @@ export default {
     this.$store.state.isCategoryPage = false;
     document.body.id = "tt-body-page";
 
+    this.$store.dispatch('GET_AUTHORITY');
     this.$store.dispatch('GET_ARTICLE_DATA', this.$route.params.articleId);
     this.$store.dispatch('GET_COMMENT_DATA', {
       articleId: this.$route.params.articleId

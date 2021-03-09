@@ -4,8 +4,8 @@
 
     <!-- 공감 아이콘 -->
     <div class="container_postbtn #post_button_group">
-      <div class="postbtn_like" @click="likeClickEvent">
-        <div class="wrap_btn">
+      <div class="postbtn_like">
+        <div class="wrap_btn" @click="likeClickEvent">
           <button class="btn_post uoc-icon">
             <!-- 클래스 추가: empathy_up_without_ani like_on -->
             <div class="uoc-icon" :class="[{ 'empathy_up_without_ani' : data.isAlreadyLike }, { 'like on' : data.isAlreadyLike }]">
@@ -14,6 +14,18 @@
             </div>
           </button>
         </div>
+        <template v-if="isAuthorized">
+          <div class="wrap_btn">
+            <button type="button" class="btn_post">
+              <i class="far fa-edit"></i>
+            </button>
+          </div>
+          <div class="wrap_btn">
+            <button type="button" class="btn_post">
+              <i class="far fa-trash-alt"></i>
+            </button>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -25,6 +37,9 @@ export default {
     data() {
       return this.$store.state.articleData;
     },
+    isAuthorized() {
+      return this.$store.state.isAuthorized;
+    }
   },
   methods: {
     likeClickEvent() {
@@ -47,5 +62,9 @@ export default {
 </script>
 
 <style scoped>
-
+i {
+  font-size: 14px;
+  color: #525252;
+  opacity: 55%;
+}
 </style>

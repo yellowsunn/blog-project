@@ -1,12 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  deleteCommentData,
+  deleteCommentData, fetchLogin,
   getArticleData,
   getArticleId,
   getAsideArticles,
   getAsideCategoryList,
-  getAsideProfileData,
+  getAsideProfileData, getAuthority,
   getCategoryData,
   getCommentCount,
   getCommentData,
@@ -18,6 +18,7 @@ Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   state: {
+    isAuthorized: false,
     // aside toggle
     asideOn: false,
     // 메인 페이지, 카테고리 페이지인지 확인
@@ -52,6 +53,18 @@ export const store = new Vuex.Store({
     }
   },
   actions : {
+    async FETCH_LOGIN(context, account) {
+      return fetchLogin(account);
+    },
+    async GET_AUTHORITY({ state }) {
+      try {
+        const response = await getAuthority();
+        state.isAuthorized = true;
+        return response;
+      } catch (error) {
+        state.isAuthorized = false;
+      }
+    },
     async GET_HEADER_DATA({ commit }) {
       try {
         const response = await getHeaderData();
