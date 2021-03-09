@@ -5,6 +5,8 @@ import com.yellowsunn.springblog.domain.dto.MainDto;
 import com.yellowsunn.springblog.domain.dto.ProfileDto;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,5 +34,12 @@ public class CoverController {
     @GetMapping("/profile")
     public ProfileDto findProfile() {
         return coverService.findProfile();
+    }
+
+    @GetMapping("/admin/test")
+    public void test() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        return;
     }
 }

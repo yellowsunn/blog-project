@@ -6,6 +6,8 @@ import com.yellowsunn.springblog.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
@@ -20,10 +22,7 @@ public class ArticleController {
     @GetMapping("/article/{articleId}")
     public ArticleDto findArticle(@PathVariable(value = "articleId") Long articleId) {
         // 익명 사용자의 세션 아이디
-        SecurityContext context = SecurityContextHolder.getContext();
-        String sessionId = ((WebAuthenticationDetails) context.getAuthentication().getDetails()).getSessionId();
-
-        return articleService.findArticle(articleId, sessionId);
+        return articleService.findArticle(articleId, getSessionId());
     }
 
     @GetMapping("/article/find")
@@ -39,11 +38,19 @@ public class ArticleController {
     // Like 업데이트
     @PutMapping("/article/like/{articleId}")
     public ResponseEntity<?> updateLike(@PathVariable(value = "articleId") Long articleId) {
-        // 익명 사용자의 세션 아이디
-        SecurityContext context = SecurityContextHolder.getContext();
-        String sessionId = ((WebAuthenticationDetails) context.getAuthentication().getDetails()).getSessionId();
-
-        HttpStatus httpStatus = articleService.updateLike(articleId, sessionId);
+        HttpStatus httpStatus = articleService.updateLike(articleId, getSessionId());
         return new ResponseEntity<>(httpStatus);
+    }
+
+    private String getSessionId() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        String sessionId = null;
+        if (context.getAuthentication() instanceof UsernamePasswordAuthenticationToken) {
+            sessionId = "0000";
+        } else if (context.getAuthentication() instanceof AnonymousAuthenticationToken) {
+            sessionId = ((WebAuthenticationDetails) context.getAuthentication().getDetails()).getSessionId();
+        }
+
+        return sessionId;
     }
 }
