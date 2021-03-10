@@ -15,7 +15,7 @@
           </button>
         </div>
         <template v-if="isAuthorized">
-          <div class="wrap_btn">
+          <div class="wrap_btn" @click="editClickEvent">
             <button type="button" class="btn_post">
               <i class="far fa-edit"></i>
             </button>
@@ -56,6 +56,10 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    editClickEvent() {
+      const url = `${window.location.protocol}//${window.location.host}`;
+      window.location.href = `${url}/newpost/${this.$route.params.articleId}`;
     }
   }
 };

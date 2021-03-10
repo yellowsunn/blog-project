@@ -5,6 +5,7 @@ import CategoryView from '@/view/CategoryView';
 import ArticleView from '@/view/ArticleView';
 import SearchView from '@/view/SearchView';
 import LoginView from '@/view/LoginView';
+import CreateArticleView from '@/view/CreateArticleView';
 
 Vue.use(VueRouter);
 
@@ -20,6 +21,10 @@ export const router = new VueRouter({
       component: LoginView,
     },
     {
+      path: '/newpost/',
+      component: CreateArticleView,
+    },
+    {
       path: '/category/',
       component: CategoryView
     },
@@ -30,6 +35,10 @@ export const router = new VueRouter({
     {
       path: '/:articleId',
       component: ArticleView
+    },
+    {
+      path: '/newpost/:articleId',
+      component: CreateArticleView,
     },
     {
       path: '/category/:categoryId',
