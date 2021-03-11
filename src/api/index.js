@@ -41,6 +41,15 @@ const getSearchData = async (search, page) => {
   })
 };
 
+const uploadArticleData = async (formData) => {
+  return await axios.post('/article/create', formData, {
+    ...securityConfig,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+};
+
 const getArticleData = async (articleId) => {
   return await axios.get(`/article/${articleId}`, securityConfig);
 };
@@ -96,6 +105,7 @@ export {
   getMainPageData,
   getCategoryData,
   getSearchData,
+  uploadArticleData,
   getArticleData,
   getArticleId,
   updateArticleLike,

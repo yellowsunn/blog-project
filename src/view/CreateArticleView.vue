@@ -6,10 +6,16 @@
           <b-form-select-option :value="null" disabled>카테고리 선택</b-form-select-option>
         </template>
       </b-form-select>
+      <div class="thumbnail_box">
+        <div class="thumbnail">섬네일</div>
+        <Thumbnail :prevThumbnail="articleData.thumbnail"></Thumbnail>
+      </div>
       <input type="text" v-model="articleData.title" placeholder="제목을 입력하세요." required>
-      <VueEditor v-model="articleData.content"></VueEditor>
+      <VueEditor v-model="articleData.content" useCustomImageHandler
+                 @image-added="handleImageAdded"
+                 @image-removed="handleImageRemoved"></VueEditor>
       <div class="btn_container">
-        <div class="post_btn">등록</div>
+        <div class="post_btn" @click="submit">등록</div>
         <div class="cancel_btn" @click="cancel">취소</div>
       </div>
     </div>
@@ -18,10 +24,13 @@
 
 <script>
 import { VueEditor, Quill } from "vue2-editor";
+import Thumbnail from '@/components/Thumbnail';
+import uuidGenerator from '@/common/uuidGenerator';
 
 export default {
   components: {
-    VueEditor
+    VueEditor,
+    Thumbnail
   },
   async created() {
     if (this.$route.params.articleId) {
@@ -35,12 +44,20 @@ export default {
     }
     this.options = this.getOptions();
   },
+  computed: {
+    thumbnailFile() {
+      return this.$store.state.thumbnailFile;
+    }
+  },
   data() {
+    const imageFiles = new Map();
+
     return {
       articleData: { title: '', content: '' },
+      imageFiles,
+
       selected: null,
       options: [],
-      thumbnail: null,
     }
   },
   methods: {
@@ -60,6 +77,49 @@ export default {
       }
       return options;
     },
+    async submit() {
+      if (!this.selected) {
+        alert("카테고리를 선택하세요.");
+        return;
+      }
+      if (!this.articleData.title) {
+        alert("제목을 입력하세요.");
+        return;
+      }
+      if (!this.articleData.content) {
+        alert("내용을 입력하세요.");
+        return;
+      }
+
+      const isPost = confirm("게시글을 등록하시겠습니까?");
+      if (!isPost) return;
+      let content = this.articleData.content;
+
+      const formData = new FormData();
+      for (let [key, value] of this.imageFiles) {
+        let imageName = uuidGenerator() + this.getImageType(value.name);
+        content = content.replace(key, imageName);
+        formData.append("imageFile", value, imageName);
+      }
+
+      if (this.thumbnailFile) {
+        const thumbnail = uuidGenerator() + this.getImageType(this.thumbnailFile.name);
+        formData.append("thumbnailFile", this.thumbnailFile, thumbnail);
+      }
+      formData.append("categoryId", this.options[this.selected - 1].value);
+      formData.append("title", this.articleData.title);
+      formData.append("content", content);
+
+      try {
+        await this.$store.dispatch('UPLOAD_ARTICLE_DATA', formData);
+      } catch (error) {
+        if (error.response.status === 401) {
+          alert("블로그 관리자만 게시글을 등록할 수 있습니다.");
+        } else {
+          alert("게시글 등록에 실패했습니다.");
+        }
+      }
+    },
     cancel() {
       const isCancel = confirm("글쓰기를 취소하시겠습니까?");
       if (isCancel) {
@@ -70,7 +130,30 @@ export default {
           window.location.href = `${url}/${this.$route.params.articleId}`;
         }
       }
-    }
+    },
+    getImageType(imageName) {
+      const regex = /(.+)(\.\w+)/;
+      const result = imageName.match(regex);
+      console.log(result);
+      return result[2];
+    },
+    handleImageAdded(file, Editor, cursorLocation, resetUploader) {
+      const blobUrl = URL.createObjectURL(file);
+
+      // blob 이미지가 안올라가는 문제 해결
+      const Image = Quill.import('formats/image');
+      Image.sanitize = url => url;
+      // blob 이미지 url 추가
+      Editor.insertEmbed(cursorLocation, 'image', blobUrl);
+      // 커서를 맨뒤로 이동하고 다음줄로 넘어감
+      Editor.setSelection(Editor.getSelection().index + 1);
+      Editor.insertText(Editor.getSelection().index, '\n');
+      resetUploader();
+      this.imageFiles.set(blobUrl, file);
+    },
+    handleImageRemoved(blobUrl) {
+      this.imageFiles.delete(blobUrl);
+    },
   }
 };
 </script>
@@ -86,7 +169,7 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 72px 24px;
+  padding: 48px 24px;
 
   .form_container {
     width: 100%;
@@ -95,7 +178,7 @@ section {
     .category_select {
       width: 220px;
       align-self: flex-start;
-      margin-bottom: 24px;
+      margin-bottom: 10px;
     }
 
     input {
@@ -138,32 +221,43 @@ section {
   }
 }
 
+.thumbnail_box {
+  .thumbnail {
+    font-size: 16px;
+    padding: 4px 8px;
+    font-weight: 400;
+  }
+  margin-bottom: 15px;
+}
+
 @media screen and (max-width: 768px) {
   section {
     font-size: 14px;
     padding: 36px 12px;
-    input {
-      margin-bottom: 16px;
-    }
-    .btn_container {
-      margin-top: 16px;
-      > * {
-        font-size: inherit;
-        padding: 6px 0;
-        margin: 0;
-        flex: 1 1 50%;
-        text-align: center;
+    .form_container {
+      input {
+        margin-bottom: 16px;
       }
-      .post_btn {
-        margin-right: 6px;
-      }
-      .cancel_btn {
-        margin-left: 6px;
-        &:hover {
-          background-color: white;
+      .btn_container {
+        margin-top: 16px;
+        > * {
+          font-size: inherit;
+          padding: 6px 0;
+          margin: 0;
+          flex: 1 1 50%;
+          text-align: center;
         }
-        &:active {
-          background-color: $active-color
+        .post_btn {
+          margin-right: 6px;
+        }
+        .cancel_btn {
+          margin-left: 6px;
+          &:hover {
+            background-color: white;
+          }
+          &:active {
+            background-color: $active-color
+          }
         }
       }
     }

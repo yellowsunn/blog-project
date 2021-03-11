@@ -1,17 +1,23 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  deleteCommentData, fetchLogin,
+  deleteCommentData,
+  fetchLogin,
   getArticleData,
   getArticleId,
   getAsideArticles,
   getAsideCategoryList,
-  getAsideProfileData, getAuthority,
+  getAsideProfileData,
+  getAuthority,
   getCategoryData,
   getCommentCount,
   getCommentData,
   getHeaderData,
-  getMainPageData, getSearchData, submitCommentData, updateArticleLike,
+  getMainPageData,
+  getSearchData,
+  submitCommentData,
+  updateArticleLike,
+  uploadArticleData,
 } from '@/api';
 
 Vue.use(Vuex);
@@ -34,6 +40,8 @@ export const store = new Vuex.Store({
     parentCommentId: null,
     // 삭제하고자 하는 댓글 Id
     deleteCommentId: null,
+    // 섬네일 이미지 파일
+    thumbnailFile: null,
 
     coverHeaderData: {},
     // 메인 페이지에 뜨는 커버 게시글
@@ -119,6 +127,10 @@ export const store = new Vuex.Store({
       } finally {
         state.loadPage = false;
       }
+    },
+
+    async UPLOAD_ARTICLE_DATA(context, formData) {
+        return await uploadArticleData(formData);
     },
     async GET_ARTICLE_DATA({ commit }, articleId) {
       try {
