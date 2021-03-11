@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
+  deleteArticleData,
   deleteCommentData,
   fetchLogin,
   getArticleData,
@@ -15,7 +16,7 @@ import {
   getHeaderData,
   getMainPageData,
   getSearchData,
-  submitCommentData,
+  submitCommentData, updateArticleData,
   updateArticleLike,
   uploadArticleData,
 } from '@/api';
@@ -130,7 +131,10 @@ export const store = new Vuex.Store({
     },
 
     async UPLOAD_ARTICLE_DATA(context, formData) {
-        return await uploadArticleData(formData);
+      return await uploadArticleData(formData);
+    },
+    async UPDATE_ARTICLE_DATA(context, formData) {
+      return await updateArticleData(formData);
     },
     async GET_ARTICLE_DATA({ commit }, articleId) {
       try {
@@ -139,6 +143,9 @@ export const store = new Vuex.Store({
       } catch (error) {
         console.log(error);
       }
+    },
+    async DELETE_ARTICLE_DATA(context, articleId) {
+      return await deleteArticleData(articleId);
     },
     async GET_ARTICLE_ID(context, { categoryId, page }) {
       return await getArticleId(categoryId, page);

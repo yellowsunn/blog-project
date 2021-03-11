@@ -50,8 +50,21 @@ const uploadArticleData = async (formData) => {
   })
 };
 
+const updateArticleData = async (formData) => {
+  return await axios.put('/article/update', formData, {
+    ...securityConfig,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+};
+
 const getArticleData = async (articleId) => {
   return await axios.get(`/article/${articleId}`, securityConfig);
+};
+
+const deleteArticleData = async (articleId) => {
+  return await axios.delete(`/article/delete/${articleId}`, securityConfig);
 };
 
 const getArticleId = async (categoryId, page) => {
@@ -105,8 +118,7 @@ export {
   getMainPageData,
   getCategoryData,
   getSearchData,
-  uploadArticleData,
-  getArticleData,
+  uploadArticleData, updateArticleData, getArticleData, deleteArticleData,
   getArticleId,
   updateArticleLike,
   getCommentData,

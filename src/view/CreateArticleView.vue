@@ -111,7 +111,18 @@ export default {
       formData.append("content", content);
 
       try {
-        await this.$store.dispatch('UPLOAD_ARTICLE_DATA', formData);
+        if (!this.articleData.id) {
+          // 게시글 작성
+          const response = await this.$store.dispatch('UPLOAD_ARTICLE_DATA', formData);
+          this.articleData.id = response.data;
+        } else {
+          // 게시글 수정
+          formData.append("id", this.articleData.id);
+          await this.$store.dispatch('UPDATE_ARTICLE_DATA', formData);
+        }
+
+        const url = `${window.location.protocol}//${window.location.host}`;
+        window.location.href = `${url}/${this.articleData.id}`;
       } catch (error) {
         if (error.response.status === 401) {
           alert("블로그 관리자만 게시글을 등록할 수 있습니다.");

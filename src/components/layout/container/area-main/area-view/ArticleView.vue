@@ -20,7 +20,7 @@
               <i class="far fa-edit"></i>
             </button>
           </div>
-          <div class="wrap_btn">
+          <div class="wrap_btn" @click="deleteClickEvent">
             <button type="button" class="btn_post">
               <i class="far fa-trash-alt"></i>
             </button>
@@ -60,6 +60,23 @@ export default {
     editClickEvent() {
       const url = `${window.location.protocol}//${window.location.host}`;
       window.location.href = `${url}/newpost/${this.$route.params.articleId}`;
+    },
+    async deleteClickEvent() {
+      const isDelete = confirm("게시글을 삭제하시겠습니까?");
+      if (isDelete) {
+        try {
+          await this.$store.dispatch('DELETE_ARTICLE_DATA', this.$route.params.articleId);
+
+          const url = `${window.location.protocol}//${window.location.host}`;
+          window.location.href = `${url}/category/${this.data.categoryId}`;
+        } catch (error) {
+          if (error.response.status === 401) {
+            alert("블로그 관리자만 게시글을 삭제할 수 있습니다.");
+          } else {
+            alert("게시글 삭제에 실패했습니다.");
+          }
+        }
+      }
     }
   }
 };
