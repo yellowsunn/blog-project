@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,8 +35,10 @@ public class CommentController {
         return commentService.upload(commentDto, request.getRemoteAddr());
     }
 
+    // 댓글 삭제
     @DeleteMapping("/comment/delete")
     public ResponseEntity<?> commentDelete(@RequestBody CommentDto commentDto) {
+
         HttpStatus httpStatus = commentService.delete(commentDto);
         return new ResponseEntity<>(httpStatus);
     }

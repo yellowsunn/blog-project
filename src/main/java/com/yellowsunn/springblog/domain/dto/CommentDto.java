@@ -33,5 +33,8 @@ public class CommentDto {
     @JsonInclude(NON_EMPTY)
     private Long parentCommentId;
 
+    @JsonInclude(NON_EMPTY)
+    private String profileImage;
+
     private List<CommentDto> subComment;
 }

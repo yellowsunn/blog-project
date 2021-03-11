@@ -45,10 +45,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // JSESSIONID 항상 생성
 
                 .and()
-                .requestMatchers().antMatchers("/api/**", "/admin/**", "/article/**")
+                .requestMatchers().antMatchers("/api/**", "/admin/**", "/article/**", "/comment/**")
                 .and().authorizeRequests()
                 .antMatchers("/article/create", "/article/update", "/article/delete/**").authenticated()
                 .antMatchers("/article/**").permitAll()
+                .antMatchers("/comment/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and().logout()

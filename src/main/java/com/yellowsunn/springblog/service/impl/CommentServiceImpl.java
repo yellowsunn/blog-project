@@ -12,6 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -101,17 +105,25 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public HttpStatus delete(CommentDto commentDto) {
-        Long commentId = commentDto.getCommentId();
-        Optional<Comment> commentOptional = commentRepository.findById(commentId);
+        Optional<Comment> commentOptional = commentRepository.findById(commentDto.getCommentId());
         if (commentOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
-
         Comment comment = commentOptional.get();
-        if (passwordEncoder.matches(commentDto.getPassword(), comment.getPassword())) {
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        // 관리자는 바로 삭제 가능
+        if (context.getAuthentication() instanceof UsernamePasswordAuthenticationToken) {
             commentRepository.delete(comment);
             return HttpStatus.OK;
-        } else {
-            return HttpStatus.FORBIDDEN;
+        } else if (context.getAuthentication() instanceof AnonymousAuthenticationToken) {
+            if (passwordEncoder.matches(commentDto.getPassword(), comment.getPassword())) {
+                commentRepository.delete(comment);
+                return HttpStatus.OK;
+            } else {
+                return HttpStatus.FORBIDDEN;
+            }
         }
+
+        return HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
     @Override

@@ -2,11 +2,13 @@ package com.yellowsunn.springblog.domain.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 @Data
 @Builder
+@Getter
 public class ProfileDto {
 
-    String profileImage;
-    String profileText;
+    private String profileImage;
+    private String profileText;
 }
