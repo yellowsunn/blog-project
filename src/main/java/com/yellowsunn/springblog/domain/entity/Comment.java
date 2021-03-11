@@ -31,9 +31,7 @@ public class Comment {
 
     private String ipAddr; // 아이피 주소
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id")
-    private Image profile;
+    private boolean isManager; // 매니저인지 확인
 
     // 댓글의 댓글인 경우 기준이 되는 댓글
     @ManyToOne(fetch = FetchType.LAZY)

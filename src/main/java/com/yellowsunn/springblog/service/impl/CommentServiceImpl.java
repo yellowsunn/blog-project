@@ -5,6 +5,7 @@ import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Comment;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CommentRepository;
+import com.yellowsunn.springblog.repository.CoverRepository;
 import com.yellowsunn.springblog.service.CommentService;
 import com.yellowsunn.springblog.service.Common;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,12 +47,14 @@ public class CommentServiceImpl implements CommentService {
                         .parentCommentId(comment.getMainComment() != null ? comment.getMainComment().getId() : null)
                         .name(comment.getName())
                         .content(comment.getContent())
+                        .isManager(comment.isManager())
                         .date(comment.getDate())
                         .subComment(comment.getSubComment().stream().map(subComment ->
                                 CommentDto.builder()
                                         .commentId(subComment.getId())
                                         .name(subComment.getName())
                                         .content(subComment.getContent())
+                                        .isManager(subComment.isManager())
                                         .date(subComment.getDate())
                                         .build()
                         ).collect(Collectors.toList()))
@@ -66,11 +70,18 @@ public class CommentServiceImpl implements CommentService {
         if (articleOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         Comment.CommentBuilder builder = Comment.builder()
-                .article(articleOptional.get())
-                .name(commentDto.getName())
-                .password(passwordEncoder.encode(commentDto.getPassword()))
-                .content(replaceNewLine(commentDto.getContent()))
-                .ipAddr(ipAddr);
+                .article(articleOptional.get());
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth instanceof UsernamePasswordAuthenticationToken) {
+            builder.name(auth.getName())
+                    .isManager(true);
+        } else if (auth instanceof AnonymousAuthenticationToken) {
+            builder.name(commentDto.getName())
+                    .password(passwordEncoder.encode(commentDto.getPassword()))
+                    .ipAddr(ipAddr);
+        }
+        builder.content(replaceNewLine(commentDto.getContent()));
 
         Long parentCommentId = commentDto.getParentCommentId();
         if (parentCommentId != null) {
@@ -95,6 +106,7 @@ public class CommentServiceImpl implements CommentService {
                 .commentId(saveComment.getId())
                 .name(saveComment.getName())
                 .content(saveComment.getContent())
+                .isManager(saveComment.isManager())
                 .date(saveComment.getDate())
                 .parentCommentId(saveComment.getMainComment() != null ? saveComment.getMainComment().getId() : null)
                 .build();
@@ -109,12 +121,12 @@ public class CommentServiceImpl implements CommentService {
         if (commentOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
         Comment comment = commentOptional.get();
 
-        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         // 관리자는 바로 삭제 가능
-        if (context.getAuthentication() instanceof UsernamePasswordAuthenticationToken) {
+        if (auth instanceof UsernamePasswordAuthenticationToken) {
             commentRepository.delete(comment);
             return HttpStatus.OK;
-        } else if (context.getAuthentication() instanceof AnonymousAuthenticationToken) {
+        } else if (auth instanceof AnonymousAuthenticationToken) {
             if (passwordEncoder.matches(commentDto.getPassword(), comment.getPassword())) {
                 commentRepository.delete(comment);
                 return HttpStatus.OK;
