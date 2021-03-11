@@ -1,6 +1,7 @@
 <template>
   <li class="item-reply rp_general">
-    <i class="fas fa-user-circle thumbnail"></i>
+    <i class="fas fa-user-circle thumbnail" v-if="!comment.isManager"></i>
+    <span class="thumbnail" :style="{backgroundImage: `url(${this.managerProfile})`}" v-else></span>
     <div class="box-content">
       <div class="box-meta">
         <strong>{{ comment.name }}</strong>
@@ -11,7 +12,7 @@
 
       <!-- 댓글 삭제 -->
       <div class="box-modify">
-        <i class="far fa-times-circle" @click="deleteEvent(comment.commentId)"></i>
+        <i class="far fa-times-circle" @click="deleteEvent(comment.commentId)" v-if="!comment.isManager || isAuthorized"></i>
       </div>
     </div>
 
@@ -32,6 +33,9 @@ export default {
   computed: {
     isAuthorized() {
       return this.$store.state.isAuthorized;
+    },
+    managerProfile() {
+      return this.$store.state.asideProfileData.profileImage;
     },
     subComment() {
       return this.comment.subComment;

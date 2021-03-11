@@ -34,11 +34,15 @@ export default {
   },
   methods: {
     submitEvent() {
-      if (!this.comment.password) {
-        alert('비밀번호를 입력해 주세요.'); return;
-      }
-      if (!this.comment.name) {
-        alert('닉네임을 입력해 주세요.'); return;
+      if (!this.isAuthorized) {
+        if (!this.comment.password) {
+          alert('비밀번호를 입력해 주세요.');
+          return;
+        }
+        if (!this.comment.name) {
+          alert('닉네임을 입력해 주세요.');
+          return;
+        }
       }
       if (!this.comment.content) {
         alert('내용을 입력해 주세요.'); return;
