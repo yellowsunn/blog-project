@@ -16,13 +16,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,12 +48,12 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
-    public HttpStatus createArticle(ArticleDto articleDto, MultipartFile thumbnailFile, List<MultipartFile> imageFiles) {
+    public ResponseEntity<Long> createArticle(ArticleDto articleDto, MultipartFile thumbnailFile, List<MultipartFile> imageFiles) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (!(auth instanceof UsernamePasswordAuthenticationToken)) return HttpStatus.UNAUTHORIZED;
+        if (!(auth instanceof UsernamePasswordAuthenticationToken)) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         Optional<Category> categoryOptional = categoryRepository.findById(articleDto.getCategoryId());
-        if (categoryOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
+        if (categoryOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         Article article = Article.builder()
                 .writer(auth.getName())
@@ -59,30 +63,25 @@ public class ArticleServiceImpl implements ArticleService {
                 .build();
         Article saveArticle = articleRepository.save(article);
 
-        if (thumbnailFile != null) {
-            Image thumbnailImage = Image.builder()
-                    .name(thumbnailFile.getOriginalFilename())
-                    .article(saveArticle)
-                    .isThumbnail(true)
-                    .build();
-            imageRepository.save(thumbnailImage);
+        HttpStatus status = uploadImage(saveArticle, thumbnailFile, imageFiles);
+        return new ResponseEntity<>(saveArticle.getId(), status);
+    }
 
-            boolean isUpload = common.uploadImageFile(thumbnailFile);
-            if (!isUpload) return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+    @Transactional
+    @Override
+    public HttpStatus updateArticle(ArticleDto articleDto, MultipartFile thumbnailFile, List<MultipartFile> imageFiles) {
+        Optional<Article> articleOptional = articleRepository.findById(articleDto.getId());
+        if (articleOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
 
-        for (MultipartFile imageFile : imageFiles) {
-            Image image = Image.builder()
-                    .name(imageFile.getOriginalFilename())
-                    .article(saveArticle)
-                    .build();
-            imageRepository.save(image);
+        Optional<Category> categoryOptional = categoryRepository.findById(articleDto.getCategoryId());
+        if (categoryOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
 
-            boolean isUpload = common.uploadImageFile(imageFile);
-            if (!isUpload) return HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+        Article article = articleOptional.get();
+        article.changeCategory(categoryOptional.get());
+        article.changeTitle(articleDto.getTitle());
+        article.changeContent(common.removeServerUrlContent(articleDto.getContent()));
 
-        return HttpStatus.OK;
+        return uploadImage(article, thumbnailFile, imageFiles);
     }
 
     @Transactional
@@ -100,14 +99,14 @@ public class ArticleServiceImpl implements ArticleService {
                 .id(article.getId())
                 .writer(article.getWriter())
                 .title(article.getTitle())
-                .content(getServerUrlContent(article.getContent()))
+                .content(common.addServerUrlContent(article.getContent()))
                 .like(article.getLike())
                 .isAlreadyLike(sessionId != null && sessionId.equals(article.getLikeId()))
                 .date(article.getDate());
 
         // 섬네일 이미지
         imageRepository.findThumbnailByArticle(article).ifPresent(image -> {
-            builder.thumbnail(common.getServerUrlImage(image.getName()));
+            builder.thumbnail(common.getServerUrlImage() + image.getName());
         });
 
         // 부모 카테고리
@@ -208,7 +207,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .title(tuple.get(article.title))
                 .summary(common.getSummary(tuple.get(article.content)))
                 .commentCount(tuple.get(6, Long.class))
-                .thumbnail(common.getServerUrlImage(tuple.get(5, String.class)))
+                .thumbnail(common.getServerUrlImage() + tuple.get(5, String.class))
                 .simpleDate(tuple.get(article.date));
 
         Long id = tuple.get(article.category.id);
@@ -224,26 +223,42 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     public ArticleDto changeVerySimple(Tuple tuple) {
+        String thumbnail = tuple.get(3, String.class);
+
         return ArticleDto.builder()
                 .id(tuple.get(article.id))
                 .title(tuple.get(article.title))
                 .simpleDate(tuple.get(article.date))
-                .thumbnail(common.getServerUrlImage(tuple.get(3, String.class)))
+                .thumbnail(thumbnail != null ? common.getServerUrlImage() + thumbnail : null)
                 .build();
     }
 
-    private String getServerUrlContent(String content) {
-        Pattern pattern = Pattern.compile("src=\"([\\w\\d\\-]+\\.\\w+)\"");
-        Matcher matcher = pattern.matcher(content);
-        List<String> imageFiles = new ArrayList<>();
-        while (matcher.find()) {
-            imageFiles.add(matcher.group(1));
+    private HttpStatus uploadImage(Article article, MultipartFile thumbnailFile, List<MultipartFile> imageFiles) {
+        if (thumbnailFile != null) {
+            Image thumbnailImage = Image.builder()
+                    .name(thumbnailFile.getOriginalFilename())
+                    .article(article)
+                    .isThumbnail(true)
+                    .build();
+            imageRepository.save(thumbnailImage);
+
+            boolean isUpload = common.uploadImageFile(thumbnailFile);
+            if (!isUpload) return HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
-        for (String imageFile : imageFiles) {
-            content = content.replace(imageFile, common.getServerUrlImage(imageFile));
+        if (imageFiles != null) {
+            for (MultipartFile imageFile : imageFiles) {
+                Image image = Image.builder()
+                        .name(imageFile.getOriginalFilename())
+                        .article(article)
+                        .build();
+                imageRepository.save(image);
+
+                boolean isUpload = common.uploadImageFile(imageFile);
+                if (!isUpload) return HttpStatus.INTERNAL_SERVER_ERROR;
+            }
         }
 
-        return content;
+        return HttpStatus.OK;
     }
 }

@@ -11,6 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class Common {
@@ -19,6 +25,8 @@ public class Common {
     private String imgPath;
     @Value("${file.upload.directory}")
     private String imgUploadPath;
+
+    private final String UUID_REGEX = "([\\w\\d]{8}-[\\w\\d]{4}-[\\w\\d]{4}-[\\w\\d]{4}-[\\w\\d]{12}.\\w+)";
 
     // 본문 내용 요약처리
     public String getSummary(String content) {
@@ -36,11 +44,42 @@ public class Common {
         return html.replaceAll("(<([^>]+)>)", "");
     }
 
-    public String getServerUrlImage(String image) {
-        if (image == null) return null;
-
+    public String getServerUrlImage() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + imgPath + image;
+        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + imgPath;
+    }
+
+    // 콘텐츠 이미지 서버주소 prefix로 추가
+    public String addServerUrlContent(String content) {
+        Pattern pattern = Pattern.compile("src=\"" + UUID_REGEX + "\"");
+        Matcher matcher = pattern.matcher(content);
+        List<String> imageFiles = new ArrayList<>();
+        while (matcher.find()) {
+            imageFiles.add(matcher.group(1));
+        }
+
+        for (String imageFile : imageFiles) {
+            content = content.replace(imageFile, getServerUrlImage() + imageFile);
+        }
+
+        return content;
+    }
+
+    // 콘텐츠 이미지 서버주소 prefix에서 삭제
+    public String removeServerUrlContent(String content) {
+        Pattern pattern = Pattern.compile("src=\"(" + getServerUrlImage() + UUID_REGEX + ")\"");
+        Matcher matcher = pattern.matcher(content);
+        Map<String, String> imageMap = new HashMap<>();
+        while (matcher.find()) {
+            imageMap.put(matcher.group(1), matcher.group(2));
+        }
+
+        for (Map.Entry<String, String> entry : imageMap.entrySet()) {
+            String urlImage = entry.getKey(), image = entry.getValue();
+            content = content.replace(urlImage, image);
+        }
+
+        return content;
     }
 
     public boolean uploadImageFile(MultipartFile imageFile) {

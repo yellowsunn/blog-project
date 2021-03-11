@@ -29,14 +29,24 @@ public class ArticleController {
         return articleService.findArticle(articleId, getSessionId());
     }
 
+    // 게시글 작성 (게시글 Id 반환)
     @PostMapping(value = "/article/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> upload(ArticleDto articleDto,
+    public ResponseEntity<Long> upload(ArticleDto articleDto,
                                     @RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
                                     @RequestParam(value = "imageFile", required = false) List<MultipartFile> imageFiles) {
-        HttpStatus httpStatus = articleService.createArticle(articleDto, thumbnailFile, imageFiles);
+        return articleService.createArticle(articleDto, thumbnailFile, imageFiles);
+    }
+
+    // 게시글 수정
+    @PutMapping(value = "/article/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> update(ArticleDto articleDto,
+                                    @RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
+                                    @RequestParam(value = "imageFile", required = false) List<MultipartFile> imageFiles) {
+        HttpStatus httpStatus = articleService.updateArticle(articleDto, thumbnailFile, imageFiles);
         return new ResponseEntity<>(httpStatus);
     }
 
+    // 게시글 조회
     @GetMapping("/article/find")
     public Long findArticleIdByPage(@RequestParam Long categoryId, @RequestParam int page) {
         return articleService.findArticleIdByPage(categoryId, page);

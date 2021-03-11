@@ -62,6 +62,10 @@ public class Article {
         likeId = null;
     }
 
+    public void changeCategory(Category category) {
+        this.category = category;
+    }
+
     public void changeTitle(String title) {
         this.title = title;
     }

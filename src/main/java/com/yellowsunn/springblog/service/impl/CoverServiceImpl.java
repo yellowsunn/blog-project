@@ -89,7 +89,7 @@ public class CoverServiceImpl implements CoverService {
 
         Tuple tuple = tupleOptional.get();
         return ProfileDto.builder()
-                .profileImage(common.getServerUrlImage(tuple.get(cover.profile.name)))
+                .profileImage(common.getServerUrlImage() + tuple.get(cover.profile.name))
                 .profileText(tuple.get(cover.profileText))
                 .build();
     }

@@ -77,7 +77,10 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     public List<Tuple> findVerySimpleArticles(boolean isPopular) {
         JPAQuery<Tuple> query = queryFactory
                 .select(article.id, article.title, article.date,
-                        select(image.name).from(image).where(image.article.eq(article), image.isThumbnail.eq(true)).limit(1)
+                        select(image.name)
+                                .from(image)
+                                .where(image.article.eq(article), image.isThumbnail.eq(true))
+                                .orderBy(image.id.desc()).limit(1)
                 )
                 .from(article);
 
@@ -131,7 +134,7 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     private JPAQuery<Tuple> simpleArticlesQuery(Category baseCategory) {
         return queryFactory
                 .select(article.id, article.title, article.content, article.date, article.category.id,
-                        select(image.name).from(image).where(image.article.eq(article), image.isThumbnail.eq(true)).limit(1),
+                        select(image.name).from(image).where(image.article.eq(article), image.isThumbnail.eq(true)).orderBy(image.id.desc()).limit(1),
                         select(comment.count()).from(comment).where(comment.article.eq(article))
                 )
                 .from(article)

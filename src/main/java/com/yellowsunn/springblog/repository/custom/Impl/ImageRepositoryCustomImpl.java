@@ -25,6 +25,7 @@ public class ImageRepositoryCustomImpl implements ImageRepositoryCustom {
         Image thumbnail = queryFactory
                 .selectFrom(image)
                 .where(image.article.eq(article), image.isThumbnail.eq(true))
+                .orderBy(image.id.desc())
                 .fetchFirst();
 
         return Optional.ofNullable(thumbnail);
