@@ -5,6 +5,7 @@ import com.yellowsunn.springblog.domain.dto.ArticleDto;
 import com.yellowsunn.springblog.domain.dto.AsideArticlesDto;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Category;
+import com.yellowsunn.springblog.domain.entity.Image;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CategoryRepository;
 import com.yellowsunn.springblog.repository.ImageRepository;
@@ -15,12 +16,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.yellowsunn.springblog.domain.entity.QArticle.article;
 
@@ -37,19 +44,63 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Transactional
     @Override
+    public HttpStatus createArticle(ArticleDto articleDto, MultipartFile thumbnailFile, List<MultipartFile> imageFiles) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (!(auth instanceof UsernamePasswordAuthenticationToken)) return HttpStatus.UNAUTHORIZED;
+
+        Optional<Category> categoryOptional = categoryRepository.findById(articleDto.getCategoryId());
+        if (categoryOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
+
+        Article article = Article.builder()
+                .writer(auth.getName())
+                .category(categoryOptional.get())
+                .title(articleDto.getTitle())
+                .content(articleDto.getContent())
+                .build();
+        Article saveArticle = articleRepository.save(article);
+
+        if (thumbnailFile != null) {
+            Image thumbnailImage = Image.builder()
+                    .name(thumbnailFile.getOriginalFilename())
+                    .article(saveArticle)
+                    .isThumbnail(true)
+                    .build();
+            imageRepository.save(thumbnailImage);
+
+            boolean isUpload = common.uploadImageFile(thumbnailFile);
+            if (!isUpload) return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        for (MultipartFile imageFile : imageFiles) {
+            Image image = Image.builder()
+                    .name(imageFile.getOriginalFilename())
+                    .article(saveArticle)
+                    .build();
+            imageRepository.save(image);
+
+            boolean isUpload = common.uploadImageFile(imageFile);
+            if (!isUpload) return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return HttpStatus.OK;
+    }
+
+    @Transactional
+    @Override
     public ArticleDto findArticle(Long articleId, String sessionId) {
         Optional<Article> articleOptional = articleRepository.findById(articleId);
         if (articleOptional.isEmpty()) return null;
 
         Article article = articleOptional.get();
         article.updateHit(); // 조회수 증가
+
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
                 .categoryId(article.getCategory().getId())
                 .category(article.getCategory().getName())
                 .id(article.getId())
                 .writer(article.getWriter())
                 .title(article.getTitle())
-                .content(article.getContent())
+                .content(getServerUrlContent(article.getContent()))
                 .like(article.getLike())
                 .isAlreadyLike(sessionId != null && sessionId.equals(article.getLikeId()))
                 .date(article.getDate());
@@ -179,5 +230,20 @@ public class ArticleServiceImpl implements ArticleService {
                 .simpleDate(tuple.get(article.date))
                 .thumbnail(common.getServerUrlImage(tuple.get(3, String.class)))
                 .build();
+    }
+
+    private String getServerUrlContent(String content) {
+        Pattern pattern = Pattern.compile("src=\"([\\w\\d\\-]+\\.\\w+)\"");
+        Matcher matcher = pattern.matcher(content);
+        List<String> imageFiles = new ArrayList<>();
+        while (matcher.find()) {
+            imageFiles.add(matcher.group(1));
+        }
+
+        for (String imageFile : imageFiles) {
+            content = content.replace(imageFile, common.getServerUrlImage(imageFile));
+        }
+
+        return content;
     }
 }

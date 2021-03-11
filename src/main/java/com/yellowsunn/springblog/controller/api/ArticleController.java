@@ -5,6 +5,7 @@ import com.yellowsunn.springblog.domain.dto.AsideArticlesDto;
 import com.yellowsunn.springblog.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,6 +13,9 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +27,14 @@ public class ArticleController {
     public ArticleDto findArticle(@PathVariable(value = "articleId") Long articleId) {
         // 익명 사용자의 세션 아이디
         return articleService.findArticle(articleId, getSessionId());
+    }
+
+    @PostMapping(value = "/article/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> upload(ArticleDto articleDto,
+                                    @RequestParam(value = "thumbnailFile", required = false) MultipartFile thumbnailFile,
+                                    @RequestParam(value = "imageFile", required = false) List<MultipartFile> imageFiles) {
+        HttpStatus httpStatus = articleService.createArticle(articleDto, thumbnailFile, imageFiles);
+        return new ResponseEntity<>(httpStatus);
     }
 
     @GetMapping("/article/find")

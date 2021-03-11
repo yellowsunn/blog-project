@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_EMPTY;
 
@@ -22,6 +24,10 @@ public class ArticleDto extends PageDto {
     private String content;
     @JsonInclude(NON_EMPTY)
     private String summary;
+
+    @JsonInclude(NON_EMPTY)
+    private List<String> images;
+
     @JsonInclude(NON_EMPTY)
     private Long commentCount;
     @JsonInclude(NON_EMPTY)
@@ -52,14 +58,14 @@ public class ArticleDto extends PageDto {
     private ArticleDto after;
 
     @Builder
-
-    public ArticleDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String title, String writer, String content, String summary, Long commentCount, String thumbnail, LocalDateTime simpleDate, LocalDateTime date, Long like, Boolean isAlreadyLike, Long categoryId, String parentCategory, String category, ArticleDto before, ArticleDto after) {
+    public ArticleDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String title, String writer, String content, String summary, List<String> images, Long commentCount, String thumbnail, LocalDateTime simpleDate, LocalDateTime date, Long like, Boolean isAlreadyLike, Long categoryId, String parentCategory, String category, ArticleDto before, ArticleDto after) {
         super(totalElements, totalPages, pageNumber, isFirst, isLast, hasNext, hasPrevious);
         this.id = id;
         this.title = title;
         this.writer = writer;
         this.content = content;
         this.summary = summary;
+        this.images = images;
         this.commentCount = commentCount;
         this.thumbnail = thumbnail;
         this.simpleDate = simpleDate;
