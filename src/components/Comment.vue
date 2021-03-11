@@ -30,6 +30,9 @@ export default {
     comment: Object,
   },
   computed: {
+    isAuthorized() {
+      return this.$store.state.isAuthorized;
+    },
     subComment() {
       return this.comment.subComment;
     }
@@ -39,9 +42,24 @@ export default {
       this.$store.state.parentCommentId = commentId;
       this.$modal.show('reply');
     },
-    deleteEvent(commentId) {
+    async deleteEvent(commentId) {
       this.$store.state.deleteCommentId = commentId;
-      this.$modal.show('delete');
+
+      // 관리자인 경우
+      if (this.isAuthorized) {
+        const isDelete = confirm("해당 댓글을 삭제하시겠습니까?");
+        if (isDelete) {
+          try {
+            await this.$store.dispatch('DELETE_COMMENT_DATA', {
+              commentId: this.$store.state.deleteCommentId,
+            });
+          } catch (error) {
+            alert("실패하였습니다. 네트워크 상태를 확인해주세요.");
+          }
+        }
+      } else {
+        this.$modal.show('delete');
+      }
     }
   }
 };

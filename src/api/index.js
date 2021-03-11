@@ -77,25 +77,25 @@ const updateArticleLike = async (articleId) => {
 
 const getCommentData = async (articleId, page) => {
   return await axios.get(`/comment/${articleId}?size=30`, {
-    ...config,
+    ...securityConfig,
     params: { page }
   });
 };
 
 const getCommentCount = async (articleId) => {
-  return await axios.get(`/comment/count/${articleId}`, config);
+  return await axios.get(`/comment/count/${articleId}`, securityConfig);
 };
 
 const submitCommentData = async (commentData, articleId, parentCommentId) => {
   return await axios.post('/comment/upload', {
     ...commentData,
     articleId, parentCommentId
-  }, config);
+  }, securityConfig);
 };
 
 const deleteCommentData = async (commentId, password) => {
   return await axios.delete('/comment/delete', {
-    ...config,
+    ...securityConfig,
     data: { commentId, password }
   });
 };

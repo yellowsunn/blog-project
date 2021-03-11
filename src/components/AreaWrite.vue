@@ -1,7 +1,7 @@
 <template>
   <form method="post">
     <div class="area-write">
-      <div class="box-account">
+      <div class="box-account" v-if="!isAuthorized">
         <input type="text" title="이름" maxlength="30" placeholder="이름" :value="comment.name" @input="comment.name = $event.target.value" autocomplete="off"/>
         <input type="password" title="비밀번호" maxlength="20" placeholder="비밀번호" autocomplete="off" v-model="comment.password"/>
       </div>
@@ -18,6 +18,11 @@
 
 <script>
 export default {
+  computed: {
+    isAuthorized() {
+      return this.$store.state.isAuthorized;
+    }
+  },
   data() {
     return {
       comment: {
