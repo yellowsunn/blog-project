@@ -20,14 +20,14 @@ public class ImageRepositoryCustomImpl implements ImageRepositoryCustom {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    @Override
-    public Optional<Image> findThumbnailByArticle(Article article) {
-        Image thumbnail = queryFactory
-                .selectFrom(image)
-                .where(image.article.eq(article), image.isThumbnail.eq(true))
-                .orderBy(image.id.desc())
-                .fetchFirst();
-
-        return Optional.ofNullable(thumbnail);
-    }
+//    @Override
+//    public Optional<Image> findThumbnailByArticle(Article article) {
+//        Image thumbnail = queryFactory
+//                .selectFrom(image)
+//                .where(image.article.eq(article), image.isThumbnail.eq(true))
+//                .orderBy(image.id.desc())
+//                .fetchFirst();
+//
+//        return Optional.ofNullable(thumbnail);
+//    }
 }

@@ -55,15 +55,23 @@ public class ArticleServiceImpl implements ArticleService {
         Optional<Category> categoryOptional = categoryRepository.findById(articleDto.getCategoryId());
         if (categoryOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        Image thumbnail = null;
+        try {
+            thumbnail = uploadThumbnail(thumbnailFile);
+        } catch (IllegalStateException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         Article article = Article.builder()
                 .writer(auth.getName())
                 .category(categoryOptional.get())
+                .thumbnail(thumbnail)
                 .title(articleDto.getTitle())
                 .content(articleDto.getContent())
                 .build();
         Article saveArticle = articleRepository.save(article);
 
-        HttpStatus status = uploadImage(saveArticle, thumbnailFile, imageFiles);
+        HttpStatus status = uploadImage(saveArticle, imageFiles);
         return new ResponseEntity<>(saveArticle.getId(), status);
     }
 
@@ -77,11 +85,19 @@ public class ArticleServiceImpl implements ArticleService {
         if (categoryOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
 
         Article article = articleOptional.get();
+        Image thumbnail = null;
+        try {
+            thumbnail = uploadThumbnail(thumbnailFile);
+        } catch (IllegalStateException e) {
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
         article.changeCategory(categoryOptional.get());
+        if (thumbnail != null) article.changeThumbnail(thumbnail);
         article.changeTitle(articleDto.getTitle());
         article.changeContent(common.removeServerUrlContent(articleDto.getContent()));
 
-        return uploadImage(article, thumbnailFile, imageFiles);
+        return uploadImage(article, imageFiles);
     }
 
     @Transactional
@@ -97,17 +113,13 @@ public class ArticleServiceImpl implements ArticleService {
                 .categoryId(article.getCategory().getId())
                 .category(article.getCategory().getName())
                 .id(article.getId())
+                .thumbnail(article.getThumbnail() != null ? common.getServerUrlImage() + article.getThumbnail().getName() : null)
                 .writer(article.getWriter())
                 .title(article.getTitle())
                 .content(common.addServerUrlContent(article.getContent()))
                 .like(article.getLike())
                 .isAlreadyLike(sessionId != null && sessionId.equals(article.getLikeId()))
                 .date(article.getDate());
-
-        // 섬네일 이미지
-        imageRepository.findThumbnailByArticle(article).ifPresent(image -> {
-            builder.thumbnail(common.getServerUrlImage() + image.getName());
-        });
 
         // 부모 카테고리
         Category parentCategory = article.getCategory().getParentCategory();
@@ -202,12 +214,14 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleDto changeSimple(CategoryRepository categoryRepository, Tuple tuple) {
+        String thumbnail = tuple.get(article.thumbnail.name);
+
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
                 .id(tuple.get(article.id))
                 .title(tuple.get(article.title))
                 .summary(common.getSummary(tuple.get(article.content)))
                 .commentCount(tuple.get(6, Long.class))
-                .thumbnail(common.getServerUrlImage() + tuple.get(5, String.class))
+                .thumbnail(thumbnail != null ? common.getServerUrlImage() + thumbnail : null)
                 .simpleDate(tuple.get(article.date));
 
         Long id = tuple.get(article.category.id);
@@ -223,8 +237,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     public ArticleDto changeVerySimple(Tuple tuple) {
-        String thumbnail = tuple.get(3, String.class);
-
+        String thumbnail = tuple.get(article.thumbnail.name);
         return ArticleDto.builder()
                 .id(tuple.get(article.id))
                 .title(tuple.get(article.title))
@@ -233,19 +246,23 @@ public class ArticleServiceImpl implements ArticleService {
                 .build();
     }
 
-    private HttpStatus uploadImage(Article article, MultipartFile thumbnailFile, List<MultipartFile> imageFiles) {
-        if (thumbnailFile != null) {
-            Image thumbnailImage = Image.builder()
-                    .name(thumbnailFile.getOriginalFilename())
-                    .article(article)
-                    .isThumbnail(true)
-                    .build();
-            imageRepository.save(thumbnailImage);
+    private Image uploadThumbnail(MultipartFile thumbnailFile) {
+        if (thumbnailFile == null) return null;
 
-            boolean isUpload = common.uploadImageFile(thumbnailFile);
-            if (!isUpload) return HttpStatus.INTERNAL_SERVER_ERROR;
+        Image thumbnailImage = Image.builder()
+                .name(thumbnailFile.getOriginalFilename())
+                .build();
+        Image saveImage = imageRepository.save(thumbnailImage);
+
+        boolean isUpload = common.uploadImageFile(thumbnailFile);
+        if (!isUpload) {
+            throw new IllegalStateException();
         }
 
+        return saveImage;
+    }
+
+    private HttpStatus uploadImage(Article article, List<MultipartFile> imageFiles) {
         if (imageFiles != null) {
             for (MultipartFile imageFile : imageFiles) {
                 Image image = Image.builder()

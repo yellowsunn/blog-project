@@ -44,6 +44,10 @@ public class Article {
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "thumbnail_id")
+    private Image thumbnail;
+
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Image> images = new ArrayList<>();
 
@@ -60,6 +64,10 @@ public class Article {
         like -= 1;
         if (like < 0) like = 0;
         likeId = null;
+    }
+
+    public void changeThumbnail(Image thumbnail) {
+        this.thumbnail = thumbnail;
     }
 
     public void changeCategory(Category category) {

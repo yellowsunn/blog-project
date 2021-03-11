@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface ImageRepositoryCustom {
 
-    Optional<Image> findThumbnailByArticle(Article article);
+//    Optional<Image> findThumbnailByArticle(Article article);
 }

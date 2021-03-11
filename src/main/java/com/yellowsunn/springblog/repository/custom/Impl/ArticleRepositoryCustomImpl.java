@@ -2,7 +2,6 @@ package com.yellowsunn.springblog.repository.custom.Impl;
 
 import com.querydsl.core.QueryResults;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -22,7 +21,6 @@ import static com.querydsl.jpa.JPAExpressions.selectFrom;
 import static com.yellowsunn.springblog.domain.entity.QArticle.article;
 import static com.yellowsunn.springblog.domain.entity.QCategory.category;
 import static com.yellowsunn.springblog.domain.entity.QComment.comment;
-import static com.yellowsunn.springblog.domain.entity.QImage.image;
 
 @Transactional(readOnly = true)
 public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
@@ -76,13 +74,9 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     @Override
     public List<Tuple> findVerySimpleArticles(boolean isPopular) {
         JPAQuery<Tuple> query = queryFactory
-                .select(article.id, article.title, article.date,
-                        select(image.name)
-                                .from(image)
-                                .where(image.article.eq(article), image.isThumbnail.eq(true))
-                                .orderBy(image.id.desc()).limit(1)
-                )
-                .from(article);
+                .select(article.id, article.title, article.date, article.thumbnail.name)
+                .from(article)
+                .leftJoin(article.thumbnail);
 
         if (isPopular) {
             query.orderBy(article.hit.desc(), article.id.desc());
@@ -133,12 +127,12 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
     private JPAQuery<Tuple> simpleArticlesQuery(Category baseCategory) {
         return queryFactory
-                .select(article.id, article.title, article.content, article.date, article.category.id,
-                        select(image.name).from(image).where(image.article.eq(article), image.isThumbnail.eq(true)).orderBy(image.id.desc()).limit(1),
+                .select(article.id, article.title, article.content, article.date, article.category.id, article.thumbnail.name,
                         select(comment.count()).from(comment).where(comment.article.eq(article))
                 )
                 .from(article)
                 .where(baseCategoryEqual(baseCategory))
+                .leftJoin(article.thumbnail)
                 .orderBy(article.id.desc());
     }
 
