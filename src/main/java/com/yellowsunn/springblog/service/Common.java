@@ -83,7 +83,7 @@ public class Common {
     }
 
     public boolean uploadImageFile(MultipartFile imageFile) {
-        if (imageFile == null) return false;
+        if (imageFile == null) return true;
         File path = new File(imgUploadPath);
 
         // 디렉토리가 없으면 디렉토리 생성
@@ -102,6 +102,16 @@ public class Common {
             return true;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    public boolean removeImageFile(String imageName) {
+        File file = new File(imgUploadPath + imageName);
+
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            return true;
         }
     }
 }

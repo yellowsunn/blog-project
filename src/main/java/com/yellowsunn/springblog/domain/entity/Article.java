@@ -44,7 +44,7 @@ public class Article {
     @OneToMany(mappedBy = "article", cascade = CascadeType.REMOVE)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "thumbnail_id")
     private Image thumbnail;
 

@@ -18,6 +18,8 @@ public interface ArticleService {
 
     ArticleDto findArticle(Long articleId, String sessionId);
 
+    HttpStatus deleteArticle(Long articleId);
+
     // 페이지 번호로 게시글 찾기
     Long findArticleIdByPage(Long categoryId, int pageNumber);
 

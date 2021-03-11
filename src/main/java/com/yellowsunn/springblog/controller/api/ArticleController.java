@@ -23,12 +23,6 @@ import java.util.List;
 public class ArticleController {
     private final ArticleService articleService;
 
-    @GetMapping("/article/{articleId}")
-    public ArticleDto findArticle(@PathVariable(value = "articleId") Long articleId) {
-        // 익명 사용자의 세션 아이디
-        return articleService.findArticle(articleId, getSessionId());
-    }
-
     // 게시글 작성 (게시글 Id 반환)
     @PostMapping(value = "/article/create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> upload(ArticleDto articleDto,
@@ -47,6 +41,19 @@ public class ArticleController {
     }
 
     // 게시글 조회
+    @GetMapping("/article/{articleId}")
+    public ArticleDto findArticle(@PathVariable(value = "articleId") Long articleId) {
+        return articleService.findArticle(articleId, getSessionId());
+    }
+
+    // 게시글 삭제
+    @DeleteMapping("/article/delete/{articleId}")
+    public ResponseEntity<?> delete(@PathVariable(value = "articleId") Long articleId) {
+        HttpStatus httpStatus = articleService.deleteArticle(articleId);
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    // 게시글 아이디 조회
     @GetMapping("/article/find")
     public Long findArticleIdByPage(@RequestParam Long categoryId, @RequestParam int page) {
         return articleService.findArticleIdByPage(categoryId, page);

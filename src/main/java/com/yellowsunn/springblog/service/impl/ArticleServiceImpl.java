@@ -22,16 +22,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.yellowsunn.springblog.domain.entity.QArticle.article;
 
@@ -69,9 +64,13 @@ public class ArticleServiceImpl implements ArticleService {
                 .title(articleDto.getTitle())
                 .content(articleDto.getContent())
                 .build();
-        Article saveArticle = articleRepository.save(article);
 
+        Article saveArticle = articleRepository.save(article);
         HttpStatus status = uploadImage(saveArticle, imageFiles);
+        if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
+            throw new IllegalStateException("failed to create a article due to image upload error");
+        }
+
         return new ResponseEntity<>(saveArticle.getId(), status);
     }
 
@@ -85,11 +84,18 @@ public class ArticleServiceImpl implements ArticleService {
         if (categoryOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
 
         Article article = articleOptional.get();
+
         Image thumbnail = null;
-        try {
-            thumbnail = uploadThumbnail(thumbnailFile);
-        } catch (IllegalStateException e) {
-            return HttpStatus.INTERNAL_SERVER_ERROR;
+        if (thumbnailFile != null) {
+            try {
+                thumbnail = uploadThumbnail(thumbnailFile);
+                if (article.getThumbnail() != null) { // 기존 섬네일이 있으면 파일 삭제
+                    common.removeImageFile(article.getThumbnail().getName());
+                    imageRepository.delete(article.getThumbnail());
+                }
+            } catch (IllegalStateException e) {
+                return HttpStatus.INTERNAL_SERVER_ERROR;
+            }
         }
 
         article.changeCategory(categoryOptional.get());
@@ -97,7 +103,11 @@ public class ArticleServiceImpl implements ArticleService {
         article.changeTitle(articleDto.getTitle());
         article.changeContent(common.removeServerUrlContent(articleDto.getContent()));
 
-        return uploadImage(article, imageFiles);
+        HttpStatus status = uploadImage(article, imageFiles);
+        if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
+            throw new IllegalStateException("failed to create a article due to image upload error");
+        }
+        return status;
     }
 
     @Transactional
@@ -158,6 +168,29 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return builder.build();
+    }
+
+    @Transactional
+    @Override
+    public HttpStatus deleteArticle(Long articleId) {
+        Optional<Article> articleOptional = articleRepository.findById(articleId);
+        if (articleOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
+        Article article = articleOptional.get();
+
+        if (article.getThumbnail() != null) {
+            boolean isDeleted = common.removeImageFile(article.getThumbnail().getName());
+            if (!isDeleted) return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        if (article.getImages() != null) {
+            for (Image image : article.getImages()) {
+                boolean isDelete = common.removeImageFile(image.getName());
+                if (!isDelete) return HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+        }
+
+        articleRepository.delete(article);
+        return HttpStatus.OK;
     }
 
     @Override
