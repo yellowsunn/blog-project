@@ -21,6 +21,7 @@ import static com.querydsl.jpa.JPAExpressions.selectFrom;
 import static com.yellowsunn.springblog.domain.entity.QArticle.article;
 import static com.yellowsunn.springblog.domain.entity.QCategory.category;
 import static com.yellowsunn.springblog.domain.entity.QComment.comment;
+import static com.yellowsunn.springblog.domain.entity.QImage.image;
 
 @Transactional(readOnly = true)
 public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
@@ -74,9 +75,9 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
     @Override
     public List<Tuple> findVerySimpleArticles(boolean isPopular) {
         JPAQuery<Tuple> query = queryFactory
-                .select(article.id, article.title, article.date, article.thumbnail.name)
+                .select(article.id, article.title, article.date, image.name)
                 .from(article)
-                .leftJoin(article.thumbnail);
+                .leftJoin(article.thumbnail, image);
 
         if (isPopular) {
             query.orderBy(article.hit.desc(), article.id.desc());
@@ -127,12 +128,12 @@ public class ArticleRepositoryCustomImpl implements ArticleRepositoryCustom {
 
     private JPAQuery<Tuple> simpleArticlesQuery(Category baseCategory) {
         return queryFactory
-                .select(article.id, article.title, article.content, article.date, article.category.id, article.thumbnail.name,
+                .select(article.id, article.title, article.content, article.date, article.category.id, image.name,
                         select(comment.count()).from(comment).where(comment.article.eq(article))
                 )
                 .from(article)
                 .where(baseCategoryEqual(baseCategory))
-                .leftJoin(article.thumbnail)
+                .leftJoin(article.thumbnail, image)
                 .orderBy(article.id.desc());
     }
 

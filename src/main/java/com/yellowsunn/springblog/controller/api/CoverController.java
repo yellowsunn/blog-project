@@ -5,15 +5,14 @@ import com.yellowsunn.springblog.domain.dto.MainDto;
 import com.yellowsunn.springblog.domain.dto.ProfileDto;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.EntityManager;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(value = "*")
 public class CoverController {
 
     private final CoverService coverService;
@@ -36,10 +35,12 @@ public class CoverController {
         return coverService.findProfile();
     }
 
-    @GetMapping("/admin/test")
-    public void test() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
-        return;
+    // 헤더 정보 수정
+    @PutMapping("/admin/update/header")
+    public ResponseEntity<?> updateHeader(@RequestBody HeaderDto headerDto) {
+        HttpStatus httpStatus = coverService.updateHeader(headerDto);
+        return new ResponseEntity<>(httpStatus);
     }
+
+    // 프로필 정보 수정
 }

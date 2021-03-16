@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class CommentController {
 
     private final CommentService commentService;

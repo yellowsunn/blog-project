@@ -3,6 +3,7 @@ package com.yellowsunn.springblog.service.impl;
 import com.querydsl.core.Tuple;
 import com.yellowsunn.springblog.domain.dto.*;
 import com.yellowsunn.springblog.domain.entity.Category;
+import com.yellowsunn.springblog.domain.entity.Cover;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CategoryRepository;
 import com.yellowsunn.springblog.repository.CoverRepository;
@@ -10,6 +11,7 @@ import com.yellowsunn.springblog.service.ArticleService;
 import com.yellowsunn.springblog.service.Common;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,20 @@ public class CoverServiceImpl implements CoverService {
     private final CoverRepository coverRepository;
     private final ArticleRepository articleRepository;
 
+    @Transactional
+    @Override
+    public HttpStatus updateHeader(HeaderDto headerDto) {
+        List<Cover> coverList = coverRepository.findAll();
+        if (coverList.isEmpty()) return HttpStatus.INTERNAL_SERVER_ERROR;
+        Cover cover = coverList.get(0);
+
+        cover.changeTitle(headerDto.getTitle());
+        cover.changeSlogunTitle(headerDto.getSlogunTitle());
+        cover.changeSlogunText(headerDto.getSlogunText());
+
+        return HttpStatus.OK;
+    }
+
     @Override
     public HeaderDto findHeader() {
         Optional<Tuple> tupleOptional = coverRepository.findHeader();
@@ -41,7 +57,7 @@ public class CoverServiceImpl implements CoverService {
         return HeaderDto.builder()
                 .title(tuple.get(cover.title))
                 .slogunTitle(tuple.get(cover.slogunTitle))
-                .slogunText(tuple.get(cover.slogunText))
+                .slogunText(common.replaceNewLine(tuple.get(cover.slogunText)))
                 .build();
     }
 

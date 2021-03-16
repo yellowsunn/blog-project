@@ -44,13 +44,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // JSESSIONID 항상 생성
 
-                .and()
-                .requestMatchers().antMatchers("/api/**", "/admin/**", "/article/**", "/comment/**")
                 .and().authorizeRequests()
                 .antMatchers("/article/create", "/article/update", "/article/delete/**").authenticated()
-                .antMatchers("/article/**").permitAll()
-                .antMatchers("/comment/**").permitAll()
-                .anyRequest().authenticated()
+                .antMatchers("/api/**").authenticated()
+                .anyRequest().permitAll()
 
                 .and().logout()
                 .logoutUrl("/api/logout")
@@ -61,7 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint) // 인증 실패
 
                 .and().formLogin()
-                .and().cors()
+                .and().cors().configurationSource(corsConfigurationSource())
                 .and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 .and().addFilterBefore(authenticationProcessingFilter(), UsernamePasswordAuthenticationFilter.class);
     }
@@ -84,6 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

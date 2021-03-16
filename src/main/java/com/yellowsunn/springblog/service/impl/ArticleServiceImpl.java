@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.yellowsunn.springblog.domain.entity.QArticle.article;
+import static com.yellowsunn.springblog.domain.entity.QImage.image;
 
 @Service
 @Transactional(readOnly = true)
@@ -270,7 +271,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     public ArticleDto changeVerySimple(Tuple tuple) {
-        String thumbnail = tuple.get(article.thumbnail.name);
+        String thumbnail = tuple.get(image.name);
         return ArticleDto.builder()
                 .id(tuple.get(article.id))
                 .title(tuple.get(article.title))

@@ -27,8 +27,6 @@ public class CategoryRepositoryCustomImpl implements CategoryRepositoryCustom {
 
     @Override
     public Queue<Tuple> findCategoryList() {
-        QCategory subCategory = new QCategory("subCategory");
-
         List<Tuple> list = queryFactory
                 .select(category,
                         select(article.count()).from(article).where(article.category.eq(category))

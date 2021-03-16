@@ -1,12 +1,14 @@
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/blog_db?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC&allowPublicKeyRetrieval=true&autoReconnection=true
+    url: jdbc:mariadb://localhost:3307/blog_db?autoReconnect=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
-
+    hikari:
+      connection-test-query: select 1
+      leak-detection-threshold: 2000
   jpa:
-    database: MYSQL
+    database: mysql
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: none
@@ -26,6 +28,7 @@ logging.level:
   org.hibernate:
     SQL: debug
     type: trace
+  com.zaxxer.hikari: TRACE
 
 # 이미지 경로
 file.upload.directory: ./upload/image/

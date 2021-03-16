@@ -30,4 +30,16 @@ public class Cover {
     @JoinColumn(name = "profile_id")
     private Image profile;
     private String profileText;
+
+    public void changeTitle(String title) {
+        this.title = title;
+    }
+
+    public void changeSlogunTitle(String slogunTitle) {
+        this.slogunTitle = slogunTitle;
+    }
+
+    public void changeSlogunText(String slogunText) {
+        this.slogunText = slogunText;
+    }
 }

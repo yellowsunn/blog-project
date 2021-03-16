@@ -1,10 +1,10 @@
 package com.yellowsunn.springblog.domain.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor @Builder
 public class HeaderDto {
 
     private String title;

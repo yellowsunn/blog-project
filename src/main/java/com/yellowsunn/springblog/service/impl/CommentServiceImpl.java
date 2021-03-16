@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
                     .password(passwordEncoder.encode(commentDto.getPassword()))
                     .ipAddr(ipAddr);
         }
-        builder.content(replaceNewLine(commentDto.getContent()));
+        builder.content(common.replaceNewLine(commentDto.getContent()));
 
         Long parentCommentId = commentDto.getParentCommentId();
         if (parentCommentId != null) {
@@ -144,10 +144,5 @@ public class CommentServiceImpl implements CommentService {
         if (articleOptional.isEmpty()) return null;
 
         return commentRepository.countByArticle(articleOptional.get());
-    }
-
-    private String replaceNewLine(String word) {
-        word = common.removeTag(word);
-        return word.replaceAll("\n", "<br>");
     }
 }

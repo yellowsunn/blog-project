@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(value = "*")
 public class CategoryController {
 
     private final CategoryService categoryService;

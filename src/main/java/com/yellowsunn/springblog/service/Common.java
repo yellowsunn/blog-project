@@ -114,4 +114,9 @@ public class Common {
             return true;
         }
     }
+
+    public String replaceNewLine(String word) {
+        word = word.replaceAll("(<([^>]+)>)", "");
+        return word.replaceAll("\\n", "<br>");
+    }
 }
