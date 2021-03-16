@@ -17,7 +17,7 @@ import {
   getMainPageData,
   getSearchData,
   submitCommentData, updateArticleData,
-  updateArticleLike,
+  updateArticleLike, updateHeaderData,
   uploadArticleData,
 } from '@/api';
 
@@ -73,6 +73,9 @@ export const store = new Vuex.Store({
       } catch (error) {
         state.isAuthorized = false;
       }
+    },
+    async UPDATE_HEADER_DATA(context, headerData) {
+      return await updateHeaderData(headerData);
     },
     async GET_HEADER_DATA({ commit }) {
       try {

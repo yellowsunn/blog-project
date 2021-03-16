@@ -136,7 +136,7 @@ export default {
       if (isCancel) {
         const url = `${window.location.protocol}//${window.location.host}`;
         if (!this.$route.params.articleId) {
-          window.location.href = `${url}`;
+          this.$router.push("/manage");
         } else {
           window.location.href = `${url}/${this.$route.params.articleId}`;
         }

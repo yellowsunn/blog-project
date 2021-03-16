@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const config = {
-  baseURL: `http://localhost:8080`
+  baseURL: `http://localhost:8080`,
+  withCredentials: true
 };
 const securityConfig = {
   ...config,
@@ -14,6 +15,10 @@ const fetchLogin = async (account) => {
 
 const getAuthority = async () => {
   return await axios.get("/api/authority", securityConfig);
+};
+
+const updateHeaderData = async (header) => {
+  return await axios.put('/admin/update/header', header, securityConfig);
 };
 
 const getHeaderData = async () => {
@@ -114,7 +119,7 @@ const getAsideArticles = async () => {
 
 export {
   fetchLogin, getAuthority,
-  getHeaderData,
+  updateHeaderData, getHeaderData,
   getMainPageData,
   getCategoryData,
   getSearchData,

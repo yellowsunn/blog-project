@@ -6,6 +6,9 @@ import ArticleView from '@/view/ArticleView';
 import SearchView from '@/view/SearchView';
 import LoginView from '@/view/LoginView';
 import CreateArticleView from '@/view/CreateArticleView';
+import ManageView from '@/view/ManageView';
+import ManageHeader from '@/components/manage/ManageHeader';
+import ManageProfile from '@/components/manage/ManageProfile';
 
 Vue.use(VueRouter);
 
@@ -33,6 +36,10 @@ export const router = new VueRouter({
       component: SearchView
     },
     {
+      path: '/manage',
+      component: ManageView
+    },
+    {
       path: '/:articleId',
       component: ArticleView
     },
@@ -47,6 +54,14 @@ export const router = new VueRouter({
     {
       path: '/search/:search',
       component: SearchView
+    },
+    {
+      path: '/manage/header',
+      component: ManageHeader
+    },
+    {
+      path: '/manage/profile',
+      component: ManageProfile
     }
   ]
 });
