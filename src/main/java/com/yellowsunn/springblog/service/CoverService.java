@@ -4,6 +4,7 @@ import com.yellowsunn.springblog.domain.dto.MainDto;
 import com.yellowsunn.springblog.domain.dto.HeaderDto;
 import com.yellowsunn.springblog.domain.dto.ProfileDto;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface CoverService {
 
@@ -12,6 +13,8 @@ public interface CoverService {
     HeaderDto findHeader();
 
     MainDto findMainInfo();
+
+    HttpStatus updateProfile(ProfileDto profileDto, MultipartFile profileFile);
 
     ProfileDto findProfile();
 }

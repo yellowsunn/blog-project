@@ -28,7 +28,7 @@ logging.level:
   org.hibernate:
     SQL: debug
     type: trace
-  com.zaxxer.hikari: TRACE
+#  com.zaxxer.hikari: TRACE
 
 # 이미지 경로
 file.upload.directory: ./upload/image/

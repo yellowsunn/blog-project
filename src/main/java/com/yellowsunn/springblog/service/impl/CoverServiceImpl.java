@@ -4,16 +4,20 @@ import com.querydsl.core.Tuple;
 import com.yellowsunn.springblog.domain.dto.*;
 import com.yellowsunn.springblog.domain.entity.Category;
 import com.yellowsunn.springblog.domain.entity.Cover;
+import com.yellowsunn.springblog.domain.entity.Image;
 import com.yellowsunn.springblog.repository.ArticleRepository;
 import com.yellowsunn.springblog.repository.CategoryRepository;
 import com.yellowsunn.springblog.repository.CoverRepository;
+import com.yellowsunn.springblog.repository.ImageRepository;
 import com.yellowsunn.springblog.service.ArticleService;
 import com.yellowsunn.springblog.service.Common;
 import com.yellowsunn.springblog.service.CoverService;
+import com.yellowsunn.springblog.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +33,12 @@ public class CoverServiceImpl implements CoverService {
     private final Common common;
 
     private final ArticleService articleService;
+    private final ImageService imageService;
 
     private final CategoryRepository categoryRepository;
     private final CoverRepository coverRepository;
     private final ArticleRepository articleRepository;
+    private final ImageRepository imageRepository;
 
     @Transactional
     @Override
@@ -96,6 +102,28 @@ public class CoverServiceImpl implements CoverService {
                 .build();
 
         return builder.category(categoryDto).build();
+    }
+
+    @Transactional
+    @Override
+    public HttpStatus updateProfile(ProfileDto profileDto, MultipartFile profileFile) {
+        List<Cover> coverList = coverRepository.findAll();
+        if (coverList.isEmpty()) return HttpStatus.INTERNAL_SERVER_ERROR;
+        Cover cover = coverList.get(0);
+
+        Image profile = null;
+        if (profileFile != null) {
+            profile = imageService.uploadImage(profileFile);
+            if (cover.getProfile() != null) { // 기존 프로필이 있으면 파일 삭제
+                common.removeImageFile(cover.getProfile().getName());
+                imageRepository.delete(cover.getProfile());
+            }
+        }
+
+        if (profile != null) cover.changeProfile(profile);
+        cover.changeProfileText(profileDto.getProfileText());
+
+        return HttpStatus.OK;
     }
 
     @Override

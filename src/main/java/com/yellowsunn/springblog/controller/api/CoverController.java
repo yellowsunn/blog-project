@@ -6,10 +6,10 @@ import com.yellowsunn.springblog.domain.dto.ProfileDto;
 import com.yellowsunn.springblog.service.CoverService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.persistence.EntityManager;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,4 +43,11 @@ public class CoverController {
     }
 
     // 프로필 정보 수정
+    @PutMapping(value = "/admin/update/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> updateProfile(
+            ProfileDto profileDto,
+            @RequestParam(value = "profileFile", required = false) MultipartFile profileFile) {
+        HttpStatus httpStatus = coverService.updateProfile(profileDto, profileFile);
+        return new ResponseEntity<>(httpStatus);
+    }
 }

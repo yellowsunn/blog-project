@@ -1,11 +1,10 @@
 package com.yellowsunn.springblog.domain.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 @Data
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor @Builder
 @Getter
 public class ProfileDto {
 

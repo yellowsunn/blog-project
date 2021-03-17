@@ -11,6 +11,7 @@ import com.yellowsunn.springblog.repository.CategoryRepository;
 import com.yellowsunn.springblog.repository.ImageRepository;
 import com.yellowsunn.springblog.service.ArticleService;
 import com.yellowsunn.springblog.service.Common;
+import com.yellowsunn.springblog.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,6 +38,7 @@ import static com.yellowsunn.springblog.domain.entity.QImage.image;
 public class ArticleServiceImpl implements ArticleService {
 
     private final Common common;
+    private final ImageService imageService;
 
     private final CategoryRepository categoryRepository;
     private final ArticleRepository articleRepository;
@@ -53,7 +55,7 @@ public class ArticleServiceImpl implements ArticleService {
 
         Image thumbnail = null;
         try {
-            thumbnail = uploadThumbnail(thumbnailFile);
+            thumbnail = imageService.uploadImage(thumbnailFile);
         } catch (IllegalStateException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -67,7 +69,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .build();
 
         Article saveArticle = articleRepository.save(article);
-        HttpStatus status = uploadImage(saveArticle, imageFiles);
+        HttpStatus status = uploadImages(saveArticle, imageFiles);
         if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
             throw new IllegalStateException("failed to create a article due to image upload error");
         }
@@ -88,14 +90,10 @@ public class ArticleServiceImpl implements ArticleService {
 
         Image thumbnail = null;
         if (thumbnailFile != null) {
-            try {
-                thumbnail = uploadThumbnail(thumbnailFile);
-                if (article.getThumbnail() != null) { // 기존 섬네일이 있으면 파일 삭제
-                    common.removeImageFile(article.getThumbnail().getName());
-                    imageRepository.delete(article.getThumbnail());
-                }
-            } catch (IllegalStateException e) {
-                return HttpStatus.INTERNAL_SERVER_ERROR;
+            thumbnail = imageService.uploadImage(thumbnailFile);
+            if (article.getThumbnail() != null) { // 기존 섬네일이 있으면 파일 삭제
+                common.removeImageFile(article.getThumbnail().getName());
+                imageRepository.delete(article.getThumbnail());
             }
         }
 
@@ -104,7 +102,7 @@ public class ArticleServiceImpl implements ArticleService {
         article.changeTitle(articleDto.getTitle());
         article.changeContent(common.removeServerUrlContent(articleDto.getContent()));
 
-        HttpStatus status = uploadImage(article, imageFiles);
+        HttpStatus status = uploadImages(article, imageFiles);
         if (status == HttpStatus.INTERNAL_SERVER_ERROR) {
             throw new IllegalStateException("failed to create a article due to image upload error");
         }
@@ -248,7 +246,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public ArticleDto changeSimple(CategoryRepository categoryRepository, Tuple tuple) {
-        String thumbnail = tuple.get(article.thumbnail.name);
+        String thumbnail = tuple.get(image.name);
 
         ArticleDto.ArticleDtoBuilder builder = ArticleDto.builder()
                 .id(tuple.get(article.id))
@@ -280,23 +278,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .build();
     }
 
-    private Image uploadThumbnail(MultipartFile thumbnailFile) {
-        if (thumbnailFile == null) return null;
-
-        Image thumbnailImage = Image.builder()
-                .name(thumbnailFile.getOriginalFilename())
-                .build();
-        Image saveImage = imageRepository.save(thumbnailImage);
-
-        boolean isUpload = common.uploadImageFile(thumbnailFile);
-        if (!isUpload) {
-            throw new IllegalStateException();
-        }
-
-        return saveImage;
-    }
-
-    private HttpStatus uploadImage(Article article, List<MultipartFile> imageFiles) {
+    private HttpStatus uploadImages(Article article, List<MultipartFile> imageFiles) {
         if (imageFiles != null) {
             for (MultipartFile imageFile : imageFiles) {
                 Image image = Image.builder()

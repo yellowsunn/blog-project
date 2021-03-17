@@ -42,4 +42,12 @@ public class Cover {
     public void changeSlogunText(String slogunText) {
         this.slogunText = slogunText;
     }
+
+    public void changeProfile(Image profile) {
+        this.profile = profile;
+    }
+
+    public void changeProfileText(String profileText) {
+        this.profileText = profileText;
+    }
 }
