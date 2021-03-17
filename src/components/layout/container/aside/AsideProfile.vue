@@ -15,9 +15,6 @@
 import noImage from '@/assets/profile.png';
 
 export default {
-  created() {
-    this.$store.dispatch('GET_ASIDE_PROFILE_DATA');
-  },
   computed: {
     data() {
       return this.$store.state.asideProfileData;

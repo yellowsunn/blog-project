@@ -145,7 +145,6 @@ export default {
     getImageType(imageName) {
       const regex = /(.+)(\.\w+)/;
       const result = imageName.match(regex);
-      console.log(result);
       return result[2];
     },
     handleImageAdded(file, Editor, cursorLocation, resetUploader) {

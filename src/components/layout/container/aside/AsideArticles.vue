@@ -38,9 +38,6 @@
 import noImage from '@/assets/no-image.jpg';
 
 export default {
-  created() {
-    this.$store.dispatch('GET_ASIDE_ARTICLES');
-  },
   computed: {
     data() {
       return this.$store.state.asideArticles;

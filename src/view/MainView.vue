@@ -14,12 +14,16 @@ import Footer from '@/components/layout/Footer';
 export default {
   name: 'MainView',
   components: { Footer, Container, Header },
-  created() {
+  async created() {
     this.$store.state.isMainPage = true;
     this.$store.state.isCategoryPage = false;
     this.$store.state.isViewPage = false;
 
-    this.$store.dispatch('GET_MAIN_PAGE_DATA');
+    await this.$store.dispatch('GET_HEADER_DATA');
+    await this.$store.dispatch('GET_MAIN_PAGE_DATA');
+    await this.$store.dispatch('GET_ASIDE_PROFILE_DATA');
+    await this.$store.dispatch('GET_ASIDE_CATEGORY_LIST');
+    await this.$store.dispatch('GET_ASIDE_ARTICLES');
   }
 };
 </script>

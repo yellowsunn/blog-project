@@ -17,7 +17,7 @@ import {
   getMainPageData,
   getSearchData,
   submitCommentData, updateArticleData,
-  updateArticleLike, updateHeaderData,
+  updateArticleLike, updateAsideProfileData, updateHeaderData,
   uploadArticleData,
 } from '@/api';
 
@@ -203,6 +203,9 @@ export const store = new Vuex.Store({
       } catch (error) {
         throw error;
       }
+    },
+    async UPDATE_ASIDE_PROFILE_DATA(context, formData) {
+      return await updateAsideProfileData(formData);
     },
     async GET_ASIDE_PROFILE_DATA({ commit }) {
       try {

@@ -105,6 +105,15 @@ const deleteCommentData = async (commentId, password) => {
   });
 };
 
+const updateAsideProfileData = async (formData) => {
+  return await axios.put("/admin/update/profile", formData, {
+    ...securityConfig,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};
+
 const getAsideProfileData = async () => {
   return await axios.get("/profile", config);
 }
@@ -130,7 +139,7 @@ export {
   getCommentCount,
   submitCommentData,
   deleteCommentData,
-  getAsideProfileData,
+  updateAsideProfileData, getAsideProfileData,
   getAsideCategoryList,
   getAsideArticles
 };

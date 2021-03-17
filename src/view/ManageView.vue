@@ -18,15 +18,21 @@
 
 <script>
 export default {
+  data() {
+    const url = `${window.location.protocol}//${window.location.host}`;
+    return {
+      url,
+    }
+  },
   methods: {
     editHeader() {
-      this.$router.push("/manage/header");
+      window.location.href = `${this.url}/manage/header`
     },
     editProfile() {
-      this.$router.push("/manage/profile");
+      window.location.href = `${this.url}/manage/profile`
     },
     newArticle() {
-      this.$router.push("/newpost")
+      window.location.href = `${this.url}/newpost`
     }
   }
 };

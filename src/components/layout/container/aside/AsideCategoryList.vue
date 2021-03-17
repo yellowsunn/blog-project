@@ -30,9 +30,6 @@
 
 <script>
 export default {
-  created() {
-    this.$store.dispatch('GET_ASIDE_CATEGORY_LIST');
-  },
   computed: {
     data() {
       return this.$store.state.asideCategoryList;

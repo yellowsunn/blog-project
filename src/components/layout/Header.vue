@@ -46,9 +46,6 @@
 
 <script>
 export default {
-  created() {
-    this.$store.dispatch('GET_HEADER_DATA');
-  },
   computed: {
     data() {
       return this.$store.state.coverHeaderData;
