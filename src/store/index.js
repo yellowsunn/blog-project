@@ -13,11 +13,16 @@ import {
   getCategoryData,
   getCommentCount,
   getCommentData,
+  getCoverCategoryId,
   getHeaderData,
   getMainPageData,
   getSearchData,
-  submitCommentData, updateArticleData,
-  updateArticleLike, updateAsideProfileData, updateHeaderData,
+  submitCommentData,
+  updateArticleData,
+  updateArticleLike,
+  updateAsideProfileData,
+  updateCoverCategoryId,
+  updateHeaderData,
   uploadArticleData,
 } from '@/api';
 
@@ -54,7 +59,8 @@ export const store = new Vuex.Store({
     commentData: {},
     asideCategoryList: {},
     asideProfileData: {},
-    asideArticles: {}
+    asideArticles: {},
+    coverCategoryId: {},
   },
   getters: {
     isCommentFirst(state) {
@@ -230,6 +236,17 @@ export const store = new Vuex.Store({
       } catch (error) {
         console.log(error);
       }
+    },
+    async GET_COVER_CATEGORY_ID({ commit }) {
+      try {
+        const response = await getCoverCategoryId();
+        commit('GET_COVER_CATEGORY_ID', response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async UPDATE_COVER_CATEGORY_ID(context, { articleCategoryId, categoryId }) {
+      await updateCoverCategoryId(articleCategoryId, categoryId)
     }
   },
   mutations: {
@@ -335,6 +352,9 @@ export const store = new Vuex.Store({
     },
     GET_ASIDE_ARTICLES(state, data) {
       state.asideArticles = data;
+    },
+    GET_COVER_CATEGORY_ID(state, data) {
+      state.coverCategoryId = data;
     }
   }
 });

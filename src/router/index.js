@@ -9,6 +9,7 @@ import CreateArticleView from '@/view/CreateArticleView';
 import ManageView from '@/view/ManageView';
 import ManageHeader from '@/components/manage/ManageHeader';
 import ManageProfile from '@/components/manage/ManageProfile';
+import ManageCover from '@/components/manage/ManageCover';
 
 Vue.use(VueRouter);
 
@@ -62,6 +63,10 @@ export const router = new VueRouter({
     {
       path: '/manage/profile',
       component: ManageProfile
+    },
+    {
+      path: '/manage/cover',
+      component: ManageCover
     }
   ]
 });

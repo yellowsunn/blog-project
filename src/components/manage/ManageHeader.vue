@@ -108,7 +108,7 @@ section {
       border: none;
       .sub_container {
         flex-direction: column;
-        padding: 1em 0.625em;;
+        padding: 1em 0.625em;
         .label {
           align-self: flex-start;
           margin-bottom: 0.214em;

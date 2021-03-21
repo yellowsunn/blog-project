@@ -6,7 +6,7 @@
         <b-button class="manage_btn" variant="outline-primary" @click="editProfile">프로필 수정</b-button>
       </div>
       <div class="sub_container">
-        <b-button class="manage_btn long_btn" variant="outline-info">커버 아이템 수정</b-button>
+        <b-button class="manage_btn long_btn" variant="outline-info" @click="editCover">커버 아이템 수정</b-button>
       </div>
       <div class="sub_container">
         <b-button class="manage_btn" variant="outline-danger" @click="newArticle">게시글 작성</b-button>
@@ -30,6 +30,9 @@ export default {
     },
     editProfile() {
       window.location.href = `${this.url}/manage/profile`
+    },
+    editCover() {
+      window.location.href = `${this.url}/manage/cover`;
     },
     newArticle() {
       window.location.href = `${this.url}/newpost`

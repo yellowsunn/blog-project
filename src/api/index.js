@@ -126,6 +126,16 @@ const getAsideArticles = async () => {
   return await axios.get('/asideArticles', config);
 }
 
+const getCoverCategoryId = async () => {
+  return await axios.get('/coverCategoryId', config);
+}
+
+const updateCoverCategoryId = async (articleCategoryId, categoryId) => {
+  return await axios.put('/admin/update/coverCategoryId', {
+    articleCategoryId, categoryId
+  }, config);
+}
+
 export {
   fetchLogin, getAuthority,
   updateHeaderData, getHeaderData,
@@ -141,5 +151,6 @@ export {
   deleteCommentData,
   updateAsideProfileData, getAsideProfileData,
   getAsideCategoryList,
-  getAsideArticles
+  getAsideArticles,
+  getCoverCategoryId, updateCoverCategoryId
 };
