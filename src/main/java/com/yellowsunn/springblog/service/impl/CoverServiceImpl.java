@@ -137,4 +137,43 @@ public class CoverServiceImpl implements CoverService {
                 .profileText(tuple.get(cover.profileText))
                 .build();
     }
+
+    @Override
+    public CoverCategoryIdDto findCoverCategoryId() {
+        Optional<Tuple> tupleOptional = coverRepository.findCoverCategory();
+        if (tupleOptional.isEmpty()) return null;
+
+        Tuple tuple = tupleOptional.get();
+        return CoverCategoryIdDto.builder()
+                .articleCategoryId(tuple.get(cover.coverCategory.id))
+                .categoryId(tuple.get(cover.category.id))
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public HttpStatus updateCoverCategoryId(CoverCategoryIdDto categoryIdDto) {
+        List<Cover> coverList = coverRepository.findAll();
+        if (coverList.isEmpty()) return HttpStatus.INTERNAL_SERVER_ERROR;
+        Cover cover = coverList.get(0);
+
+        Category articleCategory = null;
+        Category category = null;
+        if (categoryIdDto.getArticleCategoryId() != null) {
+            Optional<Category> articleCategoryOptional = categoryRepository.findById(categoryIdDto.getArticleCategoryId());
+            if (articleCategoryOptional.isEmpty()) return HttpStatus.INTERNAL_SERVER_ERROR;
+            articleCategory = articleCategoryOptional.get();
+        }
+
+        if (categoryIdDto.getCategoryId() != null) {
+            Optional<Category> categoryOptional = categoryRepository.findById(categoryIdDto.getCategoryId());
+            if (categoryOptional.isEmpty()) return HttpStatus.INTERNAL_SERVER_ERROR;
+            category = categoryOptional.get();
+        }
+
+        cover.changeArticleCategory(articleCategory);
+        cover.changeCategory(category);
+
+        return HttpStatus.OK;
+    }
 }

@@ -53,4 +53,14 @@ public class CoverRepositoryCustomImpl implements CoverRepositoryCustom {
 
         return Optional.ofNullable(tuple);
     }
+
+    @Override
+    public Optional<Tuple> findCoverCategory() {
+        Tuple tuple = queryFactory
+                .select(cover.coverCategory.id, cover.category.id)
+                .from(cover)
+                .fetchFirst();
+
+        return Optional.ofNullable(tuple);
+    }
 }

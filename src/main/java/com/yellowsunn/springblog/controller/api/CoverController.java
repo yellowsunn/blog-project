@@ -1,5 +1,6 @@
 package com.yellowsunn.springblog.controller.api;
 
+import com.yellowsunn.springblog.domain.dto.CoverCategoryIdDto;
 import com.yellowsunn.springblog.domain.dto.HeaderDto;
 import com.yellowsunn.springblog.domain.dto.MainDto;
 import com.yellowsunn.springblog.domain.dto.ProfileDto;
@@ -48,6 +49,19 @@ public class CoverController {
             ProfileDto profileDto,
             @RequestParam(value = "profileFile", required = false) MultipartFile profileFile) {
         HttpStatus httpStatus = coverService.updateProfile(profileDto, profileFile);
+        return new ResponseEntity<>(httpStatus);
+    }
+
+    // 커버 카테고리 정보
+    @GetMapping("/coverCategoryId")
+    public CoverCategoryIdDto findCoverCategoryId() {
+        return coverService.findCoverCategoryId();
+    }
+
+    // 커버 카테고리 수정
+    @PutMapping("/admin/update/coverCategoryId")
+    public ResponseEntity<?> updateCoverCategoryId(@RequestBody CoverCategoryIdDto categoryIdDto) {
+        HttpStatus httpStatus = coverService.updateCoverCategoryId(categoryIdDto);
         return new ResponseEntity<>(httpStatus);
     }
 }

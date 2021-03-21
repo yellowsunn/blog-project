@@ -50,4 +50,12 @@ public class Cover {
     public void changeProfileText(String profileText) {
         this.profileText = profileText;
     }
+
+    public void changeArticleCategory(Category category) {
+        this.coverCategory = category;
+    }
+
+    public void changeCategory(Category category) {
+        this.category = category;
+    }
 }

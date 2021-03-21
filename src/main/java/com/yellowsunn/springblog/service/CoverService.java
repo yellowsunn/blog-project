@@ -1,5 +1,6 @@
 package com.yellowsunn.springblog.service;
 
+import com.yellowsunn.springblog.domain.dto.CoverCategoryIdDto;
 import com.yellowsunn.springblog.domain.dto.MainDto;
 import com.yellowsunn.springblog.domain.dto.HeaderDto;
 import com.yellowsunn.springblog.domain.dto.ProfileDto;
@@ -17,4 +18,8 @@ public interface CoverService {
     HttpStatus updateProfile(ProfileDto profileDto, MultipartFile profileFile);
 
     ProfileDto findProfile();
+
+    CoverCategoryIdDto findCoverCategoryId();
+
+    HttpStatus updateCoverCategoryId(CoverCategoryIdDto categoryIdDto);
 }

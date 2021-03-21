@@ -11,4 +11,6 @@ public interface CoverRepositoryCustom {
     Optional<Tuple> findHeader();
 
     Optional<Tuple> findProfile();
+
+    Optional<Tuple> findCoverCategory();
 }
