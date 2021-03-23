@@ -103,14 +103,13 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto findArticles(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         String parentCategoryName = null;
-
+        if (category != null) {
+            parentCategoryName = category.getParentCategory() != null ? category.getParentCategory().getName() : null;
+        }
         Page<Tuple> tuplePage = articleRepository.findSimpleArticles(category, pageable);
 
         List<ArticleDto> articles = new ArrayList<>();
         for (Tuple t : tuplePage) {
-            if (category != null) {
-                parentCategoryName = category.getParentCategory() != null ? category.getParentCategory().getName() : null;
-            }
             ArticleDto articleDto = articleService.changeSimple(categoryRepository, t);
             articles.add(articleDto);
         }

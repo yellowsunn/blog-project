@@ -47,6 +47,7 @@ public class CategoryController {
         return categoryService.findArticles(categoryId != null ? categoryId : 0L, pageable);
     }
 
+    // 검색으로 게시글 조회
     @GetMapping(value = {"/search", "/search/{search}"})
     public CategoryDto search(@PathVariable(value = "search", required = false) String search, Pageable pageable) {
         if (search == null) {
@@ -59,7 +60,7 @@ public class CategoryController {
         return categoryService.search(search, pageable);
     }
 
-
+    // 카테고리 목록
     @GetMapping("/categoryList")
     public CategoryListDto findCategoryList() {
         return categoryService.findAll();

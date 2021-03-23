@@ -95,9 +95,16 @@ public class CoverServiceImpl implements CoverService {
             articles.add(articleDto);
         }
 
+        String parentCategory = null;
+        // 부모 카테고리 조회
+        if (coverCategory != null) {
+            parentCategory = coverCategory.getParentCategory() != null ? coverCategory.getParentCategory().getName() : null;
+        }
+
         CategoryDto categoryDto = CategoryDto.builder()
                 .id(coverCategory != null ? coverCategory.getId() : null)
                 .category(coverCategory != null ? coverCategory.getName() : null)
+                .parentCategory(parentCategory)
                 .articles(articles)
                 .build();
 
@@ -132,8 +139,9 @@ public class CoverServiceImpl implements CoverService {
         if (tupleOptional.isEmpty()) return null;
 
         Tuple tuple = tupleOptional.get();
+        String profileName = tuple.get(cover.profile.name);
         return ProfileDto.builder()
-                .profileImage(common.getServerUrlImage() + tuple.get(cover.profile.name))
+                .profileImage(profileName != null ? common.getServerUrlImage() + profileName : null)
                 .profileText(tuple.get(cover.profileText))
                 .build();
     }

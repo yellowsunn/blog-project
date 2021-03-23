@@ -58,6 +58,7 @@ public class ArticleController {
         return articleService.findArticleIdByPage(categoryId, page);
     }
 
+    // 사이드에 있는 최근글, 인기글 게시글 목록
     @GetMapping("/asideArticles")
     public AsideArticlesDto findAsideArticles() {
         return articleService.findAsideArticles();
@@ -70,6 +71,7 @@ public class ArticleController {
         return new ResponseEntity<>(httpStatus);
     }
 
+    // 익명 or 인증된 사용자의 세션 아이디
     private String getSessionId() {
         SecurityContext context = SecurityContextHolder.getContext();
         String sessionId = null;

@@ -18,11 +18,13 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    // 게시글의 댓글 조회
     @GetMapping("/comment/{articleId}")
     public Page<CommentDto> findComments(@PathVariable("articleId") Long articleId, Pageable pageable) {
         return commentService.findByArticleId(articleId, pageable);
     }
 
+    // 게시글의 댓글 개수
     @GetMapping("/comment/count/{articleId}")
     public Long countComments(@PathVariable("articleId") Long articleId) {
         return commentService.countByArticleId(articleId);
