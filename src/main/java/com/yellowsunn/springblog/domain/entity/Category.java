@@ -1,6 +1,7 @@
 package com.yellowsunn.springblog.domain.entity;
 
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,8 +19,9 @@ public class Category {
     @Column(nullable = false)
     private String name;
 
+    @ColumnDefault("0")
     @Column(name = "orders")
-    private Long order;
+    private long order;
 
     @OneToMany(mappedBy = "category")
     private List<Article> articles = new ArrayList<>();
@@ -33,5 +35,13 @@ public class Category {
 
     public void changeName(String name) {
         this.name = name;
+    }
+
+    public void changeOrder(long order) {
+        this.order = order;
+    }
+
+    public void changeParentCategory(Category parentCategory) {
+        this.parentCategory = parentCategory;
     }
 }

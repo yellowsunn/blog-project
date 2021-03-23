@@ -14,6 +14,8 @@ import com.yellowsunn.springblog.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +35,72 @@ public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final ArticleRepository articleRepository;
 
+    @Transactional
     @Override
-    public CategoryDto findCategory(Long categoryId, Pageable pageable) {
+    public ResponseEntity<Long> createCategory(CategoryDto categoryDto) {
+        Category.CategoryBuilder builder = Category.builder()
+                .name(categoryDto.getCategory())
+                .order(categoryDto.getOrder());
+
+        if (categoryDto.getParentId() != null) {
+            Optional<Category> categoryOptional = categoryRepository.findById(categoryDto.getParentId());
+            if (categoryOptional.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+            builder.parentCategory(categoryOptional.get());
+        }
+
+        Category saveCategory = categoryRepository.save(builder.build());
+
+        return new ResponseEntity<>(saveCategory.getId(), HttpStatus.CREATED);
+    }
+
+    @Override
+    public CategoryDto findCategory(Long categoryId) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        if (categoryOptional.isEmpty()) return null;
+
+        Category category = categoryOptional.get();
+
+        return CategoryDto.builder()
+                .id(category.getId())
+                .category(category.getName())
+                .parentId(category.getParentCategory() != null ? category.getParentCategory().getId() : null)
+                .order(category.getOrder())
+                .build();
+    }
+
+    @Transactional
+    @Override
+    public HttpStatus updateCategory(CategoryDto categoryDto) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryDto.getId());
+        if (categoryOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
+
+        Category parentCategory = null;
+        if(categoryDto.getParentId() != null) {
+            Optional<Category> parentCategoryOptional = categoryRepository.findById(categoryDto.getParentId());
+            if (parentCategoryOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
+            parentCategory = parentCategoryOptional.get();
+        }
+
+        Category category = categoryOptional.get();
+        category.changeName(categoryDto.getCategory());
+        category.changeParentCategory(parentCategory);
+        category.changeOrder(categoryDto.getOrder());
+        return HttpStatus.OK;
+    }
+
+    @Transactional
+    @Override
+    public HttpStatus deleteCategory(Long categoryId) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        if (categoryOptional.isEmpty()) return HttpStatus.BAD_REQUEST;
+
+        categoryRepository.delete(categoryOptional.get());
+        return HttpStatus.OK;
+    }
+
+    @Override
+    public CategoryDto findArticles(Long categoryId, Pageable pageable) {
         Category category = categoryRepository.findById(categoryId).orElse(null);
         String parentCategoryName = null;
 

@@ -9,6 +9,7 @@ import java.util.List;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @Getter @Setter
+@NoArgsConstructor
 @ToString
 @EqualsAndHashCode(callSuper = false)
 public class CategoryDto extends PageDto {
@@ -17,13 +18,15 @@ public class CategoryDto extends PageDto {
     private String category;
 
     @JsonInclude(Include.NON_EMPTY)
+    private Long parentId;
+
+    @JsonInclude(Include.NON_EMPTY)
     private String parentCategory;
 
     @JsonInclude(Include.NON_EMPTY)
     private List<CategoryDto> children;
 
-    @JsonInclude(Include.NON_EMPTY)
-    private Long order;
+    private long order;
 
     @JsonInclude(Include.NON_EMPTY)
     private List<ArticleDto> articles;
@@ -35,10 +38,11 @@ public class CategoryDto extends PageDto {
     private String search;
 
     @Builder
-    public CategoryDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String category, String parentCategory, List<CategoryDto> children, Long order, List<ArticleDto> articles, Long totalArticles, String search) {
+    public CategoryDto(Long totalElements, Integer totalPages, Integer pageNumber, Boolean isFirst, Boolean isLast, Boolean hasNext, Boolean hasPrevious, Long id, String category, Long parentId, String parentCategory, List<CategoryDto> children, long order, List<ArticleDto> articles, Long totalArticles, String search) {
         super(totalElements, totalPages, pageNumber, isFirst, isLast, hasNext, hasPrevious);
         this.id = id;
         this.category = category;
+        this.parentId = parentId;
         this.parentCategory = parentCategory;
         this.children = children;
         this.order = order;
