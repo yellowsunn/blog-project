@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import {
-  deleteArticleData,
+  createCategory,
+  deleteArticleData, deleteCategory,
   deleteCommentData,
   fetchLogin,
   getArticleData,
@@ -10,7 +11,7 @@ import {
   getAsideCategoryList,
   getAsideProfileData,
   getAuthority,
-  getCategoryData,
+  getCategoryData, getCategoryInfo,
   getCommentCount,
   getCommentData,
   getCoverCategoryId,
@@ -20,7 +21,7 @@ import {
   submitCommentData,
   updateArticleData,
   updateArticleLike,
-  updateAsideProfileData,
+  updateAsideProfileData, updateCategory,
   updateCoverCategoryId,
   updateHeaderData,
   uploadArticleData,
@@ -61,6 +62,7 @@ export const store = new Vuex.Store({
     asideProfileData: {},
     asideArticles: {},
     coverCategoryId: {},
+    categoryInfo: {}
   },
   getters: {
     isCommentFirst(state) {
@@ -247,6 +249,24 @@ export const store = new Vuex.Store({
     },
     async UPDATE_COVER_CATEGORY_ID(context, { articleCategoryId, categoryId }) {
       await updateCoverCategoryId(articleCategoryId, categoryId)
+    },
+    async CREATE_CATEGORY(context, data) {
+      await createCategory(data);
+    },
+    async GET_CATEGORY_INFO(context, categoryId) {
+      // eslint-disable-next-line no-useless-catch
+      try {
+        const response = await getCategoryInfo(categoryId);
+        return response.data;
+      } catch (error) {
+        throw error;
+      }
+    },
+    async UPDATE_CATEGORY(context, data) {
+      await updateCategory(data);
+    },
+    async DELETE_CATEGORY(context, categoryId) {
+      await deleteCategory(categoryId);
     }
   },
   mutations: {

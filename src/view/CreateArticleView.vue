@@ -106,7 +106,7 @@ export default {
         const thumbnail = uuidGenerator() + this.getImageType(this.thumbnailFile.name);
         formData.append("thumbnailFile", this.thumbnailFile, thumbnail);
       }
-      formData.append("categoryId", this.options[this.selected - 1].value);
+      formData.append("categoryId", this.selected);
       formData.append("title", this.articleData.title);
       formData.append("content", content);
 

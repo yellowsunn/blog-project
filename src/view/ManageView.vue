@@ -10,7 +10,7 @@
       </div>
       <div class="sub_container">
         <b-button class="manage_btn" variant="outline-danger" @click="newArticle">게시글 작성</b-button>
-        <b-button class="manage_btn" variant="outline-danger">카테고리 편집</b-button>
+        <b-button class="manage_btn" variant="outline-danger" @click="editCategory">카테고리 편집</b-button>
       </div>
     </div>
   </section>
@@ -36,6 +36,9 @@ export default {
     },
     newArticle() {
       window.location.href = `${this.url}/newpost`
+    },
+    editCategory() {
+      window.location.href = `${this.url}/manage/category`;
     }
   }
 };

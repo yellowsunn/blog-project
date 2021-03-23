@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import { store } from '@/store';
 import VueRouter from 'vue-router';
 import MainView from '@/view/MainView';
 import CategoryView from '@/view/CategoryView';
@@ -10,6 +11,8 @@ import ManageView from '@/view/ManageView';
 import ManageHeader from '@/components/manage/ManageHeader';
 import ManageProfile from '@/components/manage/ManageProfile';
 import ManageCover from '@/components/manage/ManageCover';
+import ManageCategory from '@/components/manage/ManageCategory';
+import EditCategory from '@/components/manage/EditCategory';
 
 Vue.use(VueRouter);
 
@@ -38,7 +41,15 @@ export const router = new VueRouter({
     },
     {
       path: '/manage',
-      component: ManageView
+      component: ManageView,
+      beforeEnter: async (to, from, next) => {
+          await store.dispatch('GET_AUTHORITY');
+          if (store.state.isAuthorized) {
+            next();
+          } else {
+            next("/login");
+          }
+      }
     },
     {
       path: '/:articleId',
@@ -67,6 +78,18 @@ export const router = new VueRouter({
     {
       path: '/manage/cover',
       component: ManageCover
+    },
+    {
+      path: '/manage/category',
+      component: ManageCategory
+    },
+    {
+      path: '/manage/category/edit',
+      component: EditCategory
+    },
+    {
+      path: '/manage/category/edit/:categoryId',
+      component: EditCategory
     }
   ]
 });

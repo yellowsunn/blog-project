@@ -4,21 +4,17 @@ const config = {
   baseURL: `http://localhost:8080`,
   withCredentials: true
 };
-const securityConfig = {
-  ...config,
-  withCredentials: true
-};
 
 const fetchLogin = async (account) => {
-  return await axios.post('/api/login', account, securityConfig);
+  return await axios.post('/api/login', account, config);
 };
 
 const getAuthority = async () => {
-  return await axios.get("/api/authority", securityConfig);
+  return await axios.get("/api/authority", config);
 };
 
 const updateHeaderData = async (header) => {
-  return await axios.put('/admin/update/header', header, securityConfig);
+  return await axios.put('/admin/update/header', header, config);
 };
 
 const getHeaderData = async () => {
@@ -48,7 +44,7 @@ const getSearchData = async (search, page) => {
 
 const uploadArticleData = async (formData) => {
   return await axios.post('/article/create', formData, {
-    ...securityConfig,
+    ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -57,7 +53,7 @@ const uploadArticleData = async (formData) => {
 
 const updateArticleData = async (formData) => {
   return await axios.put('/article/update', formData, {
-    ...securityConfig,
+    ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -65,49 +61,49 @@ const updateArticleData = async (formData) => {
 };
 
 const getArticleData = async (articleId) => {
-  return await axios.get(`/article/${articleId}`, securityConfig);
+  return await axios.get(`/article/${articleId}`, config);
 };
 
 const deleteArticleData = async (articleId) => {
-  return await axios.delete(`/article/delete/${articleId}`, securityConfig);
+  return await axios.delete(`/article/delete/${articleId}`, config);
 };
 
 const getArticleId = async (categoryId, page) => {
-  return await axios.get(`/article/find?categoryId=${categoryId}&page=${page}`, securityConfig);
+  return await axios.get(`/article/find?categoryId=${categoryId}&page=${page}`, config);
 }
 
 const updateArticleLike = async (articleId) => {
-  return await axios.put(`/article/like/${articleId}`, null, securityConfig);
+  return await axios.put(`/article/like/${articleId}`, null, config);
 }
 
 const getCommentData = async (articleId, page) => {
   return await axios.get(`/comment/${articleId}?size=30`, {
-    ...securityConfig,
+    ...config,
     params: { page }
   });
 };
 
 const getCommentCount = async (articleId) => {
-  return await axios.get(`/comment/count/${articleId}`, securityConfig);
+  return await axios.get(`/comment/count/${articleId}`, config);
 };
 
 const submitCommentData = async (commentData, articleId, parentCommentId) => {
   return await axios.post('/comment/upload', {
     ...commentData,
     articleId, parentCommentId
-  }, securityConfig);
+  }, config);
 };
 
 const deleteCommentData = async (commentId, password) => {
   return await axios.delete('/comment/delete', {
-    ...securityConfig,
+    ...config,
     data: { commentId, password }
   });
 };
 
 const updateAsideProfileData = async (formData) => {
   return await axios.put("/admin/update/profile", formData, {
-    ...securityConfig,
+    ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -136,6 +132,22 @@ const updateCoverCategoryId = async (articleCategoryId, categoryId) => {
   }, config);
 }
 
+const createCategory = async (data) => {
+  return await axios.post('/category/create', data, config);
+}
+
+const getCategoryInfo = async (categoryId) => {
+  return await axios.get(`/category/info/${categoryId}`, config);
+}
+
+const updateCategory = async (data) => {
+  return await axios.put('/category/update', data, config);
+}
+
+const deleteCategory = async (categoryId) => {
+  return await axios.delete(`/category/delete/${categoryId}`, config);
+}
+
 export {
   fetchLogin, getAuthority,
   updateHeaderData, getHeaderData,
@@ -152,5 +164,6 @@ export {
   updateAsideProfileData, getAsideProfileData,
   getAsideCategoryList,
   getAsideArticles,
-  getCoverCategoryId, updateCoverCategoryId
+  getCoverCategoryId, updateCoverCategoryId,
+  createCategory, getCategoryInfo, updateCategory, deleteCategory
 };

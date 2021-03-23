@@ -2,7 +2,7 @@
   <section>
     <div class="main_container">
       <div class="sub_container">
-        <span class="label label_profile">프로필 </span>
+        <span class="label label_profile">프로필: </span>
         <Thumbnail :prevThumbnail="profile.profileImage"></Thumbnail>
       </div>
       <div class="sub_container">
