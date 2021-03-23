@@ -96,8 +96,8 @@ export const store = new Vuex.Store({
     async GET_MAIN_PAGE_DATA({ commit }) {
       try {
         const response = await getMainPageData();
-        commit('GET_COVER_ARTICLE_DATA', response.data.cover);
-        commit('GET_COVER_CATEGORY_DATA', response.data.category);
+        commit('GET_COVER_ARTICLE_DATA', response.data.coverArticle);
+        commit('GET_COVER_CATEGORY_DATA', response.data.coverCategory);
       } catch (error) {
         console.log(error);
       }
