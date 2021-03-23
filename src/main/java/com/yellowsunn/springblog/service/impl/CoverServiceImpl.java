@@ -74,21 +74,21 @@ public class CoverServiceImpl implements CoverService {
         if (tupleOptional.isEmpty()) return null;
 
         Tuple tuple = tupleOptional.get();
+        Category coverArticleCategory = tuple.get(cover.coverArticleCategory);
         Category coverCategory = tuple.get(cover.coverCategory);
-        Category category = tuple.get(cover.category);
 
         MainDto.MainDtoBuilder builder = MainDto.builder();
 
         // 커버 게시글
-        List<Tuple> simpleArticles = articleRepository.findSimpleArticles(coverCategory, 1);
+        List<Tuple> simpleArticles = articleRepository.findSimpleArticles(coverArticleCategory, 1);
         if (!simpleArticles.isEmpty()) {
             tuple = simpleArticles.get(0);
             ArticleDto articleDto = articleService.changeSimple(categoryRepository, tuple);
-            builder.cover(articleDto);
+            builder.coverArticle(articleDto);
         }
 
         // 카테고리 목록
-        simpleArticles = articleRepository.findSimpleArticles(category, 3);
+        simpleArticles = articleRepository.findSimpleArticles(coverCategory, 3);
         List<ArticleDto> articles = new ArrayList<>();
         for (Tuple t : simpleArticles) {
             ArticleDto articleDto = articleService.changeSimple(categoryRepository, t);
@@ -96,12 +96,12 @@ public class CoverServiceImpl implements CoverService {
         }
 
         CategoryDto categoryDto = CategoryDto.builder()
-                .id(category != null ? category.getId() : null)
-                .category(category != null ? category.getName() : null)
+                .id(coverCategory != null ? coverCategory.getId() : null)
+                .category(coverCategory != null ? coverCategory.getName() : null)
                 .articles(articles)
                 .build();
 
-        return builder.category(categoryDto).build();
+        return builder.coverCategory(categoryDto).build();
     }
 
     @Transactional
@@ -145,8 +145,8 @@ public class CoverServiceImpl implements CoverService {
 
         Tuple tuple = tupleOptional.get();
         return CoverCategoryIdDto.builder()
-                .articleCategoryId(tuple.get(cover.coverCategory.id))
-                .categoryId(tuple.get(cover.category.id))
+                .articleCategoryId(tuple.get(cover.coverArticleCategory.id))
+                .categoryId(tuple.get(cover.coverCategory.id))
                 .build();
     }
 

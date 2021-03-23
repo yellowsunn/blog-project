@@ -10,8 +10,8 @@ public class MainDto {
 
     // 커버에 보이는 게시글
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ArticleDto cover;
+    private ArticleDto coverArticle;
 
     // 카테고리 목록
-    private CategoryDto category;
+    private CategoryDto coverCategory;
 }

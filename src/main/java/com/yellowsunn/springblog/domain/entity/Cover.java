@@ -19,12 +19,12 @@ public class Cover {
     private String slogunText;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cover_category_id")
-    private Category coverCategory;
+    @JoinColumn(name = "cover_article_category_id")
+    private Category coverArticleCategory;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @JoinColumn(name = "cover_category_id")
+    private Category coverCategory;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
@@ -52,10 +52,10 @@ public class Cover {
     }
 
     public void changeArticleCategory(Category category) {
-        this.coverCategory = category;
+        this.coverArticleCategory = category;
     }
 
     public void changeCategory(Category category) {
-        this.category = category;
+        this.coverCategory = category;
     }
 }

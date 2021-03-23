@@ -8,8 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.util.Optional;
 
-import static com.querydsl.jpa.JPAExpressions.select;
-import static com.yellowsunn.springblog.domain.entity.QCategory.category;
 import static com.yellowsunn.springblog.domain.entity.QCover.cover;
 
 @Transactional(readOnly = true)
@@ -24,10 +22,10 @@ public class CoverRepositoryCustomImpl implements CoverRepositoryCustom {
     @Override
     public Optional<Tuple> findMain() {
         Tuple tuple = queryFactory
-                .select(cover.coverCategory, cover.category)
+                .select(cover.coverArticleCategory, cover.coverCategory)
                 .from(cover)
+                .leftJoin(cover.coverArticleCategory)
                 .leftJoin(cover.coverCategory)
-                .leftJoin(cover.category)
                 .fetchFirst();
 
         return Optional.ofNullable(tuple);
@@ -57,7 +55,7 @@ public class CoverRepositoryCustomImpl implements CoverRepositoryCustom {
     @Override
     public Optional<Tuple> findCoverCategory() {
         Tuple tuple = queryFactory
-                .select(cover.coverCategory.id, cover.category.id)
+                .select(cover.coverArticleCategory.id, cover.coverCategory.id)
                 .from(cover)
                 .fetchFirst();
 
