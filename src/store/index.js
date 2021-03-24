@@ -38,7 +38,8 @@ export const store = new Vuex.Store({
     asideProfileData: {},
     asideArticles: {},
     coverCategoryId: {},
-    categoryInfo: {}
+    categoryInfo: {},
+    commentHistory: {},
   },
   getters: {
     isCommentFirst(state) {

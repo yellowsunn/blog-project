@@ -148,6 +148,14 @@ const deleteCategory = async (categoryId) => {
   return await axios.delete(`/category/delete/${categoryId}`, config);
 }
 
+const getCommentHistory = async (page) => {
+  return axios.post(`/admin/comment/history`, null, {
+    ...config,
+    params: {
+      size: 20, page,
+    }
+  });
+}
 export {
   fetchLogin, getAuthority,
   updateHeaderData, getHeaderData,
@@ -165,5 +173,6 @@ export {
   getAsideCategoryList,
   getAsideArticles,
   getCoverCategoryId, updateCoverCategoryId,
-  createCategory, getCategoryInfo, updateCategory, deleteCategory
+  createCategory, getCategoryInfo, updateCategory, deleteCategory,
+  getCommentHistory
 };

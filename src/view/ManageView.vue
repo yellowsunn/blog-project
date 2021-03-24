@@ -12,6 +12,9 @@
         <b-button class="manage_btn" variant="outline-danger" @click="newArticle">게시글 작성</b-button>
         <b-button class="manage_btn" variant="outline-danger" @click="editCategory">카테고리 편집</b-button>
       </div>
+      <div class="sub_container">
+        <b-button class="manage_btn long_btn" variant="outline-secondary" @click="showCommentHistory">댓글 히스토리</b-button>
+      </div>
     </div>
   </section>
 </template>
@@ -39,6 +42,9 @@ export default {
     },
     editCategory() {
       window.location.href = `${this.url}/manage/category`;
+    },
+    showCommentHistory() {
+      window.location.href = `${this.url}/manage/comment_history`;
     }
   }
 };

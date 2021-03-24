@@ -12,7 +12,7 @@ import {
   getCategoryData,
   getCategoryInfo,
   getCommentCount,
-  getCommentData,
+  getCommentData, getCommentHistory,
   getCoverCategoryId,
   getHeaderData,
   getMainPageData,
@@ -224,5 +224,13 @@ export default {
   },
   async DELETE_CATEGORY(context, categoryId) {
     await deleteCategory(categoryId);
+  },
+  async GET_COMMENT_HISTORY({ commit }, page) {
+    try {
+      const response = await getCommentHistory(page);
+      commit('GET_COMMENT_HISTORY', response.data);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }

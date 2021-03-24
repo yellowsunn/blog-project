@@ -104,5 +104,8 @@ export default {
   },
   GET_COVER_CATEGORY_ID(state, data) {
     state.coverCategoryId = data;
+  },
+  GET_COMMENT_HISTORY(state, data) {
+    state.commentHistory = data;
   }
 }

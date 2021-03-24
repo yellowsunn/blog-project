@@ -99,6 +99,8 @@ export default {
         let search = this.$route.params.search;
         if (!search) search = '';
         window.location.href = `${url}/search/${search}?page=${page}`;
+      } else if (this.$route.path.startsWith("/manage/comment_history")) {
+        window.location.href = `${url}/manage/comment_history?page=${page}`
       } else if (this.$route.path.startsWith("/")) {
         try {
           const id = await this.$store.dispatch('GET_ARTICLE_ID', {
