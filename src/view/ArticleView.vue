@@ -28,6 +28,8 @@ export default {
     await this.$store.dispatch('GET_ASIDE_PROFILE_DATA');
     await this.$store.dispatch('GET_ASIDE_CATEGORY_LIST');
     await this.$store.dispatch('GET_ASIDE_ARTICLES');
+
+    document.title = this.$store.state.articleData.title;
   }
 };
 </script>

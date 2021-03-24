@@ -29,6 +29,19 @@ export default {
     await this.$store.dispatch('GET_ASIDE_PROFILE_DATA');
     await this.$store.dispatch('GET_ASIDE_CATEGORY_LIST');
     await this.$store.dispatch('GET_ASIDE_ARTICLES');
+
+    const category = this.category();
+    document.title = `'${category || '전체 글'}' 카테고리의 글 목록`;
+  },
+  methods: {
+    category() {
+      const categoryData = this.$store.state.categoryData;
+      const parentCategory = categoryData.parentCategory;
+      const category = categoryData.category;
+      if (!category) return '';
+      if (!parentCategory) return category;
+      return `${parentCategory}/${category}`;
+    }
   }
 };
 </script>

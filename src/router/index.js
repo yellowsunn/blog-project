@@ -13,6 +13,7 @@ import ManageProfile from '@/components/manage/ManageProfile';
 import ManageCover from '@/components/manage/ManageCover';
 import ManageCategory from '@/components/manage/ManageCategory';
 import EditCategory from '@/components/manage/EditCategory';
+import CommentHistory from '@/components/manage/CommentHistory';
 
 Vue.use(VueRouter);
 
@@ -90,6 +91,10 @@ export const router = new VueRouter({
     {
       path: '/manage/category/edit/:categoryId',
       component: EditCategory
+    },
+    {
+      path: '/manage/comment_history',
+      component: CommentHistory
     }
   ]
 });
