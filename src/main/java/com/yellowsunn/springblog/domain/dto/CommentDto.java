@@ -24,6 +24,9 @@ public class CommentDto {
     @JsonInclude(NON_EMPTY)
     private String password;
 
+    @JsonInclude(NON_EMPTY)
+    private String ipAddr;
+
     private Boolean isManager;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy.MM.dd. HH:mm", timezone = "Asia/Seoul", locale = "ko")

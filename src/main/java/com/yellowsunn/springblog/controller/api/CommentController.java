@@ -1,6 +1,7 @@
 package com.yellowsunn.springblog.controller.api;
 
 import com.yellowsunn.springblog.domain.dto.CommentDto;
+import com.yellowsunn.springblog.domain.dto.CommentHistoryDto;
 import com.yellowsunn.springblog.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,5 +43,11 @@ public class CommentController {
 
         HttpStatus httpStatus = commentService.delete(commentDto);
         return new ResponseEntity<>(httpStatus);
+    }
+
+    // 댓글 기록 조회 (인증된 사용자만 보기위해 POST)
+    @PostMapping("/admin/comment/history")
+    public CommentHistoryDto findHistory(Pageable pageable) {
+        return commentService.findHistory(pageable);
     }
 }

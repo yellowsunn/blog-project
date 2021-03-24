@@ -8,4 +8,6 @@ import org.springframework.data.domain.Pageable;
 public interface CommentRepositoryCustom {
 
     Page<Comment> findByArticle(Article article, Pageable pageable);
+
+    Page<Comment> findCustomAll(Pageable pageable);
 }

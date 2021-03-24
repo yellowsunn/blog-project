@@ -1,6 +1,7 @@
 package com.yellowsunn.springblog.service.impl;
 
 import com.yellowsunn.springblog.domain.dto.CommentDto;
+import com.yellowsunn.springblog.domain.dto.CommentHistoryDto;
 import com.yellowsunn.springblog.domain.entity.Article;
 import com.yellowsunn.springblog.domain.entity.Comment;
 import com.yellowsunn.springblog.repository.ArticleRepository;
@@ -144,5 +145,33 @@ public class CommentServiceImpl implements CommentService {
         if (articleOptional.isEmpty()) return null;
 
         return commentRepository.countByArticle(articleOptional.get());
+    }
+
+    @Override
+    public CommentHistoryDto findHistory(Pageable pageable) {
+        Page<Comment> comments = commentRepository.findCustomAll(pageable);
+
+        Page<CommentDto> map = comments.map(comment ->
+                CommentDto.builder()
+                        .name(comment.getName())
+                        .content(comment.getContent())
+                        .ipAddr(comment.getIpAddr())
+                        .date(comment.getDate())
+                        .isManager(comment.isManager())
+                        .articleId(comment.getArticle().getId())
+                        .build()
+        );
+
+        return CommentHistoryDto.builder()
+                .list(map.getContent())
+
+                .totalElements(map.getTotalElements())
+                .totalPages(map.getTotalPages())
+                .pageNumber(map.getNumber())
+                .isFirst(map.isFirst())
+                .isLast(map.isLast())
+                .hasNext(map.hasNext())
+                .hasPrevious(map.hasPrevious())
+                .build();
     }
 }
