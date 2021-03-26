@@ -1,6 +1,7 @@
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3307/blog_db?autoReconnect=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+#    url: jdbc:mariadb://localhost:3307/blog_db?autoReconnect=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mariadb://db:3306/blog_db?autoReconnect=true&useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: password
     driver-class-name: org.mariadb.jdbc.Driver
@@ -14,9 +15,10 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        format_sql: true
-        use_sql_comments: true
+#        format_sql: true
+#        use_sql_comments: true
         default_batch_fetch_size: 100
+    open-in-view: false
 
   # 파일 업로드 용량
   servlet:
@@ -24,12 +26,14 @@ spring:
       maxFileSize: 50MB
       maxRequestSize: 50MB
 
-logging.level:
-  org.hibernate:
-    SQL: debug
-    type: trace
+#logging.level:
+#  org.hibernate:
+#    SQL: debug
+#    type: trace
 #  com.zaxxer.hikari: TRACE
 
 # 이미지 경로
 file.upload.directory: ./upload/image/
 imagePath: /image/
+
+logging.level.root: warn
