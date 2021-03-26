@@ -1,7 +1,10 @@
 import axios from 'axios';
+import getEnv from '@/utils/env'
+
+const server = getEnv('VUE_APP_API_DOMAIN')
 
 const config = {
-  baseURL: `http://localhost:8080`,
+  baseURL: `http://${server}`,
   withCredentials: true
 };
 
