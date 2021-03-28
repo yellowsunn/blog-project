@@ -46,7 +46,7 @@ public class Common {
 
     public String getServerUrlImage() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + imgPath;
+        return "//" + request.getServerName() + ":" + request.getServerPort() + imgPath;
     }
 
     // 콘텐츠 이미지 서버주소 prefix로 추가
