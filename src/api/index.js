@@ -4,7 +4,7 @@ import getEnv from '@/utils/env'
 const server = getEnv('VUE_APP_API_DOMAIN')
 
 const config = {
-  baseURL: `http://${server}`,
+  baseURL: `${server}`,
   withCredentials: true
 };
 

@@ -4,7 +4,8 @@
       <div class="box-policy">
       </div>
       <div>
-        <p class="text-info">DESIGNED BY TISTORY (Copyright (c) 2020 TISTORY)</p>
+        <p class="text-info">Copyright 2021. yellowsunn. All rights reserved.</p>
+        <p class="text-info">Theme by <a href="https://tistory1.daumcdn.net/tistory/0/Odyssey/LICENSE">TISTORY</a> (© 2020. TISTORY. All rights reserved.)</p>
       </div>
     </div>
   </footer>
@@ -16,7 +17,15 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+a {
+  color: #999 !important;
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline !important;
+    color: #999 !important;
+  }
+}
 
 .text-info {
   color: #999 !important;

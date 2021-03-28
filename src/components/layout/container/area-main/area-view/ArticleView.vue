@@ -17,12 +17,12 @@
         <template v-if="isAuthorized">
           <div class="wrap_btn" @click="editClickEvent">
             <button type="button" class="btn_post">
-              <i class="far fa-edit"></i>
+              <i class="far fa-edit modify"></i>
             </button>
           </div>
           <div class="wrap_btn" @click="deleteClickEvent">
             <button type="button" class="btn_post">
-              <i class="far fa-trash-alt"></i>
+              <i class="far fa-trash-alt modify"></i>
             </button>
           </div>
         </template>
@@ -83,9 +83,9 @@ export default {
 </script>
 
 <style scoped>
-i {
+.modify {
   font-size: 14px;
   color: #525252;
-  opacity: 55%;
+  opacity: 0.55;
 }
 </style>

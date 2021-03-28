@@ -1,7 +1,7 @@
 <template>
   <li class="item-reply rp_general">
     <i class="fas fa-user-circle thumbnail" v-if="!comment.isManager"></i>
-    <span class="thumbnail" :style="{backgroundImage: `url(${this.managerProfile})`}" v-else></span>
+    <span class="thumbnail" :style="{backgroundImage: `url(${ !this.managerProfile ? noImage : this.managerProfile })`}" v-else></span>
     <div class="box-content">
       <div class="box-meta">
         <strong>{{ comment.name }}</strong>
@@ -24,6 +24,7 @@
 
 <script>
 import Reply from '@/components/Reply';
+import noImage from '@/assets/profile.png';
 
 export default {
   components: { Reply },
@@ -39,6 +40,11 @@ export default {
     },
     subComment() {
       return this.comment.subComment;
+    }
+  },
+  data() {
+    return {
+      noImage
     }
   },
   methods: {

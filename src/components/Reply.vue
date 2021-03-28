@@ -1,7 +1,7 @@
 <template>
   <li class="item-reply rp_general">
     <i class="fas fa-user-circle thumbnail" v-if="!reply.isManager"></i>
-    <span class="thumbnail" :style="{backgroundImage: `url(${this.managerProfile})`}" v-else></span>
+    <span class="thumbnail" :style="{backgroundImage: `url(${ !this.managerProfile ? noImage : this.managerProfile })`}" v-else></span>
     <div class="box-content">
       <div class="box-meta">
         <strong>{{ reply.name }}</strong>
@@ -18,6 +18,8 @@
 </template>
 
 <script>
+import noImage from '@/assets/profile.png';
+
 export default {
   props: {
     reply: Object,
@@ -29,6 +31,11 @@ export default {
     managerProfile() {
       return this.$store.state.asideProfileData.profileImage;
     },
+  },
+  data() {
+    return {
+      noImage
+    }
   },
   methods: {
     async deleteEvent(commentId) {

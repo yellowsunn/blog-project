@@ -23,6 +23,10 @@ export const router = new VueRouter({
     {
       path: '/',
       component: MainView,
+      beforeEnter: async (to, from, next) => {
+        await beforeMainView();
+        next();
+      }
     },
     {
       path: '/login',
@@ -34,7 +38,11 @@ export const router = new VueRouter({
     },
     {
       path: '/category/',
-      component: CategoryView
+      component: CategoryView,
+      beforeEnter: async (to, from, next) => {
+        await beforeCategoryView(to);
+        next();
+      }
     },
     {
       path: '/search/',
@@ -54,7 +62,11 @@ export const router = new VueRouter({
     },
     {
       path: '/:articleId',
-      component: ArticleView
+      component: ArticleView,
+      beforeEnter: async (to, from, next) => {
+        await beforeArticleView(to);
+        next();
+      }
     },
     {
       path: '/newpost/:articleId',
@@ -62,11 +74,19 @@ export const router = new VueRouter({
     },
     {
       path: '/category/:categoryId',
-      component: CategoryView
+      component: CategoryView,
+      beforeEnter: async (to, from, next) => {
+        await beforeCategoryView(to);
+        next();
+      }
     },
     {
       path: '/search/:search',
-      component: SearchView
+      component: SearchView,
+      beforeEnter: async (to, from, next) => {
+        await beforeSearchView(to);
+        next();
+      }
     },
     {
       path: '/manage/header',
@@ -98,3 +118,65 @@ export const router = new VueRouter({
     }
   ]
 });
+
+const beforeMainView = async () => {
+  store.state.isMainPage = true;
+  store.state.isCategoryPage = false;
+  store.state.isViewPage = false;
+
+  await store.dispatch('GET_HEADER_DATA');
+  await store.dispatch('GET_MAIN_PAGE_DATA');
+  await store.dispatch('GET_ASIDE_PROFILE_DATA');
+  await store.dispatch('GET_ASIDE_CATEGORY_LIST');
+  await store.dispatch('GET_ASIDE_ARTICLES');
+};
+
+const beforeArticleView = async (to) => {
+  store.state.isViewPage = true;
+  store.state.isMainPage = false;
+  store.state.isCategoryPage = false;
+  document.body.id = "tt-body-page";
+
+  await store.dispatch('GET_AUTHORITY');
+  await store.dispatch('GET_HEADER_DATA');
+  await store.dispatch('GET_ARTICLE_DATA', to.params.articleId);
+  await store.dispatch('GET_COMMENT_DATA', {
+    articleId: to.params.articleId
+  });
+  await store.dispatch('GET_ASIDE_PROFILE_DATA');
+  await store.dispatch('GET_ASIDE_CATEGORY_LIST');
+  await store.dispatch('GET_ASIDE_ARTICLES');
+};
+
+const beforeCategoryView = async (to) => {
+  store.state.isCategoryPage = true;
+  store.state.isMainPage = false;
+  store.state.isViewPage = false;
+  document.body.id = "tt-body-category"
+  document.body.classList.add('headerbannerdisplayon'); // 메인페이지 배너 이미지 사라짐
+
+  await store.dispatch('GET_HEADER_DATA');
+  await store.dispatch('GET_CATEGORY_DATA', {
+    categoryId: to.params.categoryId,
+    page: to.query.page,
+  });
+  await store.dispatch('GET_ASIDE_PROFILE_DATA');
+  await store.dispatch('GET_ASIDE_CATEGORY_LIST');
+  await store.dispatch('GET_ASIDE_ARTICLES');
+}
+
+const beforeSearchView = async (to) => {
+  store.state.isCategoryPage = true;
+
+  document.body.id = "tt-body-search";
+  document.body.classList.add('headerbannerdisplayon'); // 메인페이지 배너 이미지 사라짐
+
+  await store.dispatch('GET_HEADER_DATA');
+  await store.dispatch('GET_SEARCH_DATA', {
+    search: to.params.search,
+    page: to.query.page,
+  });
+  await store.dispatch('GET_ASIDE_PROFILE_DATA');
+  await store.dispatch('GET_ASIDE_CATEGORY_LIST');
+  await store.dispatch('GET_ASIDE_ARTICLES');
+}
