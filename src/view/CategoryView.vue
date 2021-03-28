@@ -14,9 +14,11 @@ import Footer from '@/components/layout/Footer';
 export default {
   name: 'CategoryView',
   components: { Footer, Container, Header },
-  async created() {
-    const category = this.category();
-    document.title = `'${category || '전체 글'}' 카테고리의 글 목록`;
+  metaInfo() {
+    return {
+      title: `${this.category() || '전체글'}`,
+      titleTemplate: `'%s' 카테고리의 글 목록`
+    }
   },
   methods: {
     category() {

@@ -13,8 +13,10 @@ import Footer from '@/components/layout/Footer';
 
 export default {
   components: { Footer, Container, Header },
-  async created() {
-    document.title = this.$store.state.articleData.title;
+  metaInfo() {
+    return {
+      title: this.$store.state.articleData.title,
+    }
   }
 };
 </script>

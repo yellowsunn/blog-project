@@ -14,11 +14,12 @@ import Header from '@/components/layout/Header';
 export default {
   name: 'SearchView',
   components: { Header, Container, Footer },
-  async created() {
-
-
-    document.title = `'${this.$store.state.categoryData.search}'의 검색결과`;
-  },
+  metaInfo() {
+    return {
+      title: this.$store.state.categoryData.search,
+      titleTemplate: `'%s'의 검색결과`
+    }
+  }
 };
 </script>
 

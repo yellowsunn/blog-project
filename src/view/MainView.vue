@@ -14,8 +14,10 @@ import Footer from '@/components/layout/Footer';
 export default {
   name: 'MainView',
   components: { Footer, Container, Header },
-  async created() {
-    document.title = this.$store.state.coverHeaderData.title;
+  metaInfo() {
+    return {
+      title: this.$store.state.coverHeaderData.title,
+    }
   }
 };
 </script>
