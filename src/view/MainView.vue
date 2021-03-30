@@ -17,6 +17,11 @@ export default {
   metaInfo() {
     return {
       title: this.$store.state.coverHeaderData.title,
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'title', content: this.$store.state.coverHeaderData.title },
+        { name: 'description', content: this.$store.state.asideProfileData.profileText }
+      ]
     }
   }
 };

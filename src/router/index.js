@@ -124,11 +124,7 @@ const beforeMainView = async () => {
   store.state.isCategoryPage = false;
   store.state.isViewPage = false;
 
-  await store.dispatch('GET_HEADER_DATA');
-  await store.dispatch('GET_MAIN_PAGE_DATA');
-  await store.dispatch('GET_ASIDE_PROFILE_DATA');
-  await store.dispatch('GET_ASIDE_CATEGORY_LIST');
-  await store.dispatch('GET_ASIDE_ARTICLES');
+  await store.dispatch('GET_ALL_MAIN_VIEW_DATA');
 };
 
 const beforeArticleView = async (to) => {
@@ -137,15 +133,7 @@ const beforeArticleView = async (to) => {
   store.state.isCategoryPage = false;
   document.body.id = "tt-body-page";
 
-  await store.dispatch('GET_AUTHORITY');
-  await store.dispatch('GET_HEADER_DATA');
-  await store.dispatch('GET_ARTICLE_DATA', to.params.articleId);
-  await store.dispatch('GET_COMMENT_DATA', {
-    articleId: to.params.articleId
-  });
-  await store.dispatch('GET_ASIDE_PROFILE_DATA');
-  await store.dispatch('GET_ASIDE_CATEGORY_LIST');
-  await store.dispatch('GET_ASIDE_ARTICLES');
+  await store.dispatch('GET_ALL_ARTICLE_VIEW_DATA', to.params.articleId);
 };
 
 const beforeCategoryView = async (to) => {
@@ -155,14 +143,10 @@ const beforeCategoryView = async (to) => {
   document.body.id = "tt-body-category"
   document.body.classList.add('headerbannerdisplayon'); // 메인페이지 배너 이미지 사라짐
 
-  await store.dispatch('GET_HEADER_DATA');
-  await store.dispatch('GET_CATEGORY_DATA', {
+  await store.dispatch('GET_ALL_CATEGORY_VIEW_DATA', {
     categoryId: to.params.categoryId,
     page: to.query.page,
   });
-  await store.dispatch('GET_ASIDE_PROFILE_DATA');
-  await store.dispatch('GET_ASIDE_CATEGORY_LIST');
-  await store.dispatch('GET_ASIDE_ARTICLES');
 }
 
 const beforeSearchView = async (to) => {
@@ -171,12 +155,8 @@ const beforeSearchView = async (to) => {
   document.body.id = "tt-body-search";
   document.body.classList.add('headerbannerdisplayon'); // 메인페이지 배너 이미지 사라짐
 
-  await store.dispatch('GET_HEADER_DATA');
-  await store.dispatch('GET_SEARCH_DATA', {
+  await store.dispatch('GET_ALL_SEARCH_VIEW_DATA', {
     search: to.params.search,
     page: to.query.page,
   });
-  await store.dispatch('GET_ASIDE_PROFILE_DATA');
-  await store.dispatch('GET_ASIDE_CATEGORY_LIST');
-  await store.dispatch('GET_ASIDE_ARTICLES');
 }

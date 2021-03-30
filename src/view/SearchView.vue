@@ -17,7 +17,12 @@ export default {
   metaInfo() {
     return {
       title: this.$store.state.categoryData.search,
-      titleTemplate: `'%s'의 검색결과`
+      titleTemplate: `'%s'의 검색결과`,
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'title', content: `'${this.$store.state.categoryData.search}'의 검색결과` },
+        { name: 'description', content: this.$store.state.asideProfileData.profileText }
+      ]
     }
   }
 };

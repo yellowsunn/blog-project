@@ -1,8 +1,13 @@
 import {
   createCategory,
-  deleteArticleData, deleteCategory,
+  deleteArticleData,
+  deleteCategory,
   deleteCommentData,
   fetchLogin,
+  getAllArticleViewData,
+  getAllCategoryViewData,
+  getAllMainViewData,
+  getAllSearchViewData,
   getArticleData,
   getArticleId,
   getAsideArticles,
@@ -12,15 +17,16 @@ import {
   getCategoryData,
   getCategoryInfo,
   getCommentCount,
-  getCommentData, getCommentHistory,
+  getCommentData,
+  getCommentHistory,
   getCoverCategoryId,
   getHeaderData,
-  getMainPageData,
   getSearchData,
   submitCommentData,
   updateArticleData,
   updateArticleLike,
-  updateAsideProfileData, updateCategory,
+  updateAsideProfileData,
+  updateCategory,
   updateCoverCategoryId,
   updateHeaderData,
   uploadArticleData,
@@ -50,23 +56,6 @@ export default {
       console.log(error);
     }
   },
-  async GET_MAIN_PAGE_DATA({ commit }) {
-    try {
-      const response = await getMainPageData();
-      commit('GET_COVER_ARTICLE_DATA', response.data.coverArticle);
-      commit('GET_COVER_CATEGORY_DATA', response.data.coverCategory);
-    } catch (error) {
-      console.log(error);
-    }
-  },
-  async GET_CATEGORY_DATA({ commit }, { categoryId, page }) {
-    try {
-      const response = await getCategoryData(categoryId, page);
-      commit('GET_CATEGORY_DATA', response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  },
   async UPDATE_CATEGORY_DATA({ state, commit }, { categoryId, page }) {
     state.loadPage = true;
     try {
@@ -76,14 +65,6 @@ export default {
       console.log(error);
     } finally {
       state.loadPage = false;
-    }
-  },
-  async GET_SEARCH_DATA({ commit }, {search, page}) {
-    try {
-      const response = await getSearchData(search, page);
-      commit('GET_CATEGORY_DATA', response.data);
-    } catch (error) {
-      console.log(error);
     }
   },
   async UPDATE_SEARCH_DATA({ state, commit }, { search, page }) {
@@ -97,7 +78,6 @@ export default {
       state.loadPage = false;
     }
   },
-
   async UPLOAD_ARTICLE_DATA(context, formData) {
     return await uploadArticleData(formData);
   },
@@ -229,6 +209,60 @@ export default {
     try {
       const response = await getCommentHistory(page);
       commit('GET_COMMENT_HISTORY', response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async GET_ALL_MAIN_VIEW_DATA({ commit }) {
+    try {
+      const response = await getAllMainViewData();
+      commit('GET_HEADER_DATA', response[0].data);
+      commit('GET_COVER_ARTICLE_DATA', response[1].data.coverArticle);
+      commit('GET_COVER_CATEGORY_DATA', response[1].data.coverCategory);
+      commit('GET_ASIDE_PROFILE_DATA', response[2].data);
+      commit('GET_ASIDE_CATEGORY_LIST', response[3].data);
+      commit('GET_ASIDE_ARTICLES', response[4].data);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async GET_ALL_ARTICLE_VIEW_DATA(context, articleId) {
+    const { commit } = context;
+    try {
+      await context.dispatch('GET_AUTHORITY');
+      const commentCount = await getCommentCount(articleId);
+      const page = parseInt((commentCount.data - 1) / 30);
+      const response = await getAllArticleViewData(articleId, page);
+      commit('GET_HEADER_DATA', response[0].data);
+      commit('GET_ARTICLE_DATA', response[1].data);
+      commit('GET_COMMENT_DATA', response[2].data);
+      commit('GET_ASIDE_PROFILE_DATA', response[3].data);
+      commit('GET_ASIDE_CATEGORY_LIST', response[4].data);
+      commit('GET_ASIDE_ARTICLES', response[5].data);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async GET_ALL_CATEGORY_VIEW_DATA({ commit }, { categoryId, page }) {
+    try {
+      const response = await getAllCategoryViewData(categoryId, page);
+      commit('GET_HEADER_DATA', response[0].data);
+      commit('GET_CATEGORY_DATA', response[1].data);
+      commit('GET_ASIDE_PROFILE_DATA', response[2].data);
+      commit('GET_ASIDE_CATEGORY_LIST', response[3].data);
+      commit('GET_ASIDE_ARTICLES', response[4].data);
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  async GET_ALL_SEARCH_VIEW_DATA({ commit }, { search, page }) {
+    try {
+      const response = await getAllSearchViewData(search, page);
+      commit('GET_HEADER_DATA', response[0].data);
+      commit('GET_CATEGORY_DATA', response[1].data);
+      commit('GET_ASIDE_PROFILE_DATA', response[2].data);
+      commit('GET_ASIDE_CATEGORY_LIST', response[3].data);
+      commit('GET_ASIDE_ARTICLES', response[4].data);
     } catch (error) {
       console.log(error);
     }

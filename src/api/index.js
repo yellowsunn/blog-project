@@ -80,9 +80,9 @@ const updateArticleLike = async (articleId) => {
 }
 
 const getCommentData = async (articleId, page) => {
-  return await axios.get(`/comment/${articleId}?size=30`, {
+  return await axios.get(`/comment/${articleId}`, {
     ...config,
-    params: { page }
+    params: { page, size: 30 }
   });
 };
 
@@ -159,6 +159,40 @@ const getCommentHistory = async (page) => {
     }
   });
 }
+
+const getAllMainViewData = async () => {
+  return axios.all([
+    getHeaderData(),
+    getMainPageData(),
+    getAsideProfileData(), getAsideCategoryList(), getAsideArticles(),
+  ]);
+}
+
+const getAllArticleViewData = async (articleId, page) => {
+  return axios.all([
+    getHeaderData(),
+    getArticleData(articleId),
+    getCommentData(articleId, page),
+    getAsideProfileData(), getAsideCategoryList(), getAsideArticles(),
+  ]);
+}
+
+const getAllCategoryViewData = async (categoryId, page) => {
+  return axios.all([
+    getHeaderData(),
+    getCategoryData(categoryId, page),
+    getAsideProfileData(), getAsideCategoryList(), getAsideArticles(),
+  ]);
+}
+
+const getAllSearchViewData = async (search, page) => {
+  return axios.all([
+    getHeaderData(),
+    getSearchData(search, page),
+    getAsideProfileData(), getAsideCategoryList(), getAsideArticles(),
+  ]);
+}
+
 export {
   fetchLogin, getAuthority,
   updateHeaderData, getHeaderData,
@@ -177,5 +211,6 @@ export {
   getAsideArticles,
   getCoverCategoryId, updateCoverCategoryId,
   createCategory, getCategoryInfo, updateCategory, deleteCategory,
-  getCommentHistory
+  getCommentHistory,
+  getAllMainViewData, getAllArticleViewData, getAllCategoryViewData,getAllSearchViewData,
 };

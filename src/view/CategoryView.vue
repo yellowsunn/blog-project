@@ -16,8 +16,13 @@ export default {
   components: { Footer, Container, Header },
   metaInfo() {
     return {
-      title: `${this.category() || '전체글'}`,
-      titleTemplate: `'%s' 카테고리의 글 목록`
+      title: `${this.category() || '전체 글'}`,
+      titleTemplate: `'%s' 카테고리의 글 목록`,
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'title', content: `'${this.category() || '전체 글'}' 카테고리의 글 목록` },
+        { name: 'description', content: this.$store.state.asideProfileData.profileText }
+      ]
     }
   },
   methods: {
