@@ -39,9 +39,9 @@ public class Common {
     }
 
     public String removeTag(String html) {
-        html = html.replaceAll("<br[/]?>", " ");
-        html = html.replaceAll("\\s+", " ");
-        return html.replaceAll("(<([^>]+)>)", "");
+        html = html.replaceAll("<([^>]+)>", " ");
+        html =  html.replaceAll("\\s+", " ");
+        return html.replaceAll("^\\s+|\\s+$", "");
     }
 
     public String getServerUrlImage() {
