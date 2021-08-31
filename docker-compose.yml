@@ -6,7 +6,7 @@ services:
     restart: always
     volumes:
       - ./initdb/:/docker-entrypoint-initdb.d/
-#      - ./mariadb/:/var/lib/mysql
+      - ./data/mariadb/:/var/lib/mysql
     environment:
       MYSQL_DATABASE: blog_db
       MYSQL_ROOT_PASSWORD: password
@@ -14,26 +14,23 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --skip-character-set-client-handshake
-    ports:
-    - "3307:3306"
 
-#  backend:
-#    container_name: backend
-#    image: yellowsunn/blog-backend
-#    restart: always
-#    depends_on:
-#      - db
-#    volumes:
-#    - ./upload/image:/upload/image
-#    ports:
-#      - "8080:8080"
-#
-#  frontend:
-#    container_name: frontend
-#    image: yellowsunn/blog-front
-#    restart: always
-#    environment:
-#      VUE_APP_API_DOMAIN: localhost:8080
-#    ports:
-#      - "3000:80"
-#      - "443:443"
+  backend:
+    container_name: blog-backend
+    image: yellowsunn/blog-backend
+    restart: always
+    depends_on:
+      - db
+    volumes:
+    - ./data/upload/image:/upload/image
+    ports:
+      - "8080:8080"
+
+  frontend:
+    container_name: blog-frontend
+    image: yellowsunn/blog-front
+    restart: always
+    environment:
+      VUE_APP_API_DOMAIN: 'http://yellowsunn.com:8080'
+    ports:
+      - "3000:80"

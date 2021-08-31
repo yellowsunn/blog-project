@@ -71,7 +71,7 @@ create table cover (
     primary key (cover_id)
 );
 
-insert into account (username, password, role) values ('root', '{bcrypt}$2y$12$xWgXJ8hsKYWqVClWAUhS8.WxrqwiNaEOJQzcXKZB5LtsHLpXWQj7S', 'ROLE_ADMIN');
+insert into account (username, password, role) values ('yellowsunn', '{bcrypt}$2y$12$SxlPlPPSS/9sCKG7ZNB/AOay1VPCvxYfvFovB0Ttu0ghG545lJrRm', 'ROLE_ADMIN');
 
 insert into cover (title, slogun_title, slogun_text, profile_text) values
 (
