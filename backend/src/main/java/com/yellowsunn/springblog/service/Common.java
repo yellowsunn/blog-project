@@ -1,15 +1,10 @@
 package com.yellowsunn.springblog.service;
 
-import com.yellowsunn.springblog.domain.entity.Article;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,10 +39,6 @@ public class Common {
         return html.replaceAll("^\\s+|\\s+$", "");
     }
 
-    public String getServerUrlImage() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return "//" + request.getServerName() + ":" + request.getServerPort() + imgPath;
-    }
 
     // 콘텐츠 이미지 서버주소 prefix로 추가
     public String addServerUrlContent(String content) {
@@ -59,7 +50,7 @@ public class Common {
         }
 
         for (String imageFile : imageFiles) {
-            content = content.replace(imageFile, getServerUrlImage() + imageFile);
+            content = content.replace(imageFile, imgPath + imageFile);
         }
 
         return content;
@@ -67,7 +58,7 @@ public class Common {
 
     // 콘텐츠 이미지 서버주소 prefix에서 삭제
     public String removeServerUrlContent(String content) {
-        Pattern pattern = Pattern.compile("src=\"(" + getServerUrlImage() + UUID_REGEX + ")\"");
+        Pattern pattern = Pattern.compile("src=\"(" + imgPath + UUID_REGEX + ")\"");
         Matcher matcher = pattern.matcher(content);
         Map<String, String> imageMap = new HashMap<>();
         while (matcher.find()) {

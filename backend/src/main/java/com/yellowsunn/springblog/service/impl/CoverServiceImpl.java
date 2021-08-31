@@ -14,6 +14,7 @@ import com.yellowsunn.springblog.service.Common;
 import com.yellowsunn.springblog.service.CoverService;
 import com.yellowsunn.springblog.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,9 @@ public class CoverServiceImpl implements CoverService {
     private final CoverRepository coverRepository;
     private final ArticleRepository articleRepository;
     private final ImageRepository imageRepository;
+
+    @Value("${imagePath}")
+    private String imgPath;
 
     @Transactional
     @Override
@@ -141,7 +145,7 @@ public class CoverServiceImpl implements CoverService {
         Tuple tuple = tupleOptional.get();
         String profileName = tuple.get(cover.profile.name);
         return ProfileDto.builder()
-                .profileImage(profileName != null ? common.getServerUrlImage() + profileName : null)
+                .profileImage(profileName != null ? imgPath + profileName : null)
                 .profileText(tuple.get(cover.profileText))
                 .build();
     }

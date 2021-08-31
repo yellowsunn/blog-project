@@ -13,6 +13,7 @@ import com.yellowsunn.springblog.service.ArticleService;
 import com.yellowsunn.springblog.service.Common;
 import com.yellowsunn.springblog.service.ImageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,9 @@ public class ArticleServiceImpl implements ArticleService {
     private final CategoryRepository categoryRepository;
     private final ArticleRepository articleRepository;
     private final ImageRepository imageRepository;
+
+    @Value("${imagePath}")
+    private String imgPath;
 
     @Transactional
     @Override
@@ -122,7 +126,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .categoryId(article.getCategory().getId())
                 .category(article.getCategory().getName())
                 .id(article.getId())
-                .thumbnail(article.getThumbnail() != null ? common.getServerUrlImage() + article.getThumbnail().getName() : null)
+                .thumbnail(article.getThumbnail() != null ? imgPath + article.getThumbnail().getName() : null)
                 .writer(article.getWriter())
                 .title(article.getTitle())
                 .content(common.addServerUrlContent(article.getContent()))
@@ -253,7 +257,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .title(tuple.get(article.title))
                 .summary(common.getSummary(tuple.get(article.content)))
                 .commentCount(tuple.get(6, Long.class))
-                .thumbnail(thumbnail != null ? common.getServerUrlImage() + thumbnail : null)
+                .thumbnail(thumbnail != null ? imgPath + thumbnail : null)
                 .simpleDate(tuple.get(article.date));
 
         Long id = tuple.get(article.category.id);
@@ -274,7 +278,7 @@ public class ArticleServiceImpl implements ArticleService {
                 .id(tuple.get(article.id))
                 .title(tuple.get(article.title))
                 .simpleDate(tuple.get(article.date))
-                .thumbnail(thumbnail != null ? common.getServerUrlImage() + thumbnail : null)
+                .thumbnail(thumbnail != null ? imgPath + thumbnail : null)
                 .build();
     }
 
