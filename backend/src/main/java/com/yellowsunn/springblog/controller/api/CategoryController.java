@@ -11,57 +11,58 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
 
     // 카테고리 생성
-    @PostMapping("/category/create")
+    @PostMapping
     public ResponseEntity<Long> create(@RequestBody CategoryDto categoryDto) {
         return categoryService.createCategory(categoryDto);
     }
 
     // Id로 카테고리 조회
-    @GetMapping("/category/info/{categoryId}")
+    @GetMapping("/{categoryId}/info")
     public CategoryDto findCategory(@PathVariable(value = "categoryId") Long categoryId) {
         return categoryService.findCategory(categoryId);
     }
 
     // 카테고리 정보 업데이트
-    @PutMapping("/category/update")
+    @PutMapping
     public ResponseEntity<?> update(@RequestBody CategoryDto categoryDto) {
         HttpStatus httpStatus = categoryService.updateCategory(categoryDto);
         return new ResponseEntity<>(httpStatus);
     }
 
     // 카테고리 삭제
-    @DeleteMapping("/category/delete/{categoryId}")
+    @DeleteMapping("/{categoryId}")
     public ResponseEntity<?> delete(@PathVariable(value = "categoryId") Long categoryId) {
         HttpStatus httpStatus = categoryService.deleteCategory(categoryId);
         return new ResponseEntity<>(httpStatus);
     }
 
     // 카테고리 Id로 게시글 조회
-    @GetMapping(value = {"/category", "/category/{categoryId}"})
+    @GetMapping(value = {"/", "/{categoryId}"})
     public CategoryDto findArticles(@PathVariable(value = "categoryId", required = false) Long categoryId, Pageable pageable) {
         return categoryService.findArticles(categoryId != null ? categoryId : 0L, pageable);
     }
 
     // 검색으로 게시글 조회
-    @GetMapping(value = {"/search", "/search/{search}"})
-    public CategoryDto search(@PathVariable(value = "search", required = false) String search, Pageable pageable) {
-        if (search == null) {
+    @GetMapping(value = "/search")
+    public CategoryDto search(@RequestParam(value = "keyword", required = false) String keyword, Pageable pageable) {
+        if (keyword == null) {
             return CategoryDto.builder().search("")
                     .totalElements(0L).totalPages(0).pageNumber(0)
                     .isFirst(true).isLast(true).hasNext(false).hasPrevious(false)
                     .build();
         }
 
-        return categoryService.search(search, pageable);
+        return categoryService.search(keyword, pageable);
     }
 
     // 카테고리 목록
-    @GetMapping("/categoryList")
+    @GetMapping
     public CategoryListDto findCategoryList() {
         return categoryService.findAll();
     }

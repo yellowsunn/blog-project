@@ -15,30 +15,31 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/comments")
 public class CommentController {
 
     private final CommentService commentService;
 
     // 게시글의 댓글 조회
-    @GetMapping("/comment/{articleId}")
+    @GetMapping("/{articleId}")
     public Page<CommentDto> findComments(@PathVariable("articleId") Long articleId, Pageable pageable) {
         return commentService.findByArticleId(articleId, pageable);
     }
 
     // 게시글의 댓글 개수
-    @GetMapping("/comment/count/{articleId}")
+    @GetMapping("/{articleId}/count")
     public Long countComments(@PathVariable("articleId") Long articleId) {
         return commentService.countByArticleId(articleId);
     }
 
     // 댓글 업로드
-    @PostMapping("/comment/upload")
+    @PostMapping
     public ResponseEntity<CommentDto> commentUpload(@RequestBody CommentDto commentDto, HttpServletRequest request) {
         return commentService.upload(commentDto, request.getRemoteAddr());
     }
 
     // 댓글 삭제
-    @DeleteMapping("/comment/delete")
+    @DeleteMapping
     public ResponseEntity<?> commentDelete(@RequestBody CommentDto commentDto) {
 
         HttpStatus httpStatus = commentService.delete(commentDto);
@@ -46,7 +47,7 @@ public class CommentController {
     }
 
     // 댓글 기록 조회 (인증된 사용자만 보기위해 POST)
-    @PostMapping("/admin/comment/history")
+    @PostMapping("/history")
     public CommentHistoryDto findHistory(Pageable pageable) {
         return commentService.findHistory(pageable);
     }

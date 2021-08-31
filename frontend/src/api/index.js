@@ -4,20 +4,20 @@ import getEnv from '@/utils/env'
 const server = getEnv('VUE_APP_API_DOMAIN')
 
 const config = {
-  baseURL: `${server}`,
+  baseURL: `${server}/api`,
   withCredentials: true
 };
 
 const fetchLogin = async (account) => {
-  return await axios.post('/api/login', account, config);
+  return await axios.post('/login', account, config);
 };
 
 const getAuthority = async () => {
-  return await axios.get("/api/authority", config);
+  return await axios.get("/authority", config);
 };
 
 const updateHeaderData = async (header) => {
-  return await axios.put('/admin/update/header', header, config);
+  return await axios.put('/header', header, config);
 };
 
 const getHeaderData = async () => {
@@ -25,28 +25,31 @@ const getHeaderData = async () => {
 };
 
 const getMainPageData = async () => {
-  return await axios.get('/', config);
+  return await axios.get('/info', config);
 };
 
 const getCategoryData = async (categoryId, page) => {
   if (!categoryId) categoryId = '';
 
-  return await axios.get(`/category/${categoryId}`, {
+  return await axios.get(`/categories/${categoryId}`, {
     ...config,
     params: { page, size: 10 }
   })
 };
 
-const getSearchData = async (search, page) => {
-  if (!search) search = '';
-  return await axios.get(`/search/${search}`, {
+const getSearchData = async (keyword, page) => {
+  if (!keyword) keyword = '';
+  return await axios.get('/categories/search', {
     ...config,
-    params: { page, size: 10 }
+    params: { 
+      keyword,
+      page, size: 10 
+    }
   })
 };
 
 const uploadArticleData = async (formData) => {
-  return await axios.post('/article/create', formData, {
+  return await axios.post('/article', formData, {
     ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -55,7 +58,7 @@ const uploadArticleData = async (formData) => {
 };
 
 const updateArticleData = async (formData) => {
-  return await axios.put('/article/update', formData, {
+  return await axios.put('/article', formData, {
     ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -68,7 +71,7 @@ const getArticleData = async (articleId) => {
 };
 
 const deleteArticleData = async (articleId) => {
-  return await axios.delete(`/article/delete/${articleId}`, config);
+  return await axios.delete(`/article/${articleId}`, config);
 };
 
 const getArticleId = async (categoryId, page) => {
@@ -76,36 +79,36 @@ const getArticleId = async (categoryId, page) => {
 }
 
 const updateArticleLike = async (articleId) => {
-  return await axios.put(`/article/like/${articleId}`, null, config);
+  return await axios.put(`/article/${articleId}/like`, null, config);
 }
 
 const getCommentData = async (articleId, page) => {
-  return await axios.get(`/comment/${articleId}`, {
+  return await axios.get(`/comments/${articleId}`, {
     ...config,
     params: { page, size: 30 }
   });
 };
 
 const getCommentCount = async (articleId) => {
-  return await axios.get(`/comment/count/${articleId}`, config);
+  return await axios.get(`/comments/${articleId}/count`, config);
 };
 
 const submitCommentData = async (commentData, articleId, parentCommentId) => {
-  return await axios.post('/comment/upload', {
+  return await axios.post('/comments', {
     ...commentData,
     articleId, parentCommentId
   }, config);
 };
 
 const deleteCommentData = async (commentId, password) => {
-  return await axios.delete('/comment/delete', {
+  return await axios.delete('/comments', {
     ...config,
     data: { commentId, password }
   });
 };
 
 const updateAsideProfileData = async (formData) => {
-  return await axios.put("/admin/update/profile", formData, {
+  return await axios.put("/profile", formData, {
     ...config,
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -118,11 +121,11 @@ const getAsideProfileData = async () => {
 }
 
 const getAsideCategoryList = async () => {
-  return await axios.get('/categoryList', config);
+  return await axios.get('/categories', config);
 };
 
 const getAsideArticles = async () => {
-  return await axios.get('/asideArticles', config);
+  return await axios.get('/article/aside', config);
 }
 
 const getCoverCategoryId = async () => {
@@ -130,29 +133,29 @@ const getCoverCategoryId = async () => {
 }
 
 const updateCoverCategoryId = async (articleCategoryId, categoryId) => {
-  return await axios.put('/admin/update/coverCategoryId', {
+  return await axios.put('/coverCategoryId', {
     articleCategoryId, categoryId
   }, config);
 }
 
 const createCategory = async (data) => {
-  return await axios.post('/category/create', data, config);
+  return await axios.post('/categories', data, config);
 }
 
 const getCategoryInfo = async (categoryId) => {
-  return await axios.get(`/category/info/${categoryId}`, config);
+  return await axios.get(`/categories/${categoryId}/info`, config);
 }
 
 const updateCategory = async (data) => {
-  return await axios.put('/category/update', data, config);
+  return await axios.put('/categories', data, config);
 }
 
 const deleteCategory = async (categoryId) => {
-  return await axios.delete(`/category/delete/${categoryId}`, config);
+  return await axios.delete(`/categories/${categoryId}`, config);
 }
 
 const getCommentHistory = async (page) => {
-  return axios.post(`/admin/comment/history`, null, {
+  return axios.post(`/comments/history`, null, {
     ...config,
     params: {
       size: 20, page,

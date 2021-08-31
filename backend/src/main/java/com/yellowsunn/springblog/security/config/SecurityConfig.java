@@ -7,6 +7,7 @@ import com.yellowsunn.springblog.security.provider.CustomAuthenticationProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,9 +46,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS) // JSESSIONID 항상 생성
 
                 .and().authorizeRequests()
-                .antMatchers("/article/create", "/article/update", "/article/delete/**").authenticated()
-                .antMatchers("/category/create", "/category/update", "/category/delete/**").authenticated()
-                .antMatchers("/api/**", "/admin/**").authenticated()
+                .antMatchers(HttpMethod.POST, "/api/article", "/api/categories", "/api/comments/history").authenticated()
+                .antMatchers(HttpMethod.PUT, "/api/article", "/api/categories",
+                        "/api/header", "/api/profile", "/api/coverCategoryId").authenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/article/**", "/api/categories/**").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/authority").authenticated()
                 .anyRequest().permitAll()
 
                 .and().logout()

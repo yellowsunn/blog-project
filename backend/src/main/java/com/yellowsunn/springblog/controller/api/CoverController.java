@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class CoverController {
 
     private final CoverService coverService;
@@ -25,7 +26,7 @@ public class CoverController {
     }
 
     // 메인 페이지 정보
-    @GetMapping("/")
+    @GetMapping("/info")
     public MainDto findCover() {
         return coverService.findMainInfo();
     }
@@ -37,14 +38,14 @@ public class CoverController {
     }
 
     // 헤더 정보 수정
-    @PutMapping("/admin/update/header")
+    @PutMapping("/header")
     public ResponseEntity<?> updateHeader(@RequestBody HeaderDto headerDto) {
         HttpStatus httpStatus = coverService.updateHeader(headerDto);
         return new ResponseEntity<>(httpStatus);
     }
 
     // 프로필 정보 수정
-    @PutMapping(value = "/admin/update/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProfile(
             ProfileDto profileDto,
             @RequestParam(value = "profileFile", required = false) MultipartFile profileFile) {
@@ -59,7 +60,7 @@ public class CoverController {
     }
 
     // 커버 카테고리 수정
-    @PutMapping("/admin/update/coverCategoryId")
+    @PutMapping("/coverCategoryId")
     public ResponseEntity<?> updateCoverCategoryId(@RequestBody CoverCategoryIdDto categoryIdDto) {
         HttpStatus httpStatus = coverService.updateCoverCategoryId(categoryIdDto);
         return new ResponseEntity<>(httpStatus);
