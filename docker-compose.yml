@@ -5,8 +5,8 @@ services:
     image: mariadb
     restart: always
     volumes:
-      - ./initdb/:/docker-entrypoint-initdb.d/
-      - ./data/mariadb/:/var/lib/mysql
+      - ./docker/initdb/:/docker-entrypoint-initdb.d/
+      - ./docker/data/mariadb/:/var/lib/mysql
     environment:
       MYSQL_DATABASE: blog_db
       MYSQL_ROOT_PASSWORD: password
@@ -22,7 +22,7 @@ services:
     depends_on:
       - db
     volumes:
-    - ./data/upload/image:/upload/image
+    - ./docker/data/upload/image:/upload/image
     ports:
       - "8080:8080"
 
