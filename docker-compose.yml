@@ -29,7 +29,7 @@ services:
     image: yellowsunn/blog-front
     restart: always
     environment:
-      VUE_APP_API_DOMAIN: 'http://yellowsunn.com:3000'
+      VUE_APP_API_DOMAIN: 'https://blog.yellowsunn.com'
 
   proxy:
     container_name: blog-server
